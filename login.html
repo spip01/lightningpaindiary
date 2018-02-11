@@ -28,7 +28,7 @@
 
         <dev id="usererror" style="display: none">already a user</dev>
 
-        <input id="password" class="w3-input w3-small" type="password" placeholder="password" required>
+        <input id="pw" class="w3-input w3-small" type="password" placeholder="password" required>
         <div id="registering" style="display: none">
             <input id="pwmatch" class="w3-input w3-small" type="password" placeholder="verify password" required>
         </div>
@@ -46,9 +46,9 @@
         </div>
 
         <br>
-        <button id="loginButton" onclick="doLogin()" class="w3-button w3-border w3-round w3-tiny w3-ripple" style="color: rgb(0, 78, 0);" onclick="validateLogin()">Login</button>
+        <button id="loginButton" onclick="doLogin()" class="w3-button w3-border w3-round w3-tiny w3-ripple" style="color: rgb(0, 78, 0);">Login</button>
         <button id="registerButton" onclick="doRegister()" class="w3-button w3-border w3-round w3-tiny w3-ripple" style="color: rgb(0, 78, 0);">Register</button>
-        <button id="cancelButton" onclick="doCancel()" class="w3-button w3-border w3-round w3-tiny w3-ripple" style="color: rgb(0, 78, 0);" onclick="validateLogin()">cancel</button>
+        <button id="cancelButton" onclick="doCancel()" class="w3-button w3-border w3-round w3-tiny w3-ripple" style="color: rgb(0, 78, 0);">cancel</button>
         <br>
         <br>
     </dev>
@@ -56,17 +56,33 @@
     <p id="diag">submit value</p>
 
     <script>
+        var login = "none";
+        var password = "none";
+        var passwordverify = "none";
+		diag();
+
         w3.includeHTML();
 
         function doLogin() {
-            var login = document.getElementById("loginButton");
-            var diag = document.getElementById("diag");
-            diag.innerHTML =
-                "<br>login:" + login.innerHTML();
+            var el = document.getElementById("uid");
+            login = el.value;
+            el = document.getElementById("pw");
+            password = el.value;
+            el = document.getElementById("pwmatch");
+            passwordverify = el.value;
+            diag();
         }
-    </script>
 
-<div w3-include-html="file://C:/Users/spip/Documents/Lightning%20Pain%20Diary/footer.html"></div>
+        function diag() {
+            var diag = document.getElementById("diag");
+            diag.innerHTML = 
+            "<br>login:" + login;
+            "<br>password:" + password;
+            "<br>verify:" + verify;
+        }
+            </script>
+
+    <div w3-include-html="file://C:/Users/spip/Documents/Lightning%20Pain%20Diary/footer.html"></div>
 
 </body>
 
