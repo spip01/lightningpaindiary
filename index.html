@@ -10,11 +10,10 @@
     <script src="https://www.w3schools.com/lib/w3.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-
 </head>
 
 <body>
-    <div w3-include-html="file://C:/Users/spip/Documents/Lightning%20Pain%20Diary/navbar.html"></div>
+    <div w3-include-html="file://C:/Users/spip/Documents/GitHub/lightningpaindiary/navbar.html"></div>
     <br>
 
     <div class="w3-card">
@@ -185,6 +184,7 @@
 
                 var edate = document.getElementById("entryDate");
                 edate.value = createdDate.toDateTimeLocalString();
+
                 newEntry()
             }
 
@@ -221,14 +221,16 @@
 
             //** keep current entry date so it doesn't have to be completely reentered every time **
             //var edate = document.getElementById("entryDate");
-            //edate.value = created.toDateTimeLocalString();
+            //edate.value = createdDate.toDateTimeLocalString();
 
             diag();
         }
 
         function updateEntry() {
             changedDate = new Date();
-            entrydate = new Date(document.getElementById("entryDate").value);
+
+            var edate = document.getElementById("entryDate");
+            entryDate = new Date(edate.value);
 
             medicines = procCheckboxList(medlist);
             triggers = procCheckboxList(triggerlist);
@@ -318,10 +320,10 @@
         <br>&nbsp;&nbsp; remind to complete
         <br>
         <br>
-        <br>diary.lightningmade.us
+        <br>contact about copyright
     </div>
 
-    <div w3-include-html="file://C:/Users/spip/Documents/Lightning%20Pain%20Diary/footer.html"></div>
+    <div w3-include-html="file://C:/Users/spip/Documents/GitHub/lightningpaindiary/footer.html"></div>
 </body>
 
 </html>
