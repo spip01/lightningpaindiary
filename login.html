@@ -10,14 +10,13 @@
     <script src="https://www.w3schools.com/lib/w3.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-
 </head>
 
 <body>
     <div w3-include-html="file://C:/Users/spip/Documents/Lightning%20Pain%20Diary/navbar.html"></div>
     <br>
 
-    <dev class="w3-container w3-card-4" style="display: block">
+    <div class="w3-container w3-card-4" style="display: block">
         <br>
         <header class="w3-container w3-light-gray w3-center">
             <h2 style="color: rgb(0, 78, 0);">Login</h2>
@@ -26,7 +25,7 @@
         <input id="uid" class="w3-input w3-small" type="text" placeholder="email" required>
         <label>eMail</label>
 
-        <dev id="usererror" style="display: none">already a user</dev>
+        <div id="usererror" style="display: none">already a user</div>
 
         <input id="pw" class="w3-input w3-small" type="password" placeholder="password" required>
         <div id="registering" style="display: none">
@@ -36,7 +35,7 @@
         <label>Password</label>
         <br>
 
-        <input id="keeplogin" class="w3-check" style="width:12px" type="checkbox" checked=true>
+        <input id="keeplogin" class="w3-check" style="width:12px" type="checkbox" checked>
         <label class="w3-small">Stay logged in</label>
         <br>
 
@@ -51,7 +50,7 @@
         <button id="cancelButton" onclick="doCancel()" class="w3-button w3-border w3-round w3-tiny w3-ripple" style="color: rgb(0, 78, 0);">cancel</button>
         <br>
         <br>
-    </dev>
+    </div>
 
     <p id="diag">submit value</p>
 

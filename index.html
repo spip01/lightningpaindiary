@@ -55,11 +55,11 @@
             <br>
             <br>
 
-            <dev id="medications"></dev>
-            <dev id="triggers"></dev>
-            <dev id="painlocation"></dev>
-            <dev id="paintype"></dev>
-            <dev id="warnings"></dev>
+            <div id="medications"></div>
+            <div id="triggers"></div>
+            <div id="painlocation"></div>
+            <div id="paintype"></div>
+            <div id="warnings"></div>
             <br>
 
             <header class="w3-container w3-light-gray" style="color: rgb(0, 78, 0);">
@@ -135,14 +135,14 @@
 
         function setupCheckboxeList(title, id, list) {
             var panel = document.getElementById(id);
-            var row = '<dev class="w3-row">';
+            var row = '<div class="w3-row">';
             var col =
-                '<dev class="w3-col" style="width:20%">' +
+                '<div class="w3-col" style="width:20%">' +
                 '<input id = "iname" class = "w3-check" style = "width:12px" type = "checkbox">' +
                 '<label class = "w3 - small">' +
                 'lname' +
                 '</label>' +
-                '</dev>';
+                '</div>';
             var html = '<header class="w3-container w3-light-gray" style="color: rgb(0, 78, 0);">' +
                 title +
                 '</header>' +
@@ -153,10 +153,10 @@
                 html += col.replace("iname", items[i]).replace("lname", items[i]);
 
                 if ((i + 1) % 5 == 0)
-                    html += '</dev>' + row;
+                    html += '</div>' + row;
             }
 
-            html += '</dev></dev>';
+            html += '</div></div>';
             panel.innerHTML += html;
         }
 
