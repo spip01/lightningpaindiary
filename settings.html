@@ -18,22 +18,22 @@
     <br>
     <div class="w3-light-gray w3-card w3-large">
 
-        <div class="w3-btn w3-mobile w3-hover-dark-gray labels" onclick="openTab(event, 'medlist')">Medicines</div>
-        <div class="w3-btn w3-mobile w3-hover-dark-gray labels" onclick="openTab(event, 'triggerlist')">Triggers</div>
-        <div class="w3-btn w3-mobile w3-hover-dark-gray labels" onclick="openTab(event, 'doctorlist')">Doctors</div>
-        <div class="w3-btn w3-mobile w3-hover-dark-gray labels w3-white" onclick="openTab(event, 'account')">Account</div>
+        <div class="w3-btn w3-mobile w3-hover-dark-gray tabs" onclick="openTab(event, 'medlist')">Medicines</div>
+        <div class="w3-btn w3-mobile w3-hover-dark-gray tabs" onclick="openTab(event, 'triggerlist')">Triggers</div>
+        <div class="w3-btn w3-mobile w3-hover-dark-gray tabs" onclick="openTab(event, 'doctorlist')">Doctors</div>
+        <div class="w3-btn w3-mobile w3-hover-dark-gray tabs w3-white" onclick="openTab(event, 'account')">Account</div>
 
         <div class="w3-container w3-small">
-            <div id="medlist" class="w3-container tabs" style="display: none">
+            <div id="medlist" class="w3-container panels" style="display: none">
                 medicine list +/-
             </div>
-            <div id="triggerlist" class="w3-container tabs" style="display: none">
+            <div id="triggerlist" class="w3-container panels" style="display: none">
                 trigger list +/-
             </div>
-            <div id="doctorlist" class="w3-container tabs" style="display: none">
+            <div id="doctorlist" class="w3-container panels" style="display: none">
                 doctor list +/-
             </div>
-            <div id="account" class="w3-container tabs" style="display: block">
+            <div id="account" class="w3-container panels" style="display: block">
                 account info
             </div>
         </div>
@@ -44,17 +44,17 @@
 
         function openTab(event, tabname) {
             var i;
-            var tabs = document.getElementsByClassName("tabs");
-            for (i = 0; i < tabs.length; i++) {
-                tabs[i].style.display = "none";
+            var panels = document.getElementsByClassName("panels");
+            for (i = 0; i < panels.length; i++) {
+                panels[i].style.display = "none";
             }
 
             var tab = document.getElementById(tabname);
             tab.style.display = "block";
 
-            var labels = document.getElementsByClassName("labels");
-            for (i = 0; i < labels.length; i++) {
-                labels[i].className = labels[i].className.replace(" w3-white", "");
+            var tabs = document.getElementsByClassName("tabs");
+            for (i = 0; i < tabs.length; i++) {
+                tabs[i].className = tabs[i].className.replace(" w3-white", "");
             }
 
             event.currentTarget.classname += " w3-white";
