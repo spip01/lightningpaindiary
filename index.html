@@ -14,6 +14,7 @@
 
 <body>
     <div w3-include-html="https://raw.githubusercontent.com/spip01/lightningpaindiary/master/navbar.html"></div>
+    <!-- div w3-include-html="file://C:\Users\spip\Documents\GitHub\lightningpaindiary\navbar.html"></div -->
     <br>
 
     <div class="w3-card">
@@ -24,26 +25,26 @@
 
         <form>
             <div id="painlevelpanel" class="w3-container w3-bar w3-round">
-                <button type="button" class="w3-btn w3-small w3-bar-item w3-ripple w3-hover-light-gray setPainLevel
-               " style="background-color: rgb(000, 255, 0); width:10%" onclick="painButtons(event)">1</button>
-                <button type="button" class="w3-btn w3-small w3-bar-item w3-ripple w3-hover-light-gray setPainLevel
-               " style="background-color: rgb(120, 255, 0); width:10%" onclick="painButtons(event)">2</button>
-                <button type="button" class="w3-btn w3-small w3-bar-item w3-ripple w3-hover-light-gray setPainLevel
-               " style="background-color: rgb(180, 255, 0); width:10%" onclick="painButtons(event)">3</button>
-                <button type="button" class="w3-btn w3-small w3-bar-item w3-ripple w3-hover-light-gray setPainLevel
-               " style="background-color: rgb(220, 255, 0); width:10%" onclick="painButtons(event)">4</button>
-                <button type="button" class="w3-btn w3-small w3-bar-item w3-ripple w3-hover-light-gray setPainLevel
-               " style="background-color: rgb(255, 255, 0); width:10%" onclick="painButtons(event)">5</button>
-                <button type="button" class="w3-btn w3-small w3-bar-item w3-ripple w3-hover-light-gray setPainLevel
-               " style="background-color: rgb(255, 225, 0); width:10%" onclick="painButtons(event)">6</button>
-                <button type="button" class="w3-btn w3-small w3-bar-item w3-ripple w3-hover-light-gray setPainLevel
-               " style="background-color: rgb(255, 175, 0); width:10%" onclick="painButtons(event)">7</button>
-                <button type="button" class="w3-btn w3-small w3-bar-item w3-ripple w3-hover-light-gray setPainLevel
-               " style="background-color: rgb(255, 125, 0); width:10%" onclick="painButtons(event)">8</button>
-                <button type="button" class="w3-btn w3-small w3-bar-item w3-ripple w3-hover-light-gray setPainLevel
-               " style="background-color: rgb(255, 070, 0); width:10%" onclick="painButtons(event)">9</button>
-                <button type="button" class="w3-btn w3-small w3-bar-item w3-ripple w3-hover-light-gray setPainLevel
-               " style="background-color: rgb(255, 000, 0); width:10%" onclick="painButtons(event)">10</button>
+                <button type="button" class="w3-btn w3-small w3-bar-item w3-ripple w3-hover-light-gray setPainLevel" style="background-color: rgb(000, 255, 0); width:10%"
+                    onclick="painButtons(event)">1</button>
+                <button type="button" class="w3-btn w3-small w3-bar-item w3-ripple w3-hover-light-gray setPainLevel" style="background-color: rgb(120, 255, 0); width:10%"
+                    onclick="painButtons(event)">2</button>
+                <button type="button" class="w3-btn w3-small w3-bar-item w3-ripple w3-hover-light-gray setPainLevel" style="background-color: rgb(180, 255, 0); width:10%"
+                    onclick="painButtons(event)">3</button>
+                <button type="button" class="w3-btn w3-small w3-bar-item w3-ripple w3-hover-light-gray setPainLevel" style="background-color: rgb(220, 255, 0); width:10%"
+                    onclick="painButtons(event)">4</button>
+                <button type="button" class="w3-btn w3-small w3-bar-item w3-ripple w3-hover-light-gray setPainLevel" style="background-color: rgb(255, 255, 0); width:10%"
+                    onclick="painButtons(event)">5</button>
+                <button type="button" class="w3-btn w3-small w3-bar-item w3-ripple w3-hover-light-gray setPainLevel" style="background-color: rgb(255, 225, 0); width:10%"
+                    onclick="painButtons(event)">6</button>
+                <button type="button" class="w3-btn w3-small w3-bar-item w3-ripple w3-hover-light-gray setPainLevel" style="background-color: rgb(255, 175, 0); width:10%"
+                    onclick="painButtons(event)">7</button>
+                <button type="button" class="w3-btn w3-small w3-bar-item w3-ripple w3-hover-light-gray setPainLevel" style="background-color: rgb(255, 125, 0); width:10%"
+                    onclick="painButtons(event)">8</button>
+                <button type="button" class="w3-btn w3-small w3-bar-item w3-ripple w3-hover-light-gray setPainLevel" style="background-color: rgb(255, 070, 0); width:10%"
+                    onclick="painButtons(event)">9</button>
+                <button type="button" class="w3-btn w3-small w3-bar-item w3-ripple w3-hover-light-gray setPainLevel" style="background-color: rgb(255, 000, 0); width:10%"
+                    onclick="painButtons(event)">10</button>
             </div>
             <br>
 
@@ -53,6 +54,7 @@
                 </header>
 
                 <input id="entryDate" class="w3-border w3-round" type="datetime-local">
+                <label for="entryDate" class = "w3 - small">Diary Entry Date</label>    
                 <br>
                 <br>
 
@@ -68,16 +70,16 @@
                 </header>
 
                 <div id="relieflevelpanel" class="w3-container w3-bar w3-round">
-                    <button type="button" class="w3-btn w3-tiny w3-bar-item w3-ripple w3-hover-light-gray setReliefLevel
-               " style="background-color: rgb(0, 255, 0);" onclick="reliefButtons(event)">5</button>
-                    <button type="button" class="w3-btn w3-tiny w3-bar-item w3-ripple w3-hover-light-gray setReliefLevel
-               " style="background-color: rgb(180, 255, 0);" onclick="reliefButtons(event)">4</button>
-                    <button type="button" class="w3-btn w3-tiny w3-bar-item w3-ripple w3-hover-light-gray setReliefLevel
-               " style="background-color: rgb(255, 255, 0);" onclick="reliefButtons(event)">3</button>
-                    <button type="button" class="w3-btn w3-tiny w3-bar-item w3-ripple w3-hover-light-gray setReliefLevel
-               " style="background-color: rgb(255, 175, 0);" onclick="reliefButtons(event)">2</button>
-                    <button type="button" class="w3-btn w3-tiny w3-bar-item w3-ripple w3-hover-light-gray setReliefLevel
-               " style="background-color: rgb(255, 70, 0);" onclick="reliefButtons(event)">1</button>
+                    <button type="button" class="w3-btn w3-tiny w3-bar-item w3-ripple w3-hover-light-gray setReliefLevel" style="background-color: rgb(0, 255, 0);"
+                        onclick="reliefButtons(event)">5</button>
+                    <button type="button" class="w3-btn w3-tiny w3-bar-item w3-ripple w3-hover-light-gray setReliefLevel" style="background-color: rgb(180, 255, 0);"
+                        onclick="reliefButtons(event)">4</button>
+                    <button type="button" class="w3-btn w3-tiny w3-bar-item w3-ripple w3-hover-light-gray setReliefLevel" style="background-color: rgb(255, 255, 0);"
+                        onclick="reliefButtons(event)">3</button>
+                    <button type="button" class="w3-btn w3-tiny w3-bar-item w3-ripple w3-hover-light-gray setReliefLevel" style="background-color: rgb(255, 175, 0);"
+                        onclick="reliefButtons(event)">2</button>
+                    <button type="button" class="w3-btn w3-tiny w3-bar-item w3-ripple w3-hover-light-gray setReliefLevel" style="background-color: rgb(255, 70, 0);"
+                        onclick="reliefButtons(event)">1</button>
                 </div>
                 <br>
 
@@ -198,7 +200,7 @@
         }
 
         function painButtons(event) {
-            painlevel = event.currentTarget.innerHTML;
+            painlevel = event.currentTarget.innerText;
 
             var panel = document.getElementById("detail");
             if (panel.style.display === "none") {
@@ -222,7 +224,7 @@
         }
 
         function reliefButtons(event) {
-            relieflevel = event.currentTarget.innerHTML;
+            relieflevel = event.currentTarget.innerText;
 
             var i;
             var rl = document.getElementsByClassName("setReliefLevel");
@@ -235,11 +237,11 @@
         }
 
         function entryButtons(event) {
-            if (event.currentTarget.innerHTML == "Update")
+            if (event.currentTarget.innerText == "Update")
                 updateEntry();
-            else if (event.currentTarget.innerHTML == "New")
+            else if (event.currentTarget.innerText == "New")
                 newEntry();
-            else if (event.currentTarget.innerHTML == "Cancel")
+            else if (event.currentTarget.innerText == "Cancel")
                 cancelEntry()
 
             diag();
@@ -404,7 +406,7 @@
     </div>
 
     <div w3-include-html="https://raw.githubusercontent.com/spip01/lightningpaindiary/master/footer.html"></div>
-    <div w3-include-html="file://C:\Users\spip\Documents\GitHub\lightningpaindiary\login.html"></div>
+    <!-- div w3-include-html="file://C:\Users\spip\Documents\GitHub\lightningpaindiary\footer.html"></div -->
 </body>
 
 </html>
