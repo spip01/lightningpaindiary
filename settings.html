@@ -18,46 +18,58 @@
     <br>
     <div class="w3-light-gray w3-card w3-large">
 
-        <div class="w3-btn w3-mobile w3-hover-dark-gray tabs" onclick="openTab(event, 'medlist')">Medicines</div>
-        <div class="w3-btn w3-mobile w3-hover-dark-gray tabs" onclick="openTab(event, 'triggerlist')">Triggers</div>
-        <div class="w3-btn w3-mobile w3-hover-dark-gray tabs" onclick="openTab(event, 'doctorlist')">Doctors</div>
-        <div class="w3-btn w3-mobile w3-hover-dark-gray tabs w3-white" onclick="openTab(event, 'account')">Account</div>
+        <div id="tabs">
+            <div id="medlist" class="w3-btn w3-mobile w3-hover-dark-gray">Medicines</div>
+            <div id="painlocation" class="w3-btn w3-mobile w3-hover-dark-gray">Pain Location</div>
+            <div id="paintype" class="w3-btn w3-mobile w3-hover-dark-gray">Pain Type</div>
+            <div id="triggerlist" class="w3-btn w3-mobile w3-hover-dark-gray">Triggers</div>
+            <div id="warninglist" class="w3-btn w3-mobile w3-hover-dark-gray">Warnings</div>
+            <div id="doctorlist" class="w3-btn w3-mobile w3-hover-dark-gray">Doctors</div>
+            <div id="account" class="w3-btn w3-mobile w3-hover-dark-gray w3-dark-gray">Account</div>
+        </div>
 
-        <div class="w3-container w3-small">
-            <div id="medlist" class="w3-container panels" style="display: none">
-                medicine list +/-
+        <div id="panels" class="w3-container w3-small">
+            <div id="medlist" class="w3-container" style="display: none">
+                These list shows up in the "Medicines" section on diary entry page
             </div>
-            <div id="triggerlist" class="w3-container panels" style="display: none">
-                trigger list +/-
+            <div id="painlocation" class="w3-container" style="display: none">
+                These list shows up in the "Pain Location" section on diary entry page
             </div>
-            <div id="doctorlist" class="w3-container panels" style="display: none">
-                doctor list +/-
+            <div id="paintype" class="w3-container" style="display: none">
+                These list shows up in the "Pain Type" section on diary entry page
             </div>
-            <div id="account" class="w3-container panels" style="display: block">
-                account info
+            <div id="triggerlist" class="w3-container" style="display: none">
+                These list shows up in the "Triggers" section on diary entry page
+            </div>
+            <div id="warninglist" class="w3-container" style="display: none">
+                These list shows up in the "Warnings" section on diary entry page
+            </div>
+            <div id="doctorlist" class="w3-container" style="display: none">
+                This list gets included with printed reports
+            </div>
+            <div id="account" class="w3-container" style="display: block">
+                account info, diary type
             </div>
         </div>
     </div>
 
+    <div id="diag"></div>
+
     <script>
         w3.includeHTML();
 
-        function openTab(event, tabname) {
-            var i;
-            var panels = document.getElementsByClassName("panels");
-            for (i = 0; i < panels.length; i++) {
-                panels[i].style.display = "none";
-            }
+        $(document).ready(function () {
+            $("#tabs div").click(function () {
+                openTab(this);
+            });
+        });
 
-            var tab = document.getElementById(tabname);
-            tab.style.display = "block";
+        function openTab(evt) {
+            $("#tabs div").removeClass("w3-dark-gray");
+            $(evt).addClass("w3-dark-gray");
 
-            var tabs = document.getElementsByClassName("tabs");
-            for (i = 0; i < tabs.length; i++) {
-                tabs[i].className = tabs[i].className.replace(" w3-white", "");
-            }
-
-            event.currentTarget.classname += " w3-white";
+            $("#panels div").hide();
+            $("#panels").find("#" + $(evt).attr("id")).show();
         }
     </script>
 
