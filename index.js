@@ -74,17 +74,17 @@ function procCheckboxList(listname) {
     var set = [];
 
     $("#" + listname + " :checked").each(function () {
-        set[i++] = $(this).attr("id");
+        set[i++] = $(this).prop("id");
     });
 
     return (set);
 }
 
 function resetCheckboxList(listname, set) {
-    $("#" + listname).removeAttr("checked");
+    $("#" + listname).removeProp("checked");
 
     for (var i = 0; i < set.length; ++i) {
-        $("#" + set[i]).attr("checked", "checked");
+        $("#" + set[i]).prop("checked", "checked");
     }
 }
 
