@@ -1,28 +1,44 @@
 function setup() {
     setupCheckboxList("Medicines", "medications", medlist);
-    setupCheckboxList("Triggers", "triggerlist", triggerlist);
     setupCheckboxList("Pain Location", "painlocation", locationlist);
     setupCheckboxList("Pain Type", "paintype", typelist);
+    setupCheckboxList("Triggers", "triggerlist", triggerlist);
     setupCheckboxList("Warnings", "warninglist", warninglist);
 }
 
+function procCheckboxLists() {
+    medicines = procCheckboxList("medications");
+    painlocation = procCheckboxList("painlocation");
+    paintype = procCheckboxList("paintype");
+    triggers = procCheckboxList("triggerlist");
+    warnings = procCheckboxList("warninglist");
+}
+
+function resetCheckboxLists() {
+    resetCheckboxList("medications", medicines);
+    resetCheckboxList("painlocation", painlocation);
+    resetCheckboxList("paintype", paintype);
+    resetCheckboxList("triggerlist", triggers);
+    resetCheckboxList("warninglist", warnings);
+}
+
 function setupCheckboxList(title, id, list) {
-    var row = 
+    var row =
         '<div class="w3-row w3-container">';
     var col =
         '    <div class="w3-col" style="width:20%">' +
-        '       <input id="listname" class="w3-check" style="width:12px" type="checkbox">' +
-        '       <label for="listname" class="w3-small">' +
-        '           listname' +
+        '       <input id="itemname" class="w3-check" style="width:12px" type="checkbox">' +
+        '       <label for="itemname">&nbsp;' +
+        '           itemname' +
         '       </label>' +
         '    </div>';
-      //'</div>'
+    //'</div>'
     var html =
         '<header class="w3-container w3-light-gray" style="color: rgb(0, 78, 0);">' + title + '</header>' + row;
 
     for (var i = 0; i < list.length; ++i) {
         var l = list[i];
-        html += col.replace("listname", l).replace("listname", l).replace("listname", l);
+        html += col.replace("itemname", l).replace("itemname", l).replace("itemname", l);
 
         if ((i + 1) % 5 == 0)
             html += '</div>' + row;
@@ -33,22 +49,42 @@ function setupCheckboxList(title, id, list) {
     $("#" + id).html(html);
 }
 
-function procCheckboxList(listName) {
+function procCheckboxList(listname) {
+    //  <div id="medications">
+    //      <header class="w3-container w3-light-gray" style="color: rgb(0, 78, 0);">Medicines</header>
+    //      <div class="w3-row w3-container">
+    //          <div class="w3-col" style="width:20%">
+    //              <input id="kepra" class="w3-check" style="width:12px" type="checkbox">
+    //              <label for="kepra" class="w3-small"> kepra </label>
+    //          </div>
+    //          <div class="w3-col" style="width:20%">
+    //              <input id="relafin" class="w3-check" style="width:12px" type="checkbox">
+    //              <label for="relafin" class="w3-small"> relafin </label>
+    //          </div>
+    //      </div>
+    //      <div class="w3-row w3-container">
+    //          <div class="w3-col" style="width:20%">
+    //              <input id="compazine" class="w3-check" style="width:12px" type="checkbox">
+    //              <label for="compazine" class="w3-small"> compazine </label>
+    //          </div>
+    //      </div>
+    //  </div>
+
     var i = 0;
     var set = [];
 
-    $("input #" + listName).each(function () {
-        set[i++] = $(this).text();
+    $("#" + listname + " :checked").each(function () {
+        set[i++] = $(this).attr("id");
     });
 
     return (set);
 }
 
 function resetCheckboxList(listname, set) {
-    $("input #" + listname).removeAttr("checked");
+    $("#" + listname).removeAttr("checked");
 
     for (var i = 0; i < set.length; ++i) {
-        $("input #" + listname).find("#" + set[i]).setAttribute("checked");
+        $("#" + set[i]).attr("checked", "checked");
     }
 }
 
@@ -105,11 +141,7 @@ function updateEntry(evt) {
     changedDate = new Date();
     entryDate = new Date($("#entryDate").val());
 
-    medicines = procCheckboxList("medlist");
-    painlocation = procCheckboxList("painlocation");
-    paintype = procCheckboxList("paintype");
-    triggers = procCheckboxList("triggerlist");
-    warnings = procCheckboxList("warninglist");
+    procCheckboxLists();
 
     createdDateOld = createdDate;
     changedDateOld = changedDate;
@@ -139,17 +171,13 @@ function cancelEntry(evt) {
 
     $("#entryDate").val(entryDate.toDateTimeLocalString());
 
-    $(".setPainLevel").removeClass("w3-aqua");
-    $(".setPainLevel [value|=" + painlevel + "]").addClass("w3-aqua");
+    $("#painlevelpanel button").removeClass("w3-light-gray");
+    $("#painlevelpanel [value|=" + painlevel + "]").addClass("w3-light-gray");
 
-    $(".setReleifLevel").removeClass("w3-aqua");
-    $(".setReleifLevel [value|=" + relieflevel + "]").addClass("w3-aqua");
+    $("#relieflevelpanel button").removeClass("w3-light-gray");
+    $("#relieflevelpanel [value|=" + relieflevel + "]").addClass("w3-light-gray");
 
-    resetCheckboxList(medlist, medicines);
-    resetCheckboxList(triggerlist, triggers);
-    resetCheckboxList(locationlist, painlocation);
-    resetCheckboxList(typelist, paintype);
-    resetCheckboxList(warninglist, warnings);
+    resetCheckboxLists();
 }
 
 function diag() {
