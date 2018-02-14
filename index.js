@@ -1,117 +1,98 @@
-function setupCheckboxList(title, id, list) {
-    var panel = document.getElementById(id);
-    var row = '<div class="w3-row">';
-    var col =
-        '<div class="w3-col" style="width:20%">' +
-        '<input id = "iname" class = "w3-check" style = "width:12px" type = "checkbox">' +
-        '<label for = "iname" class = "w3 - small">' +
-        'iname' +
-        '</label>' +
-        '</div>';
-    var html = '<header class="w3-container w3-light-gray" style="color: rgb(0, 78, 0);">' +
-        title +
-        '</header>' +
-        row;
+function setup() {
+    setupCheckboxList("Medicines", "medications", medlist);
+    setupCheckboxList("Triggers", "triggerlist", triggerlist);
+    setupCheckboxList("Pain Location", "painlocation", locationlist);
+    setupCheckboxList("Pain Type", "paintype", typelist);
+    setupCheckboxList("Warnings", "warninglist", warninglist);
+}
 
-    var items = list.split(",").sort();
-    for (i = 0; i < items.length; ++i) {
-        html += col.replace("iname", items[i]).replace("iname", items[i]).replace("iname", items[i]);
+function setupCheckboxList(title, id, list) {
+    var row = 
+        '<div class="w3-row w3-container">';
+    var col =
+        '    <div class="w3-col" style="width:20%">' +
+        '       <input id="listname" class="w3-check" style="width:12px" type="checkbox">' +
+        '       <label for="listname" class="w3-small">' +
+        '           listname' +
+        '       </label>' +
+        '    </div>';
+      //'</div>'
+    var html =
+        '<header class="w3-container w3-light-gray" style="color: rgb(0, 78, 0);">' + title + '</header>' + row;
+
+    for (var i = 0; i < list.length; ++i) {
+        var l = list[i];
+        html += col.replace("listname", l).replace("listname", l).replace("listname", l);
 
         if ((i + 1) % 5 == 0)
             html += '</div>' + row;
     }
 
-    html += '</div></div>';
-    panel.innerHTML += html;
+    html += '</div>';
+
+    $("#" + id).html(html);
 }
 
-function procCheckboxList(list) {
-    var rstr = "";
-    var items = list.split(",").sort();
+function procCheckboxList(listName) {
+    var i = 0;
+    var set = [];
 
-    $(: checked)
-    for (i = 0; i < items.length; ++i) {
-        id = "#" + items[i];
-        $(id)
-        chk = document.getElementById(items[i]);
-        if (chk.checked)
-            rstr += items[i] + ",";
-    }
+    $("input #" + listName).each(function () {
+        set[i++] = $(this).text();
+    });
 
-    rstr = rstr.slice(0, rstr.length - 1);
-
-    return rstr;
+    return (set);
 }
 
-function resetCheckboxList(list, set) {
-    var items = list.split(",").sort();
-    var setitems = set.split(",").sort();
+function resetCheckboxList(listname, set) {
+    $("input #" + listname).removeAttr("checked");
 
-    var i, j;
-
-    for (i = 0; i < items.length; ++i) {
-        chk = document.getElementById(items[i]);
-        chk.removeAttribute("checked");
-
-        for (j = 0; j < setitems.length; ++j) {
-            if (items[i] == setitems[j]) {
-                chk.setAttribute("checked", "");
-                break;
-            }
-        }
+    for (var i = 0; i < set.length; ++i) {
+        $("input #" + listname).find("#" + set[i]).setAttribute("checked");
     }
 }
 
-function painButtons(event) {
-    painlevel = event.currentTarget.innerText;
+function painButtons(evt) {
+    $("#detail").show();
 
-    var panel = document.getElementById("detail");
-    if (panel.style.display === "none") {
-        panel.style.display = "block";
+    $("#painlevelpanel button").removeClass("w3-light-gray");
+    $(evt).addClass("w3-light-gray");
 
-        var edate = document.getElementById("entryDate");
-        edate.value = createdDate.toDateTimeLocalString();
-
-        newEntry()
-        diag();
-    }
-
-    var i;
-    var pl = document.getElementsByClassName("setPainLevel");
-
-    for (i = 0; i < pl.length; i++) {
-        pl[i].className = pl[i].className.replace(" w3-aqua", "");
-    }
-
-    event.currentTarget.className += " w3-aqua";
-}
-
-function reliefButtons(event) {
-    relieflevel = event.currentTarget.innerText;
-
-    var i;
-    var rl = document.getElementsByClassName("setReliefLevel");
-
-    $()
-    for (i = 0; i < rl.length; i++) {
-        rl[i].className = rl[i].className.replace(" w3-aqua", "");
-    }
-
-    event.currentTarget.className += " w3-aqua";
-}
-
-function entryButtons(event) {
-    if (event.currentTarget.innerText == "Update")
-        updateEntry();
-    else if (event.currentTarget.innerText == "New")
+    if (neednew) {
+        $("#entryDate").val(createdDate.toDateTimeLocalString());
         newEntry();
-    else if (event.currentTarget.innerText == "Cancel")
-        cancelEntry()
+    }
+
+    return ($(evt).text())
+}
+
+function reliefButtons(evt) {
+    $("#relieflevelpanel button").removeClass("w3-light-gray");
+    $(evt).addClass("w3-light-gray");
+
+    return ($(evt).text());
+}
+
+function entryButtons(evt) {
+    button = $(evt).text();
+
+    switch (button) {
+        case "Update":
+            updateEntry(evt);
+            break;
+        case "New":
+            newEntry(evt);
+            break;
+        case "Cancel":
+            cancelEntry(evt);
+            break;
+    }
 
     diag();
 }
 
-function newEntry() {
+function newEntry(evt) {
+    neednew = false;
     createdDate = new Date();
     changedDate = new Date();
 
@@ -120,17 +101,15 @@ function newEntry() {
     //edate.value = createdDate.toDateTimeLocalString();
 }
 
-function updateEntry() {
+function updateEntry(evt) {
     changedDate = new Date();
+    entryDate = new Date($("#entryDate").val());
 
-    var edate = document.getElementById("entryDate");
-    entryDate = new Date(edate.value);
-
-    medicines = procCheckboxList(medlist);
-    triggers = procCheckboxList(triggerlist);
-    painlocation = procCheckboxList(locationlist);
-    paintype = procCheckboxList(typelist);
-    warnings = procCheckboxList(warninglist);
+    medicines = procCheckboxList("medlist");
+    painlocation = procCheckboxList("painlocation");
+    paintype = procCheckboxList("paintype");
+    triggers = procCheckboxList("triggerlist");
+    warnings = procCheckboxList("warninglist");
 
     createdDateOld = createdDate;
     changedDateOld = changedDate;
@@ -145,7 +124,7 @@ function updateEntry() {
     warningsOld = warnings;
 }
 
-function cancelEntry() {
+function cancelEntry(evt) {
     createdDate = createdDateOld;
     changedDate = changedDateOld;
     entryDate = entryDateOld;
@@ -158,27 +137,13 @@ function cancelEntry() {
     paintype = paintypeOld;
     warnings = warningsOld;
 
-    var edate = document.getElementById("entryDate");
-    edate.value = entryDate.toDateTimeLocalString();
+    $("#entryDate").val(entryDate.toDateTimeLocalString());
 
-    var i;
-    var pl = document.getElementsByClassName("setPainLevel");
+    $(".setPainLevel").removeClass("w3-aqua");
+    $(".setPainLevel [value|=" + painlevel + "]").addClass("w3-aqua");
 
-    for (i = 0; i < pl.length; i++) {
-        if (painlevel == pl[i].innerText)
-            pl[i].className += " w3-aqua";
-        else
-            pl[i].className = pl[i].className.replace(" w3-aqua", "");
-    }
-
-    pl = document.getElementsByClassName("setReliefLevel");
-
-    for (i = 0; i < pl.length; i++) {
-        if (relieflevel == pl[i].innerText)
-            pl[i].className += " w3-aqua";
-        else
-            pl[i].className = pl[i].className.replace(" w3-aqua", "");
-    }
+    $(".setReleifLevel").removeClass("w3-aqua");
+    $(".setReleifLevel [value|=" + relieflevel + "]").addClass("w3-aqua");
 
     resetCheckboxList(medlist, medicines);
     resetCheckboxList(triggerlist, triggers);
@@ -188,8 +153,7 @@ function cancelEntry() {
 }
 
 function diag() {
-    var diag = document.getElementById("diag");
-    diag.innerHTML =
+    $("#diag").html(
         "<br>created: " + createdDate.toISOString() +
         "<br>updated: " + changedDate.toISOString() +
         "<br>entry: " + entryDate.toISOString() +
@@ -199,7 +163,7 @@ function diag() {
         "<br>location: " + painlocation +
         "<br>type: " + paintype +
         "<br>warnings: " + warnings +
-        "<br>relief: " + relieflevel;
+        "<br>relief: " + relieflevel);
 }
 
 Date.prototype.toDateTimeLocalString =

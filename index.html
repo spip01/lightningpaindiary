@@ -10,6 +10,7 @@
     <script src="https://www.w3schools.com/lib/w3.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="file://C:/Users/spip/Documents/GitHub/lightningpaindiary/index.js"></script>
 </head>
 
 <body>
@@ -23,71 +24,71 @@
         </header>
         <br>
 
-        <form>
-            <div id="painlevelpanel" class="w3-container w3-bar w3-round">
-                <button type="button" class="w3-btn w3-small w3-bar-item w3-ripple w3-hover-light-gray setPainLevel" style="background-color: rgb(000, 255, 0); width:10%"
-                    onclick="painButtons(event)">1</button>
-                <button type="button" class="w3-btn w3-small w3-bar-item w3-ripple w3-hover-light-gray setPainLevel" style="background-color: rgb(120, 255, 0); width:10%"
-                    onclick="painButtons(event)">2</button>
-                <button type="button" class="w3-btn w3-small w3-bar-item w3-ripple w3-hover-light-gray setPainLevel" style="background-color: rgb(180, 255, 0); width:10%"
-                    onclick="painButtons(event)">3</button>
-                <button type="button" class="w3-btn w3-small w3-bar-item w3-ripple w3-hover-light-gray setPainLevel" style="background-color: rgb(220, 255, 0); width:10%"
-                    onclick="painButtons(event)">4</button>
-                <button type="button" class="w3-btn w3-small w3-bar-item w3-ripple w3-hover-light-gray setPainLevel" style="background-color: rgb(255, 255, 0); width:10%"
-                    onclick="painButtons(event)">5</button>
-                <button type="button" class="w3-btn w3-small w3-bar-item w3-ripple w3-hover-light-gray setPainLevel" style="background-color: rgb(255, 225, 0); width:10%"
-                    onclick="painButtons(event)">6</button>
-                <button type="button" class="w3-btn w3-small w3-bar-item w3-ripple w3-hover-light-gray setPainLevel" style="background-color: rgb(255, 175, 0); width:10%"
-                    onclick="painButtons(event)">7</button>
-                <button type="button" class="w3-btn w3-small w3-bar-item w3-ripple w3-hover-light-gray setPainLevel" style="background-color: rgb(255, 125, 0); width:10%"
-                    onclick="painButtons(event)">8</button>
-                <button type="button" class="w3-btn w3-small w3-bar-item w3-ripple w3-hover-light-gray setPainLevel" style="background-color: rgb(255, 070, 0); width:10%"
-                    onclick="painButtons(event)">9</button>
-                <button type="button" class="w3-btn w3-small w3-bar-item w3-ripple w3-hover-light-gray setPainLevel" style="background-color: rgb(255, 000, 0); width:10%"
-                    onclick="painButtons(event)">10</button>
+        <div id="painlevelpanel" class="w3-container w3-bar w3-round">
+            <button type="button" class="w3-btn w3-small w3-bar-item w3-ripple w3-hover-light-gray" style="background-color: rgb(000, 255, 0); width:10%"
+                value=1>1</button>
+            <button type="button" class="w3-btn w3-small w3-bar-item w3-ripple w3-hover-light-gray" style="background-color: rgb(120, 255, 0); width:10%"
+                value=2>2</button>
+            <button type="button" class="w3-btn w3-small w3-bar-item w3-ripple w3-hover-light-gray" style="background-color: rgb(180, 255, 0); width:10%"
+                value=3>3</button>
+            <button type="button" class="w3-btn w3-small w3-bar-item w3-ripple w3-hover-light-gray" style="background-color: rgb(220, 255, 0); width:10%"
+                value=4>4</button>
+            <button type="button" class="w3-btn w3-small w3-bar-item w3-ripple w3-hover-light-gray" style="background-color: rgb(255, 255, 0); width:10%"
+                value=5>5</button>
+            <button type="button" class="w3-btn w3-small w3-bar-item w3-ripple w3-hover-light-gray" style="background-color: rgb(255, 225, 0); width:10%"
+                value=6>6</button>
+            <button type="button" class="w3-btn w3-small w3-bar-item w3-ripple w3-hover-light-gray" style="background-color: rgb(255, 175, 0); width:10%"
+                value=7>7</button>
+            <button type="button" class="w3-btn w3-small w3-bar-item w3-ripple w3-hover-light-gray" style="background-color: rgb(255, 125, 0); width:10%"
+                value=8>8</button>
+            <button type="button" class="w3-btn w3-small w3-bar-item w3-ripple w3-hover-light-gray" style="background-color: rgb(255, 070, 0); width:10%"
+                value=9>9</button>
+            <button type="button" class="w3-btn w3-small w3-bar-item w3-ripple w3-hover-light-gray" style="background-color: rgb(255, 000, 0); width:10%"
+                value=10>10</button>
+        </div>
+        <br>
+
+        <div id="detail" class="w3-container w3-small" style="display: none">
+            <header class="w3-container w3-light-gray" style="color: rgb(0, 78, 0);">
+                Date & Time
+            </header>
+
+            <input id="entryDate" class="w3-border w3-round" type="datetime-local">
+            <label for="entryDate" class="w3 - small">Diary Entry Date</label>
+            <br>
+            <br>
+
+            <div id="medications"></div>
+            <div id="painlocation"></div>
+            <div id="paintype"></div>
+            <div id="triggers"></div>
+            <div id="warnings"></div>
+            <br>
+
+            <header class="w3-container w3-light-gray" style="color: rgb(0, 78, 0);">
+                Relief
+            </header>
+
+            <div id="relieflevelpanel" class="w3-container w3-bar w3-round">
+                <button type="button" class="w3-btn w3-tiny w3-bar-item w3-ripple w3-hover-light-gray" style="background-color: rgb(0, 255, 0);"
+                    value=5>5</button>
+                <button type="button" class="w3-btn w3-tiny w3-bar-item w3-ripple w3-hover-light-gray" style="background-color: rgb(180, 255, 0);"
+                    value=4>4</button>
+                <button type="button" class="w3-btn w3-tiny w3-bar-item w3-ripple w3-hover-light-gray" style="background-color: rgb(255, 255, 0);"
+                    value=3>3</button>
+                <button type="button" class="w3-btn w3-tiny w3-bar-item w3-ripple w3-hover-light-gray" style="background-color: rgb(255, 175, 0);"
+                    value=2>2</button>
+                <button type="button" class="w3-btn w3-tiny w3-bar-item w3-ripple w3-hover-light-gray" style="background-color: rgb(255, 70, 0);"
+                    value=1>1</button>
             </div>
             <br>
 
-            <div id="detail" class="w3-container w3-small" style="display: none">
-                <header class="w3-container w3-light-gray" style="color: rgb(0, 78, 0);">
-                    Date & Time
-                </header>
-
-                <input id="entryDate" class="w3-border w3-round" type="datetime-local">
-                <label for="entryDate" class = "w3 - small">Diary Entry Date</label>    
-                <br>
-                <br>
-
-                <div id="medications"></div>
-                <div id="triggers"></div>
-                <div id="painlocation"></div>
-                <div id="paintype"></div>
-                <div id="warnings"></div>
-                <br>
-
-                <header class="w3-container w3-light-gray" style="color: rgb(0, 78, 0);">
-                    Relief
-                </header>
-
-                <div id="relieflevelpanel" class="w3-container w3-bar w3-round">
-                    <button type="button" class="w3-btn w3-tiny w3-bar-item w3-ripple w3-hover-light-gray setReliefLevel" style="background-color: rgb(0, 255, 0);"
-                        onclick="reliefButtons(event)">5</button>
-                    <button type="button" class="w3-btn w3-tiny w3-bar-item w3-ripple w3-hover-light-gray setReliefLevel" style="background-color: rgb(180, 255, 0);"
-                        onclick="reliefButtons(event)">4</button>
-                    <button type="button" class="w3-btn w3-tiny w3-bar-item w3-ripple w3-hover-light-gray setReliefLevel" style="background-color: rgb(255, 255, 0);"
-                        onclick="reliefButtons(event)">3</button>
-                    <button type="button" class="w3-btn w3-tiny w3-bar-item w3-ripple w3-hover-light-gray setReliefLevel" style="background-color: rgb(255, 175, 0);"
-                        onclick="reliefButtons(event)">2</button>
-                    <button type="button" class="w3-btn w3-tiny w3-bar-item w3-ripple w3-hover-light-gray setReliefLevel" style="background-color: rgb(255, 70, 0);"
-                        onclick="reliefButtons(event)">1</button>
-                </div>
-                <br>
-
-                <button type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple" onclick="entryButtons(event)">Update</button>
-                <button type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple" onclick="entryButtons(event)">New</button>
-                <button type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple" onclick="entryButtons(event)">Cancel</button>
+            <div id="entrybuttons">
+                <button type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Update</button>
+                <button type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">New</button>
+                <button type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Cancel</button>
             </div>
-        </form>
+        </div>
         <br>
 
     </div>
@@ -99,6 +100,8 @@
     <script>
         w3.includeHTML();
 
+        var neednew = true;
+
         // entry values
         var createdDate = new Date();
         var changedDate = new Date();
@@ -106,11 +109,18 @@
         var painlevel = "";
         var relieflevel = "";
 
-        var medicines = "";
-        var triggers = "";
-        var painlocation = "";
-        var paintype = "";
-        var warnings = "";
+        var medicines = [];
+        var triggers = [];
+        var painlocation = [];
+        var paintype = [];
+        var warnings = [];
+
+        // get these from db
+        var medlist = ["kepra", "relafin", "haldol", "cogentin", "benadryl", "compazine"];
+        var triggerlist = ["weather", "smells", "sleep"];
+        var locationlist = ["forehead", "temple", "eyes", "left", "right", "all"];
+        var typelist = ["throbbing", "burning", "pressure", "sharp"];
+        var warninglist = ["aura"];
 
         // previous entry values
         var createdDateOld = createdDate;
@@ -125,18 +135,19 @@
         var paintypeOld = paintype;
         var warningsOld = warnings;
 
-        // get these from db
-        var medlist = "kepra,rbn6d,g,vevr,brnfev,breb,vewecw,brcwc";
-        var triggerlist = "weather,smells";
-        var locationlist = "forehead,temple,eyes,left,right,all";
-        var typelist = "throbbing,burning,pressure,sharp";
-        var warninglist = "aura";
+        $(document).ready(function () {
+            $("#painlevelpanel button").click(function () {
+                painlevel = painButtons(this);
+            });
+            $("#relieflevelpanel button").click(function () {
+                relieflevel = reliefButtons(this);
+            });
+            $("#entrybuttons button").click(function () {
+                entryButtons(this);
+            });
 
-        setupCheckboxList("Medicines", "medications", medlist);
-        setupCheckboxList("Triggers", "triggers", triggerlist);
-        setupCheckboxList("Pain Location", "painlocation", locationlist);
-        setupCheckboxList("Pain Type", "paintype", typelist);
-        setupCheckboxList("Warnings", "warnings", warninglist);
+            setup();
+        });
     </script>
 
     <div>
