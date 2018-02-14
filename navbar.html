@@ -14,3 +14,11 @@
         <i class="fa fa-cog" style="font-size:18px"></i>
     </a>
 </nav>
+
+<script>
+    var i = document.documentURI;
+    
+    $(document).ready(function () {
+        $("a [href |=" + document.documentURI).addClass("w3-dark-gray");
+    });
+</script>
