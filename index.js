@@ -15,11 +15,11 @@ function procCheckboxLists() {
 }
 
 function resetCheckboxLists() {
-    resetCheckboxList("medications", medicines);
-    resetCheckboxList("painlocation", painlocation);
-    resetCheckboxList("paintype", paintype);
-    resetCheckboxList("triggerlist", triggers);
-    resetCheckboxList("warninglist", warnings);
+    resetCheckboxList("medications", medlist, medicines);
+    resetCheckboxList("painlocation", locationlist, painlocation);
+    resetCheckboxList("paintype", typelist, paintype);
+    resetCheckboxList("triggerlist", triggerlist, triggers);
+    resetCheckboxList("warninglist", warninglist, warnings);
 }
 
 function setupCheckboxList(title, id, list) {
@@ -27,10 +27,8 @@ function setupCheckboxList(title, id, list) {
         '<div class="w3-row w3-container">';
     var col =
         '    <div class="w3-col" style="width:20%">' +
-        '       <input id="itemname" class="w3-check" style="width:12px" type="checkbox">' +
-        '       <label for="itemname">&nbsp;' +
-        '           itemname' +
-        '       </label>' +
+        '       <input id="itemname" type="checkbox" class="w3-check" style="width:12px">' +
+        '       <label for="itemname">&nbsp;itemname</label>' +
         '    </div>';
     //'</div>'
     var html =
@@ -50,26 +48,6 @@ function setupCheckboxList(title, id, list) {
 }
 
 function procCheckboxList(listname) {
-    //  <div id="medications">
-    //      <header class="w3-container w3-light-gray" style="color: rgb(0, 78, 0);">Medicines</header>
-    //      <div class="w3-row w3-container">
-    //          <div class="w3-col" style="width:20%">
-    //              <input id="kepra" class="w3-check" style="width:12px" type="checkbox">
-    //              <label for="kepra" class="w3-small"> kepra </label>
-    //          </div>
-    //          <div class="w3-col" style="width:20%">
-    //              <input id="relafin" class="w3-check" style="width:12px" type="checkbox">
-    //              <label for="relafin" class="w3-small"> relafin </label>
-    //          </div>
-    //      </div>
-    //      <div class="w3-row w3-container">
-    //          <div class="w3-col" style="width:20%">
-    //              <input id="compazine" class="w3-check" style="width:12px" type="checkbox">
-    //              <label for="compazine" class="w3-small"> compazine </label>
-    //          </div>
-    //      </div>
-    //  </div>
-
     var i = 0;
     var set = [];
 
@@ -80,7 +58,7 @@ function procCheckboxList(listname) {
     return (set);
 }
 
-function resetCheckboxList(listname, set) {
+function resetCheckboxList(listname, list, set) {
     $("#" + listname).removeProp("checked");
 
     for (var i = 0; i < set.length; ++i) {
@@ -172,10 +150,10 @@ function cancelEntry(evt) {
     $("#entryDate").val(entryDate.toDateTimeLocalString());
 
     $("#painlevelpanel button").removeClass("w3-light-gray");
-    $("#painlevelpanel [value|=" + painlevel + "]").addClass("w3-light-gray");
+    $("#painlevelpanel [value|='" + painlevel + "']").addClass("w3-light-gray");
 
     $("#relieflevelpanel button").removeClass("w3-light-gray");
-    $("#relieflevelpanel [value|=" + relieflevel + "]").addClass("w3-light-gray");
+    $("#relieflevelpanel [value|='" + relieflevel + "']").addClass("w3-light-gray");
 
     resetCheckboxLists();
 }
