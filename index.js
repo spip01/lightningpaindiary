@@ -1,4 +1,8 @@
 function setup() {
+    buildButtonBars(1, 10, false, "Pain Level", "painbuttons")
+    buildButtonBars(1,5, true, "Relief Level", "reliefbuttons")
+    buildButtonBars(1, 10, false, "Mood Level", "moodbuttons");
+
     setupCheckboxList("Medicines", "medications", medlist);
     setupCheckboxList("Pain Location", "painlocation", locationlist);
     setupCheckboxList("Pain Type", "paintype", typelist);
@@ -22,6 +26,25 @@ function resetCheckboxLists() {
     resetCheckboxList("warninglist", warninglist, warnings);
 }
 
+function buildButtonBars(start, end, reverse, title, id) {
+    var colors = [0, "rgb(0, 255, 0)", "rgb(120, 255, 0)", "rgb(180, 255, 0)", "rgb(220, 255, 0)", "rgb(255, 255, 0)",
+        "rgb(255, 225, 0)", "rgb(255, 175, 0)", "rgb(255, 125, 0)", "rgb(255, 70, 0)", "rgb(255, 0, 0)"
+    ];
+    var coloroffset = (colors.length - 1) / (end - start + 1);
+    var button = '<button type="button" class="w3-btn w3-small w3-bar-item w3-ripple w3-hover-light-gray"' +
+        ' style="background-color: colors; width:10%" value="name">name</button>';
+    var html = '<header class="w3-container w3-light-gray">' + title + '</header>';
+
+    var j = start;
+    for (var i = start; i <= end; i++) {
+        var k = reverse ? end - i + 1 : i;
+        html += button.replace("name", k).replace("name", k).replace("colors", colors[j]);
+        j += coloroffset;
+    }
+
+    $("#" + id).html(html + '<br><br>');
+}
+
 function setupCheckboxList(title, id, list) {
     var row =
         '<div class="w3-row w3-container">';
@@ -30,7 +53,7 @@ function setupCheckboxList(title, id, list) {
         '       <input id="itemname" type="checkbox" class="w3-check" style="width:12px">' +
         '       <label for="itemname">&nbsp;itemname</label>' +
         '    </div>';
-    //'</div>'
+    //'</div>' // row
     var html =
         '<header class="w3-container w3-light-gray" style="color: rgb(0, 78, 0);">' + title + '</header>' + row;
 
@@ -39,12 +62,12 @@ function setupCheckboxList(title, id, list) {
         html += col.replace("itemname", l).replace("itemname", l).replace("itemname", l);
 
         if ((i + 1) % 5 == 0)
-            html += '</div>' + row;
+            html += /* row */ '</div>' + row;
     }
 
-    html += '</div>';
+    html += /* row */ '</div>'; 
 
-    $("#" + id).html(html);
+    $("#" + id).html(html + '<br>');
 }
 
 function procCheckboxList(listname) {
@@ -66,28 +89,25 @@ function resetCheckboxList(listname, list, set) {
     }
 }
 
-function painButtons(evt) {
+function painButtons(evt, id) {
     $("#detail").show();
-
-    $("#painlevelpanel button").removeClass("w3-light-gray");
-    $(evt).addClass("w3-light-gray");
 
     if (neednew) {
         $("#entryDate").val(createdDate.toDateTimeLocalString());
         newEntry();
     }
 
-    return ($(evt).text())
+    return (procButtons(evt, id));
 }
 
-function reliefButtons(evt) {
-    $("#relieflevelpanel button").removeClass("w3-light-gray");
+function procButtons(evt, id) {
+    $("#" + id + " button").removeClass("w3-light-gray");
     $(evt).addClass("w3-light-gray");
 
-    return ($(evt).text());
+    return ($(evt).val());
 }
 
-function entryButtons(evt) {
+function entryButtons(evt, id) {
     button = $(evt).text();
 
     switch (button) {
@@ -108,11 +128,10 @@ function entryButtons(evt) {
 function newEntry(evt) {
     neednew = false;
     createdDate = new Date();
-    changedDate = new Date();
+    changedDate = new Date(createdDate);
 
-    //** keep current entry date so it doesn't have to be completely reentered every time **
-    //var edate = document.getElementById("entryDate");
-    //edate.value = createdDate.toDateTimeLocalString();
+    // start from last editDate not createdDate
+    //editDate = new Date(createdDate);
 }
 
 function updateEntry(evt) {
@@ -126,6 +145,7 @@ function updateEntry(evt) {
     entryDateOld = entryDate;
     painlevelOld = painlevel;
     relieflevelOld = relieflevel;
+    moodlevelOld = moodlevel;
 
     medicinesOld = medicines;
     triggersOld = triggers;
@@ -140,6 +160,7 @@ function cancelEntry(evt) {
     entryDate = entryDateOld;
     painlevel = painlevelOld;
     relieflevel = relieflevelOld;
+    moodlevel = moodlevelOld;
 
     medicines = medicinesOld;
     triggers = triggersOld;
@@ -149,11 +170,14 @@ function cancelEntry(evt) {
 
     $("#entryDate").val(entryDate.toDateTimeLocalString());
 
-    $("#painlevelpanel button").removeClass("w3-light-gray");
-    $("#painlevelpanel [value|='" + painlevel + "']").addClass("w3-light-gray");
+    $("#painbuttons button").removeClass("w3-light-gray");
+    $("#painbuttons [value|='" + painlevel + "']").addClass("w3-light-gray");
 
-    $("#relieflevelpanel button").removeClass("w3-light-gray");
-    $("#relieflevelpanel [value|='" + relieflevel + "']").addClass("w3-light-gray");
+    $("#reliefbuttons button").removeClass("w3-light-gray");
+    $("#reliefbuttons [value|='" + relieflevel + "']").addClass("w3-light-gray");
+
+    $("#moodbuttons button").removeClass("w3-light-gray");
+    $("#moodbuttons [value|='" + moodlevel + "']").addClass("w3-light-gray");
 
     resetCheckboxLists();
 }
@@ -169,7 +193,8 @@ function diag() {
         "<br>location: " + painlocation +
         "<br>type: " + paintype +
         "<br>warnings: " + warnings +
-        "<br>relief: " + relieflevel);
+        "<br>relief: " + relieflevel +
+        "<br>mood: " + moodlevel);
 }
 
 Date.prototype.toDateTimeLocalString =
