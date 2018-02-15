@@ -19,36 +19,55 @@
     <div class="w3-light-gray w3-card w3-large">
 
         <div id="tabs">
-            <div id="medlist" class="w3-btn w3-mobile w3-hover-dark-gray">Medicines</div>
-            <div id="painlocation" class="w3-btn w3-mobile w3-hover-dark-gray">Pain Location</div>
-            <div id="paintype" class="w3-btn w3-mobile w3-hover-dark-gray">Pain Type</div>
-            <div id="triggerlist" class="w3-btn w3-mobile w3-hover-dark-gray">Triggers</div>
-            <div id="warninglist" class="w3-btn w3-mobile w3-hover-dark-gray">Warnings</div>
-            <div id="doctorlist" class="w3-btn w3-mobile w3-hover-dark-gray">Doctors</div>
             <div id="account" class="w3-btn w3-mobile w3-hover-dark-gray w3-dark-gray">Account</div>
+            <div id="doctorlist" class="w3-btn w3-mobile w3-hover-dark-gray">Doctors</div>
+            <div id="generatedtabs">
+                <div id="medlist" class="w3-btn w3-mobile w3-hover-dark-gray">Medicines</div>
+                <div id="painlocation" class="w3-btn w3-mobile w3-hover-dark-gray">Pain Location</div>
+                <div id="paintype" class="w3-btn w3-mobile w3-hover-dark-gray">Pain Type</div>
+                <div id="triggerlist" class="w3-btn w3-mobile w3-hover-dark-gray">Triggers</div>
+                <div id="warninglist" class="w3-btn w3-mobile w3-hover-dark-gray">Warnings</div>
+            </div>
         </div>
+        <br>
 
-        <div id="panels" class="w3-container w3-small">
-            <div id="medlist" class="w3-container" style="display: none">
-                These list shows up in the "Medicines" section on diary entry page
+        <div id="panels" class="w3-light-gray w3-card">
+            <div id="account" class="w3-container" style="display: block">
+                <div id="accounttabs" class="w3-container w3-small">
+                    <div id="account" class="w3-btn w3-mobile w3-hover-dark-gray w3-dark-gray">info</div>
+                    <div id="tracked" class="w3-btn w3-mobile w3-hover-dark-gray">tracking</div>
+                </div>
+                <br>
+
+                <div id="accountpanels" class="W3-light-gray w3-card w3-small">
+                    <div id="accountinfo" class="w3-container" style="display: block">
+                        account info
+                    </div>
+                    <div id="trackinfo" class="w3-container" style="display: none">
+                        tracking list
+                    </div>
+                </div>
             </div>
-            <div id="painlocation" class="w3-container" style="display: none">
-                These list shows up in the "Pain Location" section on diary entry page
-            </div>
-            <div id="paintype" class="w3-container" style="display: none">
-                These list shows up in the "Pain Type" section on diary entry page
-            </div>
-            <div id="triggerlist" class="w3-container" style="display: none">
-                These list shows up in the "Triggers" section on diary entry page
-            </div>
-            <div id="warninglist" class="w3-container" style="display: none">
-                These list shows up in the "Warnings" section on diary entry page
-            </div>
+
             <div id="doctorlist" class="w3-container" style="display: none">
                 This list gets included with printed reports
             </div>
-            <div id="account" class="w3-container" style="display: block">
-                account info, diary type
+            <div id="generatedpanels">
+                <div id="medlist" class="w3-container" style="display: none">
+                    These list shows up in the "Medicines" section on diary entry page
+                </div>
+                <div id="painlocation" class="w3-container" style="display: none">
+                    These list shows up in the "Pain Location" section on diary entry page
+                </div>
+                <div id="paintype" class="w3-container" style="display: none">
+                    These list shows up in the "Pain Type" section on diary entry page
+                </div>
+                <div id="triggerlist" class="w3-container" style="display: none">
+                    These list shows up in the "Triggers" section on diary entry page
+                </div>
+                <div id="warninglist" class="w3-container" style="display: none">
+                    These list shows up in the "Warnings" section on diary entry page
+                </div>
             </div>
         </div>
     </div>
@@ -57,6 +76,18 @@
 
     <script>
         w3.includeHTML();
+
+        var trackinglist = [
+            ["Pain Level", "range"], // default
+            ["Entry Date", "date"], // default
+            ["Pain Location", "list"], // default
+            ["Pain Type", "list"], // default
+            ["Medications", "list"], // default
+            ["Triggers", "list"],
+            ["Warnings", "list"],
+            ["Relief Level", "range"], // default
+            ["Mood Level", "range"]
+        ];
 
         $(document).ready(function () {
             $("#tabs div").click(function () {
