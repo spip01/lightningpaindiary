@@ -1,0 +1,19 @@
+{
+  "name": "lightningpaindiary",
+  "version": "1.0.0",
+  "description": "pain diary",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/spip01/lightningpaindiary.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/spip01/lightningpaindiary/issues"
+  },
+  "homepage": "https://github.com/spip01/lightningpaindiary#readme"
+}
