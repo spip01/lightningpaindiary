@@ -27,19 +27,14 @@ function resetCheckboxLists() {
 }
 
 function buildButtonBars(start, end, reverse, title, id) {
-    var colors = [0, "rgb(0, 255, 0)", "rgb(120, 255, 0)", "rgb(180, 255, 0)", "rgb(220, 255, 0)", "rgb(255, 255, 0)",
-        "rgb(255, 225, 0)", "rgb(255, 175, 0)", "rgb(255, 125, 0)", "rgb(255, 70, 0)", "rgb(255, 0, 0)"
-    ];
-    var coloroffset = (colors.length - 1) / (end - start + 1);
-    var button = '<button type="button" class="w3-btn w3-small w3-bar-item w3-ripple w3-hover-light-gray"' +
+    var button = '<button type="button" class="w3-btn w3-border-right w3-border-light-gray w3-small w3-bar-item"' +
         ' style="background-color: colors; width:10%" value="name">name</button>';
     var html = '<header class="w3-container w3-light-gray">' + title + '</header>';
 
-    var j = start;
     for (var i = start; i <= end; i++) {
-        var k = reverse ? end - i + 1 : i;
-        html += button.replace("name", k).replace("name", k).replace("colors", colors[j]);
-        j += coloroffset;
+        var k = reverse ? end - i + start : i;
+        var c = 120 - (i - start) / (end - start) * 120; 
+        html += button.replace("name", k).replace("name", k).replace("colors", "hsl("+c+",100%,50%)");
     }
 
     $("#" + id).html(html + '<br><br>');
