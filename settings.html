@@ -16,35 +16,30 @@
     <div w3-include-html="https://raw.githubusercontent.com/spip01/lightningpaindiary/master/navbar.html"></div>
 
     <br>
-    <div class="w3-light-gray w3-card w3-large">
+    <div class="w3-light-gray w3-card">
 
         <div id="tabs">
             <div id="account" class="w3-btn w3-mobile w3-hover-dark-gray w3-dark-gray">Account</div>
             <div id="doctorlist" class="w3-btn w3-mobile w3-hover-dark-gray">Doctors</div>
-            <div id="generatedtabs">
-                <div id="medlist" class="w3-btn w3-mobile w3-hover-dark-gray">Medicines</div>
-                <div id="painlocation" class="w3-btn w3-mobile w3-hover-dark-gray">Pain Location</div>
-                <div id="paintype" class="w3-btn w3-mobile w3-hover-dark-gray">Pain Type</div>
-                <div id="triggerlist" class="w3-btn w3-mobile w3-hover-dark-gray">Triggers</div>
-                <div id="warninglist" class="w3-btn w3-mobile w3-hover-dark-gray">Warnings</div>
-            </div>
         </div>
         <br>
 
         <div id="panels" class="w3-light-gray w3-card">
+
             <div id="account" class="w3-container" style="display: block">
                 <div id="accounttabs" class="w3-container w3-small">
                     <div id="account" class="w3-btn w3-mobile w3-hover-dark-gray w3-dark-gray">info</div>
-                    <div id="tracked" class="w3-btn w3-mobile w3-hover-dark-gray">tracking</div>
+                    <div id="divacked" class="w3-btn w3-mobile w3-hover-dark-gray">divacking</div>
                 </div>
                 <br>
 
                 <div id="accountpanels" class="W3-light-gray w3-card w3-small">
+
                     <div id="accountinfo" class="w3-container" style="display: block">
                         account info
                     </div>
-                    <div id="trackinfo" class="w3-container" style="display: none">
-                        tracking list
+                    <div id="divackinfo" class="w3-container" style="display: none">
+                        divacking list
                     </div>
                 </div>
             </div>
@@ -52,48 +47,137 @@
             <div id="doctorlist" class="w3-container" style="display: none">
                 This list gets included with printed reports
             </div>
-            <div id="generatedpanels">
-                <div id="medlist" class="w3-container" style="display: none">
-                    These list shows up in the "Medicines" section on diary entry page
+        </div>
+    </div>
+    <br>
+
+    <div class="w3-card w3-border-gray w3-light-gray w3-small">
+        <div class="w3-container w3-border-gray w3-light-gray w3-small">
+            <div class="w3-large w3-border-bottom w3-border-gray">Pain Location</div>
+            <div class "w3-cell-row">
+                <div class="w3-container w3-cell w3-quarter w3-cell-bottom">temple</div>
+                <div class="w3-cell">
+                    <button type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Delete</button>
                 </div>
-                <div id="painlocation" class="w3-container" style="display: none">
-                    These list shows up in the "Pain Location" section on diary entry page
+            </div>
+            <div class "w3-cell-row">
+                <div class="w3-container w3-cell w3-quarter w3-cell-bottom">eyes</div>
+                <div class="w3-cell">
+                    <button type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Delete</button>
                 </div>
-                <div id="paintype" class="w3-container" style="display: none">
-                    These list shows up in the "Pain Type" section on diary entry page
+            </div>
+            <div class "w3-cell-row">
+                <div class="w3-container w3-cell w3-quarter w3-cell-bottom">left</div>
+                <div class="w3-cell">
+                    <button type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Delete</button>
                 </div>
-                <div id="triggerlist" class="w3-container" style="display: none">
-                    These list shows up in the "Triggers" section on diary entry page
+            </div>
+            <div class "w3-cell-row">
+                <div class="w3-container w3-cell w3-quarter w3-cell-bottom">right</div>
+                <div class="w3-cell">
+                    <button type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Delete</button>
                 </div>
-                <div id="warninglist" class="w3-container" style="display: none">
-                    These list shows up in the "Warnings" section on diary entry page
+            </div>
+
+            <div class "w3-cell-row">
+                <input id="text" class="w3-cell w3-quarter w3-input w3-border w3-round" type="text" placeholder="pain location">
+                <div class="w3-cell">
+                    <button type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Add</button>
                 </div>
             </div>
         </div>
     </div>
+
+    <br>
 
     <div id="diag"></div>
 
     <script>
         w3.includeHTML();
 
-        var trackinglist = [
-            ["Pain Level", "range"], // default
-            ["Entry Date", "date"], // default
-            ["Pain Location", "list"], // default
-            ["Pain Type", "list"], // default
-            ["Medications", "list"], // default
-            ["Triggers", "list"],
-            ["Warnings", "list"],
-            ["Relief Level", "range"], // default
-            ["Mood Level", "range"]
-        ];
-
-        $(document).ready(function () {
-            $("#tabs div").click(function () {
-                openTab(this);
-            });
+        var types = ["range", "date", "list", "weather"];
+        var divackinglist = []; // sql
+        divackinglist.push({
+            name: "Pain Level",
+            id: "painlevel",
+            type: "range",
+            start: "1",
+            end: "10"
         });
+        divackinglist.push({
+            name: "Endivy Date",
+            id: "endivydate",
+            type: "date"
+        });
+        divackinglist.push({
+            name: "Pain Location",
+            id: "painlocation",
+            type: "list",
+            list: ["forehead", "temple", "eyes", "left", "right", "all"]
+        });
+        divackinglist.push({
+            name: "Pain Type",
+            id: "paintype",
+            type: "list",
+            list: ["throbbing", "burning", "pressure", "sharp"]
+        });
+        divackinglist.push({
+            name: "Medications",
+            id: "meds",
+            type: "list",
+            list: ["kepra", "relafin", "haldol", "cogentin", "benadryl", "compazine"]
+        });
+        divackinglist.push({
+            name: "diviggers",
+            id: "diviggers",
+            type: "list",
+            list: ["weather", "smells", "sleep"]
+        });
+        divackinglist.push({
+            name: "Warnings",
+            id: "warnings",
+            type: "list",
+            list: ["aura"]
+        });
+        divackinglist.push({
+            name: "Relief Level",
+            id: "relieflevel",
+            type: "range",
+            start: "5",
+            end: "1"
+        });
+        divackinglist.push({
+            name: "Mood Level",
+            id: "moodlevel",
+            type: "range",
+            start: "1",
+            end: "10"
+        });
+        divackinglist.push({
+            name: "Weather",
+            id: "weather",
+            type: "weather",
+            list: ["temp", "humidity", "pressure"]
+            // http://openweathermap.org/api
+            // https://developer.yahoo.com/weather/
+        });
+
+        generateTabs();
+
+        function generateTabs() {
+            var tabhtml = '<div id="idname" class="w3-btn w3-mobile w3-hover-dark-gray">title</div>';
+            var panelhtml = '<div id="idname" class="w3-container" style="display: none">';
+
+            for (var i = 0; i < divackinglist.length; ++i) {
+                var endivy = divackinglist[i];
+
+                if (endivy.type === "list") {
+                    $("#tabs").append(tabhtml.replace("idname", endivy.id).replace("title", endivy.name));
+                    $("#panels").append(panelhtml.replace("idname", endivy.id));
+
+                }
+            }
+        }
 
         function openTab(evt) {
             $("#tabs div").removeClass("w3-dark-gray");
@@ -102,6 +186,12 @@
             $("#panels div").hide();
             $("#panels").find("#" + $(evt).prop("id")).show();
         }
+
+        $(document).ready(function () {
+            $("#tabs div").click(function () {
+                openTab(this);
+            });
+        });
     </script>
 
     <br>
