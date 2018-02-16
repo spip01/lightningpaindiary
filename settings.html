@@ -16,11 +16,11 @@
     <div w3-include-html="https://raw.githubusercontent.com/spip01/lightningpaindiary/master/navbar.html"></div>
 
     <br>
-    <div class="w3-light-gray w3-card">
+    <div class="w3-light-gray w3-container w3-card">
 
         <div id="tabs">
             <div id="account" class="w3-btn w3-mobile w3-hover-dark-gray w3-dark-gray">Account</div>
-            <div id="doctorlist" class="w3-btn w3-mobile w3-hover-dark-gray">Doctors</div>
+            <div id="doctorlist" class="w3-btn w3-mobile w3-hover-dark-gray w3-border-right w3-border-gray">Doctors</div>
         </div>
         <br>
 
@@ -28,66 +28,31 @@
 
             <div id="account" class="w3-container" style="display: block">
                 <div id="accounttabs" class="w3-container w3-small">
-                    <div id="account" class="w3-btn w3-mobile w3-hover-dark-gray w3-dark-gray">info</div>
-                    <div id="divacked" class="w3-btn w3-mobile w3-hover-dark-gray">divacking</div>
+                    <div id="account" class="w3-btn w3-mobile w3-hover-dark-gray w3-dark-gray">Info</div>
+                    <div id="tracking" class="w3-btn w3-mobile w3-hover-dark-gray">Tracking</div>
                 </div>
                 <br>
 
                 <div id="accountpanels" class="W3-light-gray w3-card w3-small">
 
                     <div id="accountinfo" class="w3-container" style="display: block">
-                        account info
+                        <p>account info</p>
                     </div>
-                    <div id="divackinfo" class="w3-container" style="display: none">
-                        divacking list
+                    <div id="trackinfo" class="w3-container" style="display: none">
+                        <p>tracking list</p>
                     </div>
+                    <br>
                 </div>
+                <br>
             </div>
 
-            <div id="doctorlist" class="w3-container" style="display: none">
-                This list gets included with printed reports
+            <div id="doctorlist" class="w3-container w3-small" style="display: none">
+                <p>This list gets included with printed reports</p>
             </div>
+
         </div>
+        <br>
     </div>
-    <br>
-
-    <div class="w3-card w3-border-gray w3-light-gray w3-small">
-        <div class="w3-container w3-border-gray w3-light-gray w3-small">
-            <div class="w3-large w3-border-bottom w3-border-gray">Pain Location</div>
-            <div class "w3-cell-row">
-                <div class="w3-container w3-cell w3-quarter w3-cell-bottom">temple</div>
-                <div class="w3-cell">
-                    <button type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Delete</button>
-                </div>
-            </div>
-            <div class "w3-cell-row">
-                <div class="w3-container w3-cell w3-quarter w3-cell-bottom">eyes</div>
-                <div class="w3-cell">
-                    <button type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Delete</button>
-                </div>
-            </div>
-            <div class "w3-cell-row">
-                <div class="w3-container w3-cell w3-quarter w3-cell-bottom">left</div>
-                <div class="w3-cell">
-                    <button type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Delete</button>
-                </div>
-            </div>
-            <div class "w3-cell-row">
-                <div class="w3-container w3-cell w3-quarter w3-cell-bottom">right</div>
-                <div class="w3-cell">
-                    <button type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Delete</button>
-                </div>
-            </div>
-
-            <div class "w3-cell-row">
-                <input id="text" class="w3-cell w3-quarter w3-input w3-border w3-round" type="text" placeholder="pain location">
-                <div class="w3-cell">
-                    <button type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Add</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <br>
 
     <div id="diag"></div>
@@ -96,64 +61,64 @@
         w3.includeHTML();
 
         var types = ["range", "date", "list", "weather"];
-        var divackinglist = []; // sql
-        divackinglist.push({
+        var trackinglist = []; // sql
+        trackinglist.push({
             name: "Pain Level",
             id: "painlevel",
             type: "range",
             start: "1",
             end: "10"
         });
-        divackinglist.push({
-            name: "Endivy Date",
-            id: "endivydate",
+        trackinglist.push({
+            name: "entry Date",
+            id: "entrydate",
             type: "date"
         });
-        divackinglist.push({
+        trackinglist.push({
             name: "Pain Location",
             id: "painlocation",
             type: "list",
-            list: ["forehead", "temple", "eyes", "left", "right", "all"]
+            list: ["forehead", "temple", "eyes", "left", "right"]
         });
-        divackinglist.push({
+        trackinglist.push({
             name: "Pain Type",
             id: "paintype",
             type: "list",
             list: ["throbbing", "burning", "pressure", "sharp"]
         });
-        divackinglist.push({
+        trackinglist.push({
             name: "Medications",
             id: "meds",
             type: "list",
             list: ["kepra", "relafin", "haldol", "cogentin", "benadryl", "compazine"]
         });
-        divackinglist.push({
-            name: "diviggers",
-            id: "diviggers",
+        trackinglist.push({
+            name: "Triggers",
+            id: "triggers",
             type: "list",
             list: ["weather", "smells", "sleep"]
         });
-        divackinglist.push({
+        trackinglist.push({
             name: "Warnings",
             id: "warnings",
             type: "list",
             list: ["aura"]
         });
-        divackinglist.push({
+        trackinglist.push({
             name: "Relief Level",
             id: "relieflevel",
             type: "range",
             start: "5",
             end: "1"
         });
-        divackinglist.push({
+        trackinglist.push({
             name: "Mood Level",
             id: "moodlevel",
             type: "range",
             start: "1",
             end: "10"
         });
-        divackinglist.push({
+        trackinglist.push({
             name: "Weather",
             id: "weather",
             type: "weather",
@@ -166,15 +131,49 @@
 
         function generateTabs() {
             var tabhtml = '<div id="idname" class="w3-btn w3-mobile w3-hover-dark-gray">title</div>';
-            var panelhtml = '<div id="idname" class="w3-container" style="display: none">';
 
-            for (var i = 0; i < divackinglist.length; ++i) {
-                var endivy = divackinglist[i];
+            var panelhtml =
+                '<div id="idname" class="w3-container w3-border-gray w3-light-gray w3-small" style="display: none">' +
+                '    <div class="w3-large w3-border-bottom w3-border-gray">title' +
+                '        <div class="w3-tiny w3-container">(used as checkbox list on entry page)</div>' +
+                '    </div>';
+            var listhtml =
+                '    <div id="idname" class"w3-cell-row">' +
+                '        <div class="w3-container w3-cell w3-quarter">title</div>' +
+                '        <div class="w3-cell">' +
+                '            <button type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Delete</button>' +
+                '        </div>' +
+                '    </div>';
+            var addhtml =
+                '    <div id="add" class"w3-cell-row">' +
+                '        <input id="idname" class="w3-cell w3-quarter w3-input w3-border w3-round" type="text" placeholder="title">' +
+                '        <div class="w3-cell">' +
+                '            <button id="idname" type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Add</button>' +
+                '        </div>' +
+                '    </div>' +
+                '    <br>' +
+                '</div>';
 
-                if (endivy.type === "list") {
-                    $("#tabs").append(tabhtml.replace("idname", endivy.id).replace("title", endivy.name));
-                    $("#panels").append(panelhtml.replace("idname", endivy.id));
+            for (var i = 0; i < trackinglist.length; ++i) {
+                var entry = trackinglist[i];
 
+                if (entry.type === "list") {
+                    var t = tabhtml;
+                    $("#tabs").append(t.replace("idname", entry.id).replace("title", entry.name));
+                    
+                    var h = panelhtml;
+                    h = h.replace("idname", entry.id).replace("title", entry.name);
+
+                    list = entry.list;
+                    for (var j = 0; j < list.length; ++j) {
+                        var l = listhtml;
+                        h += l.replace("idname", list[j]).replace("title", list[j]);
+                    }
+
+                    var a = addhtml;
+                    h += a.replace("idname", entry.id).replace("title", entry.name);
+
+                    $("#panels").append(h);
                 }
             }
         }
@@ -183,8 +182,8 @@
             $("#tabs div").removeClass("w3-dark-gray");
             $(evt).addClass("w3-dark-gray");
 
-            $("#panels div").hide();
-            $("#panels").find("#" + $(evt).prop("id")).show();
+            $("#panels").children().hide();
+            $("#panels").children("#" + $(evt).prop("id")).show();
         }
 
         $(document).ready(function () {
