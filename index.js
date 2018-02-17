@@ -1,6 +1,6 @@
 function setup() {
     buildButtonBars(1, 10, false, "Pain Level", "painbuttons")
-    buildButtonBars(1,5, true, "Relief Level", "reliefbuttons")
+    buildButtonBars(1, 5, true, "Relief Level", "reliefbuttons")
     buildButtonBars(1, 10, false, "Mood Level", "moodbuttons");
 
     setupCheckboxList("Medicines", "medications", medlist);
@@ -33,8 +33,8 @@ function buildButtonBars(start, end, reverse, title, id) {
 
     for (var i = start; i <= end; i++) {
         var k = reverse ? end - i + start : i;
-        var c = 120 - (i - start) / (end - start) * 120; 
-        html += button.replace("name", k).replace("name", k).replace("colors", "hsl("+c+",100%,50%)");
+        var c = 120 - (i - start) / (end - start) * 120;
+        html += button.replace("name", k).replace("name", k).replace("colors", "hsl(" + c + ",100%,50%)");
     }
 
     $("#" + id).html(html + '<br><br>');
@@ -60,7 +60,7 @@ function setupCheckboxList(title, id, list) {
             html += /* row */ '</div>' + row;
     }
 
-    html += /* row */ '</div>'; 
+    html += /* row */ '</div>';
 
     $("#" + id).html(html + '<br>');
 }
@@ -77,12 +77,16 @@ function procCheckboxList(listname) {
 }
 
 function resetCheckboxList(listname, list, set) {
-    $("#" + listname).removeProp("checked");
+    $("#" + listname + " :checked").each(function () {
+            $(this).trigger("click");
+    });
 
     for (var i = 0; i < set.length; ++i) {
         $("#" + set[i]).prop("checked", "checked");
+
     }
 }
+
 
 function painButtons(evt, id) {
     $("#detail").show();
