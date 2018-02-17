@@ -78,7 +78,7 @@ function procCheckboxList(listname) {
 
 function resetCheckboxList(listname, list, set) {
     $("#" + listname + " :checked").each(function () {
-            $(this).trigger("click");
+        $(this).trigger("click");
     });
 
     for (var i = 0; i < set.length; ++i) {
