@@ -197,32 +197,38 @@
 
             $("#panels").children().hide();
             $("#panels").children("#" + $(evt).prop("id")).show();
-            $("#diag").append("open tab " + $(evt).text() + "<br>");
+            //$("#diag").append("open tab " + $(evt).text() + "<br>");
         }
 
         function dragover(evt) {
             evt.preventDefault();
-            $("#diag").append("dragover " + this.innerText + "<br>");
+            //$("#diag").append("dragover " + this.innerText + "<br>");
         }
 
         function dragstart(evt) {
-            //evt.dataTransfer.setData("text", evt.target.id);
-            $("#diag").append("dragstart " + this.innerText + "<br>");
+            evt.originalEvent.dataTransfer.setData("text/html", this.innerText);
+            //$("#diag").append("dragstart " + this.innerText + "<br>");
         }
 
         function drop(evt) {
             evt.preventDefault();
-            //var data = evt.dataTransfer.getData("text");
-            //evt.target.appendChild(document.getElementById(data));
-            $("#diag").append("drop " + this.innerText + "<br>");
+            var src = evt.originalEvent.dataTransfer.getData("text/html");
+            var srchtml = $("#panels #" + src).clone();
+
+            var dst = evt.target.parentElement.id;
+
+            $("#diag").append("drop " + " " + src + " " + dst + " " + srchtml + "<br>");
+
+            $("#panels #" + src).detach();
+            $("#panels #" + dst).next().before(srchtml);
         }
 
         function mouseEnter(evt) {
-            $("#diag").append("enter " + this.innerText + "<br>");
+            //$("#diag").append("enter " + this.innerText + "<br>");
         }
 
         function mouseLeave(evt) {
-            $("#diag").append("leave " + this.innerText + "<br>");
+            //$("#diag").append("leave " + this.innerText + "<br>");
         }
 
         $(document).ready(function () {
@@ -231,8 +237,8 @@
             });
 
             $("#panels [draggable|='true']").on({
-                "mouseleave": $.proxy(mouseLeave),
-                "mouseenter": $.proxy(mouseEnter),
+                //"mouseleave": $.proxy(mouseLeave),
+                //"mouseenter": $.proxy(mouseEnter),
                 "drop": $.proxy(drop),
                 "dragover": $.proxy(dragover),
                 "dragstart": $.proxy(dragstart)
