@@ -55,7 +55,7 @@
     </div>
     <br>
 
-    <div id="diag"></div>
+    <div id="diag">diag</div>
 
     <script>
         w3.includeHTML();
@@ -126,6 +126,11 @@
             // http://openweathermap.org/api
             // https://developer.yahoo.com/weather/
         });
+        trackinglist.push({
+            name: "Blood Pressure",
+            id: "bloodpressure",
+            type: "bloodpressure"
+        });
 
         generateTabs();
 
@@ -137,14 +142,18 @@
                 '    <div class"w3-cell-row">' +
                 '       <div class="w3-cell w3-quarter w3-large">title</div>' +
                 '       <div class="w3-cell">' +
+                '           <button type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Edit</button>' +
                 '           <button type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Delete</button>' +
                 '       </div>' +
                 '    </div>' +
-                '    <div class="w3-tiny w3-container w3-border-bottom w3-border-gray">(used as checkbox list on entry page)</div>';
+                '    <div class="w3-tiny w3-container w3-border-bottom w3-border-gray">(used as checkbox list on entry page, drag to rearrange)</div>';
             var listhtml =
                 '    <div id="idname" class"w3-cell-row">' +
-                '        <div class="w3-container w3-cell w3-quarter">title</div>' +
+                '        <div class="w3-container w3-cell w3-quarter" draggable="true">' +
+                '            title' +
+                '        </div>' +
                 '        <div class="w3-cell">' +
+                '            <button type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Edit</button>' +
                 '            <button type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Delete</button>' +
                 '        </div>' +
                 '    </div>';
@@ -164,7 +173,7 @@
                 if (entry.type === "list") {
                     var t = tabhtml;
                     $("#tabs").append(t.replace("idname", entry.id).replace("title", entry.name));
-                    
+
                     var h = panelhtml;
                     h = h.replace("idname", entry.id).replace("title", entry.name);
 
@@ -188,11 +197,45 @@
 
             $("#panels").children().hide();
             $("#panels").children("#" + $(evt).prop("id")).show();
+            $("#diag").append("open tab " + $(evt).text() + "<br>");
+        }
+
+        function dragover(evt) {
+            evt.preventDefault();
+            $("#diag").append("dragover " + this.innerText + "<br>");
+        }
+
+        function dragstart(evt) {
+            //evt.dataTransfer.setData("text", evt.target.id);
+            $("#diag").append("dragstart " + this.innerText + "<br>");
+        }
+
+        function drop(evt) {
+            evt.preventDefault();
+            //var data = evt.dataTransfer.getData("text");
+            //evt.target.appendChild(document.getElementById(data));
+            $("#diag").append("drop " + this.innerText + "<br>");
+        }
+
+        function mouseEnter(evt) {
+            $("#diag").append("enter " + this.innerText + "<br>");
+        }
+
+        function mouseLeave(evt) {
+            $("#diag").append("leave " + this.innerText + "<br>");
         }
 
         $(document).ready(function () {
             $("#tabs div").click(function () {
                 openTab(this);
+            });
+
+            $("#panels [draggable|='true']").on({
+                "mouseleave": $.proxy(mouseLeave),
+                "mouseenter": $.proxy(mouseEnter),
+                "drop": $.proxy(drop),
+                "dragover": $.proxy(dragover),
+                "dragstart": $.proxy(dragstart)
             });
         });
     </script>
