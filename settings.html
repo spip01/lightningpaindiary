@@ -20,7 +20,7 @@
 
         <div id="tabs">
             <div id="account" class="w3-btn w3-mobile w3-hover-dark-gray w3-dark-gray">Account</div>
-            <div id="tracking" class="w3-btn w3-mobile w3-hover-dark-gray w3-border-right w3-border-gray">Tracking</div>
+            <div id="trackers" class="w3-btn w3-mobile w3-hover-dark-gray w3-border-right w3-border-gray">Trackers</div>
         </div>
         <br>
 
@@ -30,32 +30,30 @@
                 <div id="accounttabs" class="w3-container w3-small">
                     <div id="account" class="w3-btn w3-mobile w3-hover-dark-gray w3-dark-gray">Info</div>
                     <div id="doctors" class="w3-btn w3-mobile w3-hover-dark-gray">Doctors</div>
+                    <br>
                 </div>
-                <br>
 
                 <div id="accountpanels" class="W3-light-gray w3-card w3-small">
 
                     <div id="accountinfo" class="w3-container" style="display: block">
                         <p>account info</p>
                     </div>
-                    <div id="trackinfo" class="w3-container" style="display: none">
-                        <p>tracking list</p>
-                    </div>
-                    <br>
                 </div>
-                <br>
             </div>
 
             <div id="doctorlist" class="w3-container w3-small" style="display: none">
                 <p>This list gets included with printed reports</p>
             </div>
+            <br>
 
         </div>
         <br>
     </div>
     <br>
 
-    <div id="diag">diag</div>
+    <div id="diag">diag
+        <br>
+    </div>
 
     <script>
         w3.includeHTML();
@@ -70,7 +68,7 @@
             end: "10"
         });
         trackinglist.push({
-            name: "entry Date",
+            name: "Entry Date",
             id: "entrydate",
             type: "date"
         });
@@ -88,7 +86,7 @@
         });
         trackinglist.push({
             name: "Medications",
-            id: "meds",
+            id: "medications",
             type: "list",
             list: ["kepra", "relafin", "haldol", "cogentin", "benadryl", "compazine"]
         });
@@ -135,22 +133,38 @@
         generateTabs();
 
         function generateTabs() {
-            var tabhtml = '<div id="idname" class="w3-btn w3-mobile w3-hover-dark-gray">title</div>';
+            var tabhtml = '<div id="idname" class="w3-btn w3-mobile w3-hover-dark-gray">ttitle</div>';
 
-            var panelhtml =
+            var paneltitle =
                 '<div id="idname" class="w3-container w3-border-gray w3-light-gray w3-small" style="display: none">' +
-                '    <div class"w3-cell-row">' +
-                '       <div class="w3-cell w3-quarter w3-large">title</div>' +
+                '    <div id="title" class"w3-cell-row">' +
+                '       <div class="w3-cell w3-quarter w3-large">ttitle</div>' +
                 '       <div class="w3-cell">' +
                 '           <button type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Edit</button>' +
                 '           <button type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Delete</button>' +
                 '       </div>' +
-                '    </div>' +
-                '    <div class="w3-tiny w3-container w3-border-bottom w3-border-gray">(used as checkbox list on entry page, drag to rearrange)</div>';
-            var listhtml =
+                '    </div>';
+            var panelinfo = 
+                '    <div id="info" class="w3-tiny w3-container w3-border-bottom w3-border-gray">(used as checkbox list on entry page, drag to rearrange)</div>';
+            var trackinginfo = 
+                '    <div id="info" class="w3-tiny w3-container w3-border-bottom w3-border-gray">(controls what parameters are tracked on entry page, drag to rearrange)</div>';
+            var panelentries =
                 '    <div id="idname" class"w3-cell-row">' +
                 '        <div class="w3-container w3-cell w3-quarter" draggable="true">' +
-                '            title' +
+                '            ttitle' +
+                '        </div>' +
+                '        <div class="w3-cell">' +
+                '            <button type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Edit</button>' +
+                '            <button type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Delete</button>' +
+                '        </div>' +
+                '    </div>';
+            var trackingentries =
+                '    <div id="idname" class"w3-cell-row">' +
+                '        <div class="w3-container w3-cell w3-quarter" draggable="true">' +
+                '            ttitle' +
+                '        </div>' +
+                '        <div class="w3-container w3-cell w3-quarter" draggable="true">' +
+                '            ttype' +
                 '        </div>' +
                 '        <div class="w3-cell">' +
                 '            <button type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Edit</button>' +
@@ -159,36 +173,47 @@
                 '    </div>';
             var addhtml =
                 '    <div id="add" class"w3-cell-row">' +
-                '        <input id="idname" class="w3-cell w3-quarter w3-input w3-border w3-round" type="text" placeholder="title">' +
+                '        <input id="idname" class="w3-cell w3-quarter w3-input w3-border w3-round" type="text" placeholder="ttitle">' +
                 '        <div class="w3-cell">' +
                 '            <button id="idname" type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Add</button>' +
                 '        </div>' +
                 '    </div>' +
-                '    <br>' +
                 '</div>';
+
+            var th = paneltitle;
+            th = th.replace("idname", "trackers").replace("ttitle", "Trackers") + trackinginfo;
 
             for (var i = 0; i < trackinglist.length; ++i) {
                 var entry = trackinglist[i];
 
+                var tl = trackingentries;
+                th += tl.replace("idname", "t-"+entry.id).replace("ttitle", entry.name).replace("ttype", entry.type);
+
                 if (entry.type === "list") {
                     var t = tabhtml;
-                    $("#tabs").append(t.replace("idname", entry.id).replace("title", entry.name));
+                    $("#tabs").append(t.replace("idname", entry.id).replace("ttitle", entry.name));
 
-                    var h = panelhtml;
-                    h = h.replace("idname", entry.id).replace("title", entry.name);
+                    var h = paneltitle;
+                    h = h.replace("idname", entry.id).replace("ttitle", entry.name) + panelinfo;
 
                     list = entry.list;
                     for (var j = 0; j < list.length; ++j) {
-                        var l = listhtml;
-                        h += l.replace("idname", list[j]).replace("title", list[j]);
+                        var l = panelentries;
+                        h += l.replace("idname", list[j]).replace("ttitle", list[j]);
                     }
 
                     var a = addhtml;
-                    h += a.replace("idname", entry.id).replace("title", entry.name);
+                    h += a.replace("idname", entry.id).replace("ttitle", entry.name);
 
                     $("#panels").append(h);
                 }
             }
+
+            var ta = addhtml;
+            th += ta.replace("idname", "trackers").replace("ttitle", "Trackers");
+
+            $("#panels").append(th);
+
         }
 
         function openTab(evt) {
@@ -197,30 +222,54 @@
 
             $("#panels").children().hide();
             $("#panels").children("#" + $(evt).prop("id")).show();
-            //$("#diag").append("open tab " + $(evt).text() + "<br>");
         }
 
         function dragover(evt) {
             evt.preventDefault();
-            //$("#diag").append("dragover " + this.innerText + "<br>");
         }
 
         function dragstart(evt) {
-            evt.originalEvent.dataTransfer.setData("text/html", this.innerText);
-            //$("#diag").append("dragstart " + this.innerText + "<br>");
+            evt.originalEvent.dataTransfer.setData("text/html", this.parentElement.id);
         }
 
         function drop(evt) {
             evt.preventDefault();
             var src = evt.originalEvent.dataTransfer.getData("text/html");
-            var srchtml = $("#panels #" + src).clone();
-
             var dst = evt.target.parentElement.id;
+            var pt = evt.target.parentElement.parentElement.id;
 
-            $("#diag").append("drop " + " " + src + " " + dst + " " + srchtml + "<br>");
+            var list = [];
+            var found = false;
+            $("#panels #" + pt).children().each(function () {
+                var id = $(this).val("id")[0].id;
 
-            $("#panels #" + src).detach();
-            $("#panels #" + dst).next().before(srchtml);
+                switch (id) {
+                    case dst:
+                        if (!found) {
+                            list.push($("#panels #" + src).detach());
+                            list.push($("#panels #" + dst).detach());
+                            found = true;
+                        }
+                        break;
+                    case src:
+                        if (!found) {
+                            list.push($("#panels #" + dst).detach());
+                            list.push($("#panels #" + src).detach());
+                            found = true;
+                        }
+                        break;
+                    default: //$("#diag").append("add id " + id + "<br>");
+                        list.push($(this).detach());
+                }
+            });
+
+            for (var i = 0; i < list.length; ++i) {
+                $("#panels #" + pt).append(list[i]);
+            }
+
+            //$("#panels #" + src).siblings().each(function () {
+            //    $("#diag").append($(this).prop("id") + "<br>");
+            //});
         }
 
         function mouseEnter(evt) {
