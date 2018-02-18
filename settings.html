@@ -24,36 +24,29 @@
         </div>
         <br>
 
-        <div id="panels" class="w3-light-gray w3-card">
-
-            <div id="account" class="w3-container" style="display: block">
-                <div id="accounttabs" class="w3-container w3-small">
-                    <div id="account" class="w3-btn w3-mobile w3-hover-dark-gray w3-dark-gray">Info</div>
-                    <div id="doctors" class="w3-btn w3-mobile w3-hover-dark-gray">Doctors</div>
-                    <br>
-                </div>
-
-                <div id="accountpanels" class="W3-light-gray w3-card w3-small">
-
-                    <div id="accountinfo" class="w3-container" style="display: block">
-                        <p>account info</p>
-                    </div>
-                </div>
-            </div>
-
-            <div id="doctorlist" class="w3-container w3-small" style="display: none">
-                <p>This list gets included with printed reports</p>
+        <div id="panels" class="w3-light-gray w3-container w3-card">
+            <div id="account" class="w3-container w3-border-gray w3-light-gray w3-small" style="display: block">
+                <br>
+                <div id="doctors">Input Doctors</div>
+                <input id="dbname" type="text" class="w3-pad">DB Name</input>
+                <br>
+                <input id="drugs-com" type="text" class="w3-pad">drugs.com link</input>
+                <br> &nbsp;
+                <input id="reminder" type="checkbox" class="w3-check" style="width:12px">Complete entry reminder notification</input>
+                <br> &nbsp;
+                <input id="verifydelete" type="checkbox" class="w3-check" style="width:12px">Verify Deletes</input>
+                <br>
+                <br>
             </div>
             <br>
-
         </div>
         <br>
     </div>
     <br>
-
-    <div id="diag">diag
-        <br>
     </div>
+    <br>
+
+    <div id="diag"></div>
 
     <script>
         w3.includeHTML();
@@ -136,70 +129,70 @@
             var tabhtml = '<div id="idname" class="w3-btn w3-mobile w3-hover-dark-gray">ttitle</div>';
 
             var paneltitle =
-                '<div id="idname" class="w3-container w3-border-gray w3-light-gray w3-small" style="display: none">' +
-                '    <div id="title" class"w3-cell-row">' +
+                '<div id="idname" class="w3-container w3-border-gray w3-light-gray w3-small" style="display: none"><br>' +
+                '    <div id="idname" class"w3-cell-row">' +
                 '       <div class="w3-cell w3-quarter w3-large">ttitle</div>' +
                 '       <div class="w3-cell">' +
-                '           <button type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Edit</button>' +
-                '           <button type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Delete</button>' +
+                '           <button id="edittrackerbtn" type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Edit</button>' +
+                '           <input id="activatedeletebtns" type="checkbox" class="class="w3-check" style="width:12px">Activate Deletes</input>' +
                 '       </div>' +
                 '    </div>';
-            var panelinfo = 
+            var trackertitle =
+                '<div id="idname" class="w3-container w3-border-gray w3-light-gray w3-small" style="display: none"><br>' +
+                '    <div id="idname" class="w3-large">ttitle</div>';
+            var panelinfo =
                 '    <div id="info" class="w3-tiny w3-container w3-border-bottom w3-border-gray">(used as checkbox list on entry page, drag to rearrange)</div>';
-            var trackinginfo = 
+            var trackinginfo =
                 '    <div id="info" class="w3-tiny w3-container w3-border-bottom w3-border-gray">(controls what parameters are tracked on entry page, drag to rearrange)</div>';
             var panelentries =
                 '    <div id="idname" class"w3-cell-row">' +
-                '        <div class="w3-container w3-cell w3-quarter" draggable="true">' +
-                '            ttitle' +
-                '        </div>' +
-                '        <div class="w3-cell">' +
-                '            <button type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Edit</button>' +
-                '            <button type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Delete</button>' +
-                '        </div>' +
+                '        <div class="w3-container w3-cell w3-quarter" draggable="true">ttitle</div>' +
+                '        <div id="idname" class="w3-cell">' +
+                '            <button id="editbtn" type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Edit</button>' +
+                '            <button id="delbtn" type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple w3-disabled">Delete</button>' +                '        </div>' +
                 '    </div>';
             var trackingentries =
                 '    <div id="idname" class"w3-cell-row">' +
-                '        <div class="w3-container w3-cell w3-quarter" draggable="true">' +
-                '            ttitle' +
-                '        </div>' +
-                '        <div class="w3-container w3-cell w3-quarter" draggable="true">' +
-                '            ttype' +
-                '        </div>' +
-                '        <div class="w3-cell">' +
-                '            <button type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Edit</button>' +
-                '            <button type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Delete</button>' +
+                '        <div class="w3-container w3-cell w3-quarter" draggable="true">ttitle</div>' +
+                '        <div class="w3-container w3-cell w3-quarter" draggable="true">ttype</div>' +
+                '        <div id="idname" class="w3-cell">' +
+                '            <button id="editbtn" type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Edit</button>&nbsp;' +
+                '            <input id="usetrackerckb" type="checkbox" checked class="w3-check w3-tiny" style="width:12px">Use</input>' +
                 '        </div>' +
                 '    </div>';
             var addhtml =
-                '    <div id="add" class"w3-cell-row">' +
+                '    <div id="idname" class"w3-cell-row">' +
                 '        <input id="idname" class="w3-cell w3-quarter w3-input w3-border w3-round" type="text" placeholder="ttitle">' +
                 '        <div class="w3-cell">' +
-                '            <button id="idname" type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Add</button>' +
+                '            <button id="addbtn" type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Add</button>' +
                 '        </div>' +
-                '    </div>' +
+                '    </div><br>' +
                 '</div>';
 
-            var th = paneltitle;
-            th = th.replace("idname", "trackers").replace("ttitle", "Trackers") + trackinginfo;
+            var th = trackertitle;
+            th = th.replace("idname", "trackers").replace("idname", "trackers").replace("ttitle", "Trackers") +
+                trackinginfo;
 
             for (var i = 0; i < trackinglist.length; ++i) {
                 var entry = trackinglist[i];
 
                 var tl = trackingentries;
-                th += tl.replace("idname", "t-"+entry.id).replace("ttitle", entry.name).replace("ttype", entry.type);
+                th += tl.replace("idname", "t-" + entry.id).replace("idname", "t-" + entry.id)
+                    .replace("ttitle", entry.name).replace("ttype", entry.type);
 
                 if (entry.type === "list") {
                     var t = tabhtml;
-                    $("#tabs").append(t.replace("idname", entry.id).replace("ttitle", entry.name));
+                    t = t.replace("idname", entry.id).replace("ttitle", entry.name);
+                    $("#tabs").append(t);
 
                     var h = paneltitle;
-                    h = h.replace("idname", entry.id).replace("ttitle", entry.name) + panelinfo;
+                    h = h.replace("idname", entry.id).replace("idname", entry.id).replace("ttitle", entry.name) +
+                        panelinfo;
 
                     list = entry.list;
                     for (var j = 0; j < list.length; ++j) {
                         var l = panelentries;
-                        h += l.replace("idname", list[j]).replace("ttitle", list[j]);
+                        h += l.replace("idname", list[j]).replace("idname", list[j]).replace("ttitle", list[j]);
                     }
 
                     var a = addhtml;
@@ -210,8 +203,7 @@
             }
 
             var ta = addhtml;
-            th += ta.replace("idname", "trackers").replace("ttitle", "Trackers");
-
+            th += ta.replace("idname", entry.id).replace("ttitle", "Trackers");
             $("#panels").append(th);
 
         }
@@ -266,10 +258,6 @@
             for (var i = 0; i < list.length; ++i) {
                 $("#panels #" + pt).append(list[i]);
             }
-
-            //$("#panels #" + src).siblings().each(function () {
-            //    $("#diag").append($(this).prop("id") + "<br>");
-            //});
         }
 
         function mouseEnter(evt) {
@@ -280,9 +268,81 @@
             //$("#diag").append("leave " + this.innerText + "<br>");
         }
 
+        function addEntry(evt) {
+            var ent = $(evt).parent().children().each(function () {
+                buttonDiag(evt, this, "addEntry");
+            });
+        }
+
+        function deleteEntry(evt) {
+            var ent = $(evt).parent().children().each(function () {
+                buttonDiag(evt, this, "deleteEntry");
+            });
+        }
+
+        function editEntry(evt) {
+            var ent = $(evt).parent().children().each(function () {
+                buttonDiag(evt, this, "editEntry");
+            });
+        }
+
+        function useTracker(evt) {
+            var ent = $(evt).parent().children().each(function () {
+                buttonDiag(evt, this, "useTracker");
+            });
+        }
+
+        function editTracker(evt) {
+            var ent = $(evt).parent().children().each(function () {
+                buttonDiag(evt, this, "editTracker");
+            });
+        }
+
+        function newTracker(evt) {
+            var ent = $(evt).parent().children().each(function () {
+                buttonDiag(evt, this, "newTracker");
+            });
+        }
+
+        function activateDeleteBtns(evt) {
+            var ent = $(evt).parent().children().each(function () {
+                buttonDiag(evt, this, "activateDeleteBtns");
+            });
+        }
+
+        function buttonDiag(evt, which, what) {
+            $("#diag").append(what + "  pp " + $(evt).parent().parent()[0].id + " p " + $(evt).parent()[0].id + " " + $(
+                    which).text() +
+                "<br>");
+        }
+
         $(document).ready(function () {
             $("#tabs div").click(function () {
                 openTab(this);
+            });
+
+            $("#panels #addbtn").click(function () {
+                addEntry(this);
+            });
+
+            $("#panels #editbtn").click(function () {
+                editEntry(this);
+            });
+
+            $("#panels #delbtn").click(function () {
+                deleteEntry(this);
+            });
+
+            $("#panels #edittrackerbtn").click(function () {
+                editTracker(this);
+            });
+
+            $("#panels #usetrackerckb").click(function () {
+                deleteTracker(this);
+            });
+
+            $("#panels #activatedeletebtns").click(function () {
+                activateDeleteBtns(this);
             });
 
             $("#panels [draggable|='true']").on({
