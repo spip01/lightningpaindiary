@@ -60,6 +60,11 @@
             enabled: true
         });
         trackinglist.push({
+            name: "Woke With",
+            type: "true/false",
+            enabled: true
+        });
+        trackinglist.push({
             name: "Pain Location",
             type: "list",
             list: ["forehead", "temple", "eyes", "left", "right"],
@@ -72,15 +77,27 @@
             enabled: true
         });
         trackinglist.push({
+            name: "Sensitive To",
+            type: "list",
+            list: ["light", "sound"],
+            enabled: true
+        });
+        trackinglist.push({
             name: "Medications",
             type: "list",
             list: ["kepra", "relafin", "haldol", "cogentin", "benadryl", "compazine"],
             enabled: true
         });
         trackinglist.push({
-            name: "Triggers",
+            name: "Triggered By",
             type: "list",
-            list: ["weather", "smells", "sleep"],
+            list: ["weather", "smells", "sleep", "light", "sound"],
+            enabled: true
+        });
+        trackinglist.push({
+            name: "Sensitive To",
+            type: "list",
+            list: ["light", "sound"],
             enabled: true
         });
         trackinglist.push({
@@ -113,7 +130,7 @@
         });
         trackinglist.push({
             name: "Blood Pressure",
-            type: "bloodpressure",
+            type: "blood pressure",
             enabled: true
         });
         trackinglist.push({
