@@ -45,23 +45,28 @@
     <script>
         w3.includeHTML();
 
-        var types = ["range", "date", "list", "weather"];
+        var trackingtypes = ["blood pressure", "colored range", "date", "list", "number", "range", "time", "true false", "weather"];
         var trackinglist = []; // sql
         trackinglist.push({
             name: "Pain Level",
-            type: "range",
+            type: "colored range",
             start: "1",
             end: "10",
             enabled: true
         });
         trackinglist.push({
-            name: "Entry Date",
+            name: "Start Time",
             type: "date",
             enabled: true
         });
         trackinglist.push({
+            name: "End Time",
+            type: "time",
+            enabled: true
+        });
+        trackinglist.push({
             name: "Woke With",
-            type: "true/false",
+            type: "true false",
             enabled: true
         });
         trackinglist.push({
@@ -77,27 +82,21 @@
             enabled: true
         });
         trackinglist.push({
-            name: "Sensitive To",
+            name: "Sensitivities",
             type: "list",
             list: ["light", "sound"],
             enabled: true
         });
         trackinglist.push({
-            name: "Medications",
+            name: "Remedies",
             type: "list",
-            list: ["kepra", "relafin", "haldol", "cogentin", "benadryl", "compazine"],
+            list: ["kepra", "relafin", "haldol", "cogentin", "benadryl", "compazine", "sleep"],
             enabled: true
         });
         trackinglist.push({
             name: "Triggered By",
             type: "list",
             list: ["weather", "smells", "sleep", "light", "sound"],
-            enabled: true
-        });
-        trackinglist.push({
-            name: "Sensitive To",
-            type: "list",
-            list: ["light", "sound"],
             enabled: true
         });
         trackinglist.push({
@@ -108,14 +107,14 @@
         });
         trackinglist.push({
             name: "Relief Level",
-            type: "range",
+            type: "colored range",
             start: "5",
             end: "1",
             enabled: true
         });
         trackinglist.push({
             name: "Mood Level",
-            type: "range",
+            type: "colored range",
             start: "1",
             end: "10",
             enabled: true
@@ -142,141 +141,159 @@
         generateTabs();
 
         function generateTabs() {
-            var tabhtml =
+            var tab_html =
                 '    <div id="idname" class="w3-btn w3-mobile w3-hover-dark-gray">ttitle</div>';
 
-            var paneltitle =
+            var panel_title =
                 '    <div id="idname" class="w3-container w3-border-gray w3-white w3-small" style="display: none">' +
                 '        <br>' +
-                '        <div id="idname" class "w3-cell-row">' +
-                '            <div class="w3-cell w3-quarter w3-large">ttitle</div>' +
-                '            <div class="w3-cell">' +
-                '                <button id="edittrackerbtn" type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Edit</button>' +
-                '                <input id="activatedeletebtns" type="checkbox" class="w3-check" style="width:12px">' +
-        '                        <label for="activatedeletebtns">&nbsp;Activate Deletes</label>' +
-                '            </div>' +
-                '        </div>'+
-                '        <div id="info" class="w3-tiny w3-container w3-border-bottom w3-border-gray">(used as checkbox list on entry page, drag to rearrange)</div>';
-            var panelentries =
-                '        <div id="idname" class "w3-cell-row">' +
-                '            <div class="w3-container w3-cell w3-quarter" draggable="true">ttitle</div>' +
+                '        <div class "w3-cell-row">' +
+                '            <div class="w3-cell l4 m4 w3-large">ttitle</div>' +
                 '            <div id="idname" class="w3-cell">' +
-                '                <button id="editbtn" type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Edit</button>' +
-                '                <button id="delbtn" type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple w3-disabled">Delete</button>' +
+                '                <button id="edittrackerbtn"    type="button"   class="w3-btn w3-padding-small w3-light-gray w3-tiny w3-border w3-round w3-ripple">Edit</button>' +
+                '                <input id="activatedeletebtns" type="checkbox" class="w3-check" style="width:12px">Activate Deletes</input>' +
+                '            </div>' +
+                '        </div>' +
+                '        <div id="info" class="w3-tiny w3-container w3-border-bottom w3-border-gray">(used as checkbox list on entry page, drag to rearrange)</div>';
+            var panel_entries =
+                '        <div id="idname" class "w3-cell-row">' +
+                '            <div class="w3-container w3-cell l4 m4" draggable="true">ttitle</div>' +
+                '            <div id="idname" class="w3-cell">' +
+                '                <button id="editbtn" type="button" class="w3-btn w3-padding-small w3-light-gray w3-tiny w3-border w3-round w3-ripple">Edit</button>' +
+                '                <button id="delbtn"  type="button" class="w3-btn w3-padding-small w3-light-gray w3-tiny w3-border w3-round w3-ripple w3-disabled">Delete</button>' +
                 '            </div>' +
                 '        </div>';
-            var paneladd =
+            var panel_footer =
                 '        <div id="idname" class "w3-cell-row">' +
                 '            <input id="idname" class="w3-cell w3-quarter w3-input w3-border w3-round" type="text" placeholder="ttitle">' +
                 '            <div class="w3-cell">' +
-                '                <button id="addbtn" type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Add</button>' +
+                '                <button id="addbtn" type="button" class="w3-btn w3-padding-small w3-light-gray w3-tiny w3-border w3-round w3-ripple">Add</button>' +
                 '            </div>' +
                 '        </div>' +
                 '        <br>' +
                 '    </div>';
 
-            var trackertitle =
+            var tracker_title =
                 '    <div id="idname" class="w3-container w3-border-gray w3-white w3-small" style="display: none">' +
                 '        <br>' +
-                '        <div id="idname" class="w3-large">ttitle</div>'+
+                '        <div class "w3-cell-row">' +
+                '            <div class="w3-large w3-cell l6 m6">ttitle</div>' +
+                '            <div id="idname" class="w3-container w3-cell l2 m2">' +
+                '                <input id="activatedeletebtns" type="checkbox" class="w3-check" style="width:12px">Activate Deletes</input>' +
+                '            </div>' +
+                '        </div>' +
                 '        <div id="info" class="w3-tiny w3-container w3-border-bottom w3-border-gray">(controls what parameters are tracked on entry page, drag to rearrange)</div>';
-            var trackerentries =
-                '        <div id="idname" class "w3-cell-row">' +
-                '            <div class="w3-container w3-cell w3-quarter" draggable="true">ttitle</div>' +
-                '            <div class="w3-container w3-cell w3-quarter">ttype</div>' +
-                '            <div class="w3-container w3-cell w3-quarter">' +
+            var tracker_entries =
+                '        <div id="idname" class="w3-cell-row">' +
+                '            <div class="w3-cell w3-col l3 m3" draggable="true">ttitle</div>' +
+                '            <div class="w3-cell w3-col l2 m2">ttype</div>' +
+                '            <div class="w3-container w3-cell w3-col l2 m2">' +
                 '                <div ifrange>startrange-endrange</div>' +
                 '            </div>' +
-                '            <div id="idname" class="w3-cell">' +
-                '                <button id="editbtn" type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Edit</button>&nbsp;' +
-                '                <input id="usetrackerckb" type="checkbox" checked class="w3-check" style="width:12px">Use</input>' +
-                '            </div>' +
+                '            <button id="editbtn"      type="button"   class="w3-btn w3-cell l2 m2 w3-padding-small w3-light-gray w3-tiny w3-border w3-round w3-ripple">Edit</button>' +
+                '            <button id="deletebtn"    type="button"   class="w3-btn w3-cell l2 m2 w3-padding-small w3-light-gray w3-tiny w3-border w3-round w3-ripple w3-disabled">Delete</button>' +
+                '            <input id="usetrackerckb" type="checkbox" class="w3-check w3-cell l3 m3" style="width:12px" checked>Use</input>' +
+                '            <button id="editlistbtn"  type="button"   class="w3-btn w3-cell l2 m2 w3-padding-small w3-light-gray w3-tiny w3-border w3-round w3-ripple" iflist>Edit List</button>' +
                 '        </div>';
-            var trackeradd =
+            var tracker_footer =
                 '        <div id="idname" class="w3-cell-row">' +
-                '            <input id="addinp" class="w3-cell w3-quarter w3-input w3-border w3-round" type="text" placeholder="ttitle">' +
-                '            <div id="typemenu" class="w3-cell w3-quarter w3-dropdown-hover">' +
-                '                <button id="dropdown" class="w3-button">' +
-                '                    <label>Type</label>' +
-                '                </button>' +
-                '                <div class="w3-dropdown-content w3-card w3-bar-block">' +
-                '                    <button id="trackermenu" class="w3-bar-item w3-button"">Blood Pressure</button>' +
-                '                    <button id="trackermenu" class="w3-bar-item w3-button">Date</button>' +
-                '                    <button id="trackermenu" class="w3-bar-item w3-button">List</button>' +
-                '                    <button id="trackermenu" class="w3-bar-item w3-button">Number</button>' +
-                '                    <button id="trackermenu" class="w3-bar-item w3-button">Number Range</button>' +
-                '                    <button id="trackermenu" class="w3-bar-item w3-button">Weather</button>' +
-                '                </div>' +
+                '            <input id="addinp" class="w3-cell w3-col l3 m3 w3-input w3-border w3-round" type="text" placeholder="ttitle">' +
+                '            <div id="typemenu" class="w3-cell w3-col l2 m2 w3-dropdown-hover">' +
+                '                <button id="dropdown" class="w3-btn">Type</button>' +
+                '                <div class="w3-dropdown-content w3-card w3-bar-block">tmenu</div>' +
                 '            </div>' +
-                '            <div id="rangeinput" class="w3-cell w3-quarter w3-dropdown-hover" style="display: none">' +
-                '                <input id="startrangeinp" class="w3-input w3-border w3-round" type="text" placeholder="1">' +
-                '                <input id="endrangeinp" class="w3-input w3-border w3-round" type="text" placeholder="10">' +
+                '            <div id="rangeinput" style="display: none">' +
+                '                <input id="startrangeinp" class="w3-input w3-cell w3-col l1 m1 w3-border w3-round" type="text" placeholder="1">' +
+                '                <input id="endrangeinp"   class="w3-input w3-cell w3-col l1 m1 w3-border w3-round" type="text" placeholder="10">' +
                 '                <br>' +
                 '            </div>' +
-                '            <button id="addbtn" type="button" class="w3-cell w3-btn w3-tiny w3-border w3-round w3-ripple">' +
-                '                <label>Add</label>' +
-                '            </button>' +
+                '            <button id="addbtn" type="button" class="w3-cell w3-btn w3-padding-small w3-light-gray w3-tiny w3-border w3-round w3-ripple">Add</button>' +
                 '        </div>' +
                 '        <br>' +
                 '    </div>';
+            var tracker_menu =  // tmenu in tracker_footer
+                '                   <button id="trackermenu" class="w3-bar-item w3-btn">ttype</button>';
 
-            var th = trackertitle;
-            th = th.replace("idname", "trackers").replace("idname", "trackers").replace("ttitle", "Trackers");
+            var tpanel = tracker_title;
+            tpanel = tpanel.replace("idname", "trackers").replace("idname", "trackers").replace("ttitle", "Trackers");
+
+            var ttypes = [];
 
             for (var i = 0; i < trackinglist.length; ++i) {
-                var entry = trackinglist[i];
+                var tlistentry = trackinglist[i];
 
-                var t = entry.name.split(" ");
+                // generate id name
+                var t = tlistentry.name.split(" ");
                 var id = "";
                 for (var j = 0; j < t.length; ++j) {
                     id = id.concat(t[j]);
                 }
                 id = id.toLocaleLowerCase();
 
-                var tl = trackerentries;
-                if (entry.type === "range") {
-                    tl = tl.replace("ifrange", "").replace("startrange", entry.start).replace("endrange", entry.end);
+                // setup buttons for range & list types
+                t = tracker_entries;
+                if (tlistentry.type === "range" || tlistentry.type === "colored range") {
+                    t = t.replace("ifrange", "").replace("startrange", tlistentry.start).replace("endrange", tlistentry.end);
                 } else {
-                    tl = tl.replace("ifrange", "style='display: none'");
+                    t = t.replace("ifrange", 'style="display: none"');
                 }
 
-                th += tl.replace("idname", "t-" + id).replace("idname", "t-" + id)
-                    .replace("ttitle", entry.name).replace("ttype", entry.type);
+                if (tlistentry.type === "list") {
+                    t = t.replace("iflist", "");
+                } else {
+                    t = t.replace("iflist", "style='display: none'");
+                }
 
+                tpanel += t.replace("idname", "t-" + id).replace("idname", "t-" + id)
+                    .replace("ttitle", tlistentry.name).replace("ttype", tlistentry.type);
 
-                if (entry.type === "list") {
-                    var t = tabhtml;
-                    t = t.replace("idname", id).replace("ttitle", entry.name);
+                if (tlistentry.type === "list") {
+                    // navigation tabs
+                    var t = tab_html;
+                    t = t.replace("idname", id).replace("ttitle", tlistentry.name);
                     $("#tabs").append(t);
 
-                    var h = paneltitle;
-                    h = h.replace("idname", id).replace("idname", id).replace("ttitle", entry.name);
+                    // panel title
+                    var panel = panel_title;
+                    panel = panel.replace("idname", id).replace("idname", id).replace("ttitle", tlistentry.name);
 
-                    for (var j = 0; j < entry.length; ++j) {
-                        var t = entry[j].name.split(" ");
-                        var eid = "";
+                    // panel entries
+                    for (var j = 0; j < tlistentry.length; ++j) {
+                        // generate id name
+                        var t = tlistentry[j].name.split(" ");
+                        var id = "";
                         for (var k = 0; k < t.length; ++k) {
-                            eid = eid.concat(t[k]);
+                            id = id.concat(t[k]);
                         }
-                        eid=eid.toLocaleLowerCase();
-                        
-                        var l = panelentries;
-                        h += l.replace("idname", eid).replace("idname", eid).replace("ttitle", entry[j].name);
+                        id = id.toLocaleLowerCase();
+
+                        var l = panel_entries;
+                        panel += l.replace("idname", id).replace("idname", id).replace("ttitle", tlistentry[j].name);
                     }
 
-                    var a = paneladd;
-                    h += a.replace("idname", id).replace("ttitle", entry.name);
-                    $("#panels").append(h);
+                    // completed panel
+                    var a = panel_footer;
+                    panel += a.replace("idname", id).replace("ttitle", tlistentry.name);
+                    $("#panels").append(panel);
                 }
             }
 
-            var ta = trackeradd;
-            th += ta.replace("idname", id).replace("ttitle", "Trackers");
-            $("#panels").append(th);
+            // generate type menu
+            var tmenuadd = "";
+            for (var i = 0; i < trackingtypes.length; ++i) {
+                var t = tracker_menu;
+                t.replace("ttype", trackingtypes[i]);
+                tmenuadd += t;
+            }
+
+            // completed tracker panel
+            var ta = tracker_footer;
+            tpanel += ta.replace("idname", id).replace("ttitle", "Trackers").replace("tmenu", tmenuadd);
+            $("#panels").append(tpanel);
         }
 
         function trackerMenu(evt) {
-           console.log(("select " + $(evt).parent()[0].id + " " +$(evt)[0].id + "<br>"));
+            console.log(("select " + $(evt).parent()[0].id + " " + $(evt)[0].id + "<br>"));
         }
 
         function openTab(evt) {
@@ -328,55 +345,41 @@
 
             for (var i = 0; i < list.length; ++i) {
                 $("#panels #" + pt).append(list[i]);
-                console.log("readding "+ list[i]);
+                console.log("readding " + list[i]);
             }
-        }
-
-        function mouseEnter(evt) {
-        }
-
-        function mouseLeave(evt) {
         }
 
         function addEntry(evt) {
             var par = $(evt).parent().parent().attr("id");
 
-
             $("#diag").append("add " + $(evt).attr("id") + " " + $(par).find("#" + addinp).val() + "<br>");
 
             var ent = $(evt).parent().children().each(function () {
-                buttonDiag(evt, this, "addEntry");
             });
         }
 
         function deleteEntry(evt) {
-            var ent = $(evt).parent().children().each(function () {
-            });
+            var ent = $(evt).parent().children().each(function () {});
         }
 
         function editEntry(evt) {
-            var ent = $(evt).parent().children().each(function () {
-            });
+            var ent = $(evt).parent().children().each(function () {});
         }
 
         function useTracker(evt) {
-            var ent = $(evt).parent().children().each(function () {
-            });
+            var ent = $(evt).parent().children().each(function () {});
         }
 
         function editTracker(evt) {
-            var ent = $(evt).parent().children().each(function () {
-            });
+            var ent = $(evt).parent().children().each(function () {});
         }
 
         function newTracker(evt) {
-            var ent = $(evt).parent().children().each(function () {
-            });
+            var ent = $(evt).parent().children().each(function () {});
         }
 
         function activateDeleteBtns(evt) {
-            var ent = $(evt).parent().children().each(function () {
-            });
+            var ent = $(evt).parent().children().each(function () {});
         }
 
         $(document).ready(function () {
