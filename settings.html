@@ -57,7 +57,7 @@
         ];
         var trackinglist = []; // sql
         trackinglist.push({
-            name: "Pain Level",
+            name: "Pain Level",     // can only change name until first save
             type: "colored range",
             start: "1",
             end: "10",
@@ -158,10 +158,12 @@
                 '    <div id="pnl-idname" class="w3-container w3-border-gray w3-white w3-small" style="display: none">' +
                 '        <div id="ttl-idname" class "w3-container w3-cell-row">' +
                 '            <div class="w3-cell w3-third w3-large">ttitle</div>' +
-                '            <button id="edittrackerbtn"    type="button"   class="w3-btn w3-cell w3-twelfth w3-padding-small w3-light-gray w3-tiny w3-border w3-round w3-ripple">Edit</button>' +
+                '            <button id="edittrackerbtn"  type="button"   class="w3-btn w3-cell w3-twelfth w3-padding-small w3-light-gray w3-tiny w3-border w3-round w3-ripple">Edit</button>' +
                 '            <input id="enabledeletebtns" type="checkbox" class="w3-check w3-cell w3-twelfth" style="width:12px">Enable Delete Buttons</input>' +
                 '        </div>' +
-                '        <div id="info" class="w3-tiny w3-container w3-border-bottom w3-border-gray">(used as checkbox list on entry page, drag to rearrange)</div>';
+                '        <div id="info" class="w3-tiny w3-container w3-border-bottom w3-border-gray">'+
+                '            used as checkbox list on entry page, drag to rearrange'+
+                '        </div>';
             var panel_entries =
                 '        <div id="ent-idname" class "w3-container w3-cell-row">' +
                 '            <div class="w3-container w3-cell w3-third" draggable="true">ttitle</div>' +
@@ -224,7 +226,9 @@
                 '            <div class="w3-large w3-cell w3-twothird">ttitle</div>' +
                 '            <input id="enabledeletebtns" type="checkbox" class="w3-check w3-cell w3-twelfth" style="width:12px">Enable Delete Buttons</input>' +
                 '        </div>' +
-                '        <div id="info" class="w3-tiny w3-container w3-border-bottom w3-border-gray">(controls what parameters are tracked on entry page, drag to rearrange)</div>';
+                '        <div id="info" class="w3-tiny w3-container w3-border-bottom w3-border-gray">'+
+                '            controls what parameters are tracked on entry page, drag to rearrange, disable with "Use" checkbox'+
+                '        </div>';
             var tracker_entries =
                 '        <div id="ent-idname" class="w3-cell-row">' +
                 '            <div class="w3-cell w3-col w3-quarter" draggable="true">ttitle</div>' +
@@ -240,12 +244,14 @@
             var tracker_footer =
                 '        <div id="foot-idname" class="w3-cell-row">' +
                 '            <input id="addinp" class="w3-cell w3-col w3-quarter w3-input w3-border w3-round" type="text" placeholder="ttitle">' +
-                '            <div id="typemenu" class="w3-cell w3-col w3-sixth w3-dropdown-hover w3-block">' +
-                '                <button id="dropdown" class="w3-btn">Type</button>';
+                '            <div id="typemenu" class="w3-cell w3-col w3-third w3-dropdown-hover">'+
+                '                Type'+
+                '                <div class="w3-dropdown-content w3-bar-block">';
             var tracker_menu =
-                '                <button id="trackermenu" class="w3-bar-item w3-btn">ttype</button>';
+                '                    <button id="trackermenu" class="w3-bar-item w3-btn">ttype</button>';
             var tracker_footer_rem =
-                '            </div>' +
+            '                    </div>' +
+            '                </div>' +
                 '            <div id="rangeinput" style="display: none">' +
                 '                <input id="startrangeinp" class="w3-input w3-cell w3-col w3-twelfth w3-border w3-round" type="text" placeholder="1">' +
                 '                <input id="endrangeinp"   class="w3-input w3-cell w3-col w3-twelfth w3-border w3-round" type="text" placeholder="10">' +
