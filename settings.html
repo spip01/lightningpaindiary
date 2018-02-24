@@ -55,9 +55,11 @@
         var trackingtypes = ["blood pressure", "colored range", "date", "list", "number",
             "range", "time", "true false", "weather"
         ];
-        var trackinglist = []; // sql
+        var trackinglist = []; // sql, can't reuse names with stored data
+        // new user start pain level, start time, remedies, relief
         trackinglist.push({
-            name: "Pain Level",     // can only change name until first save
+            name: "Pain Level",
+            id: "painlevel",
             type: "colored range",
             start: "1",
             end: "10",
@@ -65,57 +67,67 @@
         });
         trackinglist.push({
             name: "Start Time",
+            id: "starttime",
             type: "date",
             enabled: true
         });
         trackinglist.push({
             name: "End Time",
+            id: "endtime",
             type: "time",
             enabled: true
         });
         trackinglist.push({
             name: "Woke With",
+            id: "wokewith",
             type: "true false",
             enabled: true
         });
         trackinglist.push({
             name: "Pain Location",
+            id: "painlocation",
             type: "list",
             list: ["forehead", "temple", "eyes", "left", "right"],
             enabled: true
         });
         trackinglist.push({
             name: "Pain Type",
+            id: "paintype",
             type: "list",
             list: ["throbbing", "burning", "pressure", "sharp"],
             enabled: true
         });
         trackinglist.push({
             name: "Sensitivities",
+            id: "sensitivities",
             type: "list",
             list: ["light", "sound"],
             enabled: true
         });
-        trackinglist.push({
+        trackinglist.push({ // pull drug list from drugs.com sharing link (link not saved)
             name: "Remedies",
+            id: "remedies",
             type: "list",
             list: ["kepra", "relafin", "haldol", "cogentin", "benadryl", "compazine", "sleep"],
             enabled: true
         });
         trackinglist.push({
             name: "Triggered By",
+            id: "triggeredby",
             type: "list",
             list: ["weather", "smells", "sleep", "light", "sound"],
             enabled: true
         });
         trackinglist.push({
             name: "Warnings",
+            id: "warnings",
             type: "list",
             list: ["aura", "tunnel vision", "light sensitivity", "sound sensitivity", "smell sensitivity"],
             enabled: true
         });
         trackinglist.push({
             name: "Relief Level",
+            id: "relieflevel",
             type: "colored range",
             start: "5",
             end: "1",
@@ -123,6 +135,7 @@
         });
         trackinglist.push({
             name: "Mood Level",
+            id: "moodlevel",
             type: "colored range",
             start: "1",
             end: "10",
@@ -130,6 +143,7 @@
         });
         trackinglist.push({
             name: "Weather",
+            id: "weather",
             type: "weather",
             list: ["temp", "humidity", "pressure"],
             // http://openweathermap.org/api
@@ -138,11 +152,13 @@
         });
         trackinglist.push({
             name: "Blood Pressure",
+            id: "bloodpressure",
             type: "blood pressure",
             enabled: true
         });
         trackinglist.push({
             name: "Weight",
+            id: "weight",
             type: "number",
             enabled: true
         });
@@ -161,8 +177,8 @@
                 '            <button id="edittrackerbtn"  type="button"   class="w3-btn w3-cell w3-twelfth w3-padding-small w3-light-gray w3-tiny w3-border w3-round w3-ripple">Edit</button>' +
                 '            <input id="enabledeletebtns" type="checkbox" class="w3-check w3-cell w3-twelfth" style="width:12px">Enable Delete Buttons</input>' +
                 '        </div>' +
-                '        <div id="info" class="w3-tiny w3-container w3-border-bottom w3-border-gray">'+
-                '            used as checkbox list on entry page, drag to rearrange'+
+                '        <div id="info" class="w3-tiny w3-container w3-border-bottom w3-border-gray">' +
+                '            used as checkbox list on entry page, drag to rearrange' +
                 '        </div>';
             var panel_entries =
                 '        <div id="ent-idname" class "w3-container w3-cell-row">' +
@@ -180,40 +196,23 @@
 
 
             for (var i = 0; i < trackinglist.length; ++i) {
-                var tlistentry = trackinglist[i];
+                var item = trackinglist[i];
 
-                if (tlistentry.type === "list") {
-                    // generate id name
-                    var t = tlistentry.name.split(" ");
-                    var id = "";
-                    for (var k = 0; k < t.length; ++k) {
-                        id = id.concat(t[k]);
-                    }
-                    id = id.toLocaleLowerCase();
-
+                if (item.type === "list") {
                     // panel title
                     var panel = panel_title;
-                    panel = panel.replace("idname", id).replace("idname", id).replace("ttitle", tlistentry.name);
+                    panel = panel.replace("idname", item.id).replace("idname", item.id).replace("ttitle", item.name);
 
                     // panel entries
-                    for (var j = 0; j < tlistentry.list.length; ++j) {
-                        tentryname = tlistentry.list[j];
-
-                        // generate id name
-                        t = tentryname.split(" ");
-                        id = "";
-                        for (var k = 0; k < t.length; ++k) {
-                            id = id.concat(t[k]);
-                        }
-                        id = id.toLocaleLowerCase();
-
+                    for (var j = 0; j < item.list.length; ++j) {
+                        tentryname = item.list[j];
                         var l = panel_entries;
-                        panel += l.replace("idname", id).replace("ttitle", tentryname);
+                        panel += l.replace("idname", tentryname.id).replace("ttitle", tentryname.name);
                     }
 
                     // completed panel
                     var a = panel_footer;
-                    panel += a.replace("idname", id).replace("ttitle", tlistentry.name);
+                    panel += a.replace("idname", item.id).replace("ttitle", item.name);
                     $("#panels").append(panel);
                 }
             }
@@ -226,8 +225,8 @@
                 '            <div class="w3-large w3-cell w3-twothird">ttitle</div>' +
                 '            <input id="enabledeletebtns" type="checkbox" class="w3-check w3-cell w3-twelfth" style="width:12px">Enable Delete Buttons</input>' +
                 '        </div>' +
-                '        <div id="info" class="w3-tiny w3-container w3-border-bottom w3-border-gray">'+
-                '            controls what parameters are tracked on entry page, drag to rearrange, disable with "Use" checkbox'+
+                '        <div id="info" class="w3-tiny w3-container w3-border-bottom w3-border-gray">' +
+                '            controls what parameters are tracked on entry page, drag to rearrange, disable with "Use" checkbox' +
                 '        </div>';
             var tracker_entries =
                 '        <div id="ent-idname" class="w3-cell-row">' +
@@ -244,20 +243,20 @@
             var tracker_footer =
                 '        <div id="foot-idname" class="w3-cell-row">' +
                 '            <input id="addinp" class="w3-cell w3-col w3-quarter w3-input w3-border w3-round" type="text" placeholder="ttitle">' +
-                '            <div id="typemenu" class="w3-cell w3-col w3-third w3-dropdown-hover">'+
-                '                Type'+
+                '            <div id="typemenu" class="w3-cell w3-col w3-third w3-dropdown-hover">' +
+                '                Type' +
                 '                <div class="w3-dropdown-content w3-bar-block">';
             var tracker_menu =
                 '                    <button id="trackermenu" class="w3-bar-item w3-btn">ttype</button>';
             var tracker_footer_rem =
-            '                    </div>' +
-            '                </div>' +
+                '                    </div>' +
+                '                </div>' +
                 '            <div id="rangeinput" style="display: none">' +
                 '                <input id="startrangeinp" class="w3-input w3-cell w3-col w3-twelfth w3-border w3-round" type="text" placeholder="1">' +
                 '                <input id="endrangeinp"   class="w3-input w3-cell w3-col w3-twelfth w3-border w3-round" type="text" placeholder="10">' +
                 '                <br>' +
                 '            </div>' +
-                '            <button id="addbtn" type="button" class="w3-cell w3-btn w3-padding-small w3-twelfth w3-light-gray w3-tiny w3-border w3-round w3-ripple">Add</button>' +
+                '            <button id="addtrackerbtn" type="button" class="w3-cell w3-btn w3-padding-small w3-twelfth w3-light-gray w3-tiny w3-border w3-round w3-ripple">Add</button>' +
                 '        </div>' +
                 '        <br>' +
                 '    </div>';
@@ -268,37 +267,29 @@
             tpanel = tpanel.replace("idname", "trackers").replace("idname", "trackers").replace("ttitle", "Trackers");
 
             for (var i = 0; i < trackinglist.length; ++i) {
-                var tlistentry = trackinglist[i];
-
-                // generate id name
-                var t = tlistentry.name.split(" ");
-                var id = "";
-                for (var j = 0; j < t.length; ++j) {
-                    id = id.concat(t[j]);
-                }
-                id = id.toLocaleLowerCase();
+                var item = trackinglist[i];
 
                 // setup buttons for range & list types
                 t = tracker_entries;
-                if (tlistentry.type === "range" || tlistentry.type === "colored range") {
-                    t = t.replace("ifrange", "").replace("startrange", tlistentry.start).replace("endrange", tlistentry
+                if (item.type === "range" || item.type === "colored range") {
+                    t = t.replace("ifrange", "").replace("startrange", item.start).replace("endrange", item
                         .end);
                 } else {
                     t = t.replace("ifrange", 'style="display: none"');
                 }
 
-                if (tlistentry.type === "list") {
+                if (item.type === "list") {
                     t = t.replace("iflist", "");
                 } else {
                     t = t.replace("iflist", "style='display: none'");
                 }
 
-                tpanel += t.replace("idname", id).replace("idname", id)
-                    .replace("ttitle", tlistentry.name).replace("ttype", tlistentry.type);
+                tpanel += t.replace("idname", item.id).replace("idname", item.id)
+                    .replace("ttitle", item.name).replace("ttype", item.type);
             }
 
             var ta = tracker_footer;
-            tpanel += ta.replace("idname", id).replace("ttitle", "Trackers");
+            tpanel += ta.replace("idname", "trackers").replace("ttitle", "Trackers");
 
             // generate type menu
             for (var i = 0; i < trackingtypes.length; ++i) {
@@ -310,35 +301,27 @@
         }
 
         function generateTabs() {
-            var tab_first = 
-            '       <div id="pnl-account" class="w3-btn w3-mobile w3-hover-dark-gray w3-dark-gray">Account</div>' +
-            '       <div id="pnl-trackers" class="w3-btn w3-mobile w3-hover-dark-gray w3-border-right w3-border-gray">Trackers</div>';
-           var tab_html =
+            var tab_first =
+                '       <div id="pnl-account" class="w3-btn w3-mobile w3-hover-dark-gray w3-dark-gray">Account</div>' +
+                '       <div id="pnl-trackers" class="w3-btn w3-mobile w3-hover-dark-gray w3-border-right w3-border-gray">Trackers</div>';
+            var tab_html =
                 '    <div id="pnl-idname" class="w3-btn w3-mobile w3-hover-dark-gray">ttitle</div>';
 
             $("#tabs").empty();
             $("#tabs").append(tab_first);
 
             for (var i = 0; i < trackinglist.length; ++i) {
-                var tlistentry = trackinglist[i];
-                if (tlistentry.type === "list" && tlistentry.enabled) {
-                    // generate id name
-                    var t = tlistentry.name.split(" ");
-                    var id = "";
-                    for (var j = 0; j < t.length; ++j) {
-                        id = id.concat(t[j]);
-                    }
-                    id = id.toLocaleLowerCase();
-
+                var item = trackinglist[i];
+                if (item.type === "list" && item.enabled) {
                     var t = tab_html;
-                    t = t.replace("idname", id).replace("ttitle", tlistentry.name);
+                    t = t.replace("idname", item.id).replace("ttitle", item.name);
                     $("#tabs").append(t);
                 }
             }
-        }
 
-        function trackerMenu(evt) {
-            //console.log(("select " + $(evt).parent()[0].id + " " + $(evt)[0].id + "<br>"));
+            $("#tabs div").click(function () {
+                openTab(this);
+            });
         }
 
         function openTab(evt) {
@@ -347,6 +330,11 @@
 
             $("#panels").children().hide();
             $("#panels").children("#" + $(evt).prop("id")).show();
+        }
+
+        function activateTab(evt) {
+
+
         }
 
         function dragover(evt) {
@@ -365,41 +353,9 @@
 
             var list = [];
             var found = false;
-            $("#panels #" + pt).children().each(function () {
-                var id = $(this).val("id").prop("id");
-
-                switch (id) {
-                    case dst:
-                        if (!found) {
-                            list.push($("#panels #" + src).detach());
-                            list.push($("#panels #" + dst).detach());
-                            found = true;
-                        }
-                        break;
-                    case src:
-                        if (!found) {
-                            list.push($("#panels #" + dst).detach());
-                            list.push($("#panels #" + src).detach());
-                            found = true;
-                        }
-                        break;
-                    default: //$("#diag").append("add id " + id + "<br>");
-                        list.push($(this).detach());
-                }
-            });
-
-            for (var i = 0; i < list.length; ++i) {
-                $("#panels #" + pt).append(list[i]);
-            }
-        }
-
-        function addEntry(evt) {
-        }
-
-        function deleteEntry(evt) {
-        }
-
-        function editEntry(evt) {
+            $("#panels #" + pt).detach();
+            
+            generateTabs();
         }
 
         function useTracker(evt) {
@@ -407,24 +363,12 @@
 
             for (var i = 0; i < trackinglist.length; ++i) {
                 var item = trackinglist[i];
-                var t = item.name.split(" ");
-                var id = "";
-                for (var j = 0; j < t.length; ++j) {
-                    id = id.concat(t[j]);
-                }
-                id = id.toLocaleLowerCase();
 
-                if (id === pnl) {
+                if (item.id === pnl) {
                     item.enabled = $(evt).prop("checked");
                     generateTabs();
                 }
             }
-        }
-
-        function editTracker(evt) {
-        }
-
-        function newTracker(evt) {
         }
 
         function enableDeleteBtns(evt) {
@@ -435,9 +379,23 @@
                 $("#" + pnl + " #deletebtn").addClass("w3-disabled");
         }
 
+        function addEntry(evt) {}
+
+        function editEntry(evt) {}
+
+        function deleteEntry(evt) {}
+
+        function trackerMenu(evt) {}
+
+        function addTracker(evt) {}
+
         $(document).ready(function () {
-            $("#tabs div").click(function () {
-                openTab(this);
+            //$("#tabs div").click(function () {
+            //    openTab(this);
+            //});
+
+            $("#panels #enabledeletebtns").click(function () {
+                enableDeleteBtns(this);
             });
 
             $("#panels #addbtn").click(function () {
@@ -456,16 +414,16 @@
                 useTracker(this);
             });
 
-            $("#panels #enabledeletebtns").click(function () {
-                enableDeleteBtns(this);
-            });
-
             $("#panels #trackermenu").click(function () {
                 trackerMenu(this);
             });
 
+            $("#panels #addtrackerbtn").click(function () {
+                addTracker(this);
+            });
+
             $("#panels #editlistbtn").click(function () {
-                activatePanel(this);
+                activateTab(this);
             });
 
             $("#panels [draggable|='true']").on({
