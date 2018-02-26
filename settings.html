@@ -10,6 +10,7 @@
     <script src="https://www.w3schools.com/lib/w3.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/xregexp/xregexp-all.js"></script>
 </head>
 
 <style>
@@ -397,12 +398,13 @@
         }
 
         function useTracker(evt) {
-            var pnl = $(evt).parent().prop("id").split("-")[1];
+            var pnl = $(evt).parent().prop("id").replace(/.*?-(.*)/g, "$1");
 
             for (var i = 0; i < trackinglist.length; ++i) {
                 var item = trackinglist[i];
+                id = item.name.replace(" ", "-").replace(" ", "-").replace(" ", "-");
 
-                if (item.id === pnl) {
+                if (id === pnl) {
                     item.enabled = $(evt).prop("checked");
                     generateTabs();
                 }
