@@ -10,14 +10,31 @@
     <script src="https://www.w3schools.com/lib/w3.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="file://C:/Users/spip/Documents/GitHub/lightningpaindiary/index.js"></script>
+    <script src="file://C:/Users/spip/Documents/lightningpaindiary/index.js"></script>
 </head>
 
 <body>
     <div w3-include-html="https://raw.githubusercontent.com/spip01/lightningpaindiary/master/navbar.html"></div>
-    <br>
+ 
+    <div id="javascript" class="w3-container w3-light-gray w3-card">
+        <div class="w3-bar">
+            <a href="index.html" class="w3-btn w3-bar-item w3-mobile w3-hover-dark-gray" style="color: rgb(0, 78, 0);">
+                <i class="fa fa-home" style="font-size:18px"></i>
+                Lightning Pain Diary
+            </a>
+            <a href="about.html" class="w3-btn w3-bar-item w3-mobile w3-hover-dark-gray"> About </a>
+        </div>
+        </br>
 
-    <div data-generated class="w3-card">
+        <div id="javascript" class="w3-containerw3-card w3-light-gray" style="color: rgb(0, 78, 0);">
+            Unfortunately, this page cannot function without javasript.
+            <br>Please add this site to your "allowed" sites located at
+            <br>chrome://settings/content/javascript
+        </div>
+        </br>
+    </div>
+
+    <div id="jssite" data-generated class="w3-card" style="display: none">
         <div id="painbuttons" class="w3-container w3-bar w3-round"></div>
 
         <div data-generated id="detail" class="w3-container w3-small" style="display: none">
@@ -106,6 +123,9 @@
             $("#entrybuttons button").click(function () {
                 entryButtons(this, "entrybuttons");
             });
+
+            $("#javascript").empty();
+            $("#jssite").show();
 
             setup();
         });
