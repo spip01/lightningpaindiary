@@ -89,103 +89,90 @@
     <script>
         w3.includeHTML();
 
-        var trackingtypes = ["blood pressure", "date", "list", "number",
-            "range", "range buttons", "range slider", "time", "true false", "weather"
+        var trackerstypes = ["blood pressure", "date", "list", "number",
+            "range", "range buttons", "range slider", "time", "true/false", "weather"
         ];
-        var trackinglist = []; // sql, can't reuse names with stored data unless confirmed by user for deletion
-        // new user start pain level, start time, remedies, relief
-        trackinglist.push({
-            name: "Pain Level 3",
-            type: "range buttons",
-            start: "1",
-            end: "10",
-            enabled: true
-        });
-        trackinglist.push({
-            name: "Start Time",
-            type: "date",
-            enabled: true
-        });
-        trackinglist.push({
-            name: "End Time",
-            type: "time",
-            enabled: true
-        });
-        trackinglist.push({
-            name: "Woke With",
-            type: "true false",
-            enabled: true
-        });
-        trackinglist.push({
-            name: "Pain Location",
-            type: "list",
-            list: ["forehead", "temple", "eyes", "left", "right"],
-            enabled: true
-        });
-        trackinglist.push({
-            name: "Pain Type",
-            type: "list",
-            list: ["throbbing", "burning", "pressure", "sharp"],
-//            list: [{"item":"throbbing"}, {"item":"burning"}, {"item":"pressure"}, {"item":"sharp"}],
-            enabled: true
-        });
-        trackinglist.push({
-            name: "Sensitivities",
-            type: "list",
-            list: ["light", "sound"],
-            enabled: true
-        });
-        trackinglist.push({
-            name: "Remedies",
-            type: "list",
-            // pull drug list from drugs.com sharing link (link not saved)
-            list: ["kepra", "relafin", "haldol", "cogentin", "benadryl", "compazine", "sleep"],
-            enabled: true
-        });
-        trackinglist.push({
-            name: "Triggered By",
-            type: "list",
-            list: ["weather", "smells", "sleep", "light", "sound"],
-            enabled: true
-        });
-        trackinglist.push({
-            name: "Warnings",
-            type: "list",
-            list: ["aura", "tunnel vision", "light sensitivity", "sound sensitivity", "smell sensitivity"],
-            enabled: true
-        });
-        trackinglist.push({
-            name: "Relief Level",
-            type: "range buttons",
-            start: "5",
-            end: "1",
-            enabled: true
-        });
-        trackinglist.push({
-            name: "Mood Level",
-            type: "range buttons",
-            start: "1",
-            end: "10",
-            enabled: true
-        });
-        trackinglist.push({
-            name: "Weather",
-            type: "weather",
-            list: ["temp", "humidity", "pressure"],
-            // http://openweathermap.org/api
-            // https://developer.yahoo.com/weather/
-            enabled: true
-        });
-        trackinglist.push({
-            name: "Blood Pressure",
-            type: "blood pressure",
-            enabled: true
-        });
-        trackinglist.push({
-            name: "Weight",
-            type: "number",
-            enabled: true
-        });
+        var trackerslist = [ // sql, can't reuse names with stored data unless confirmed by user for deletion
+            // new user start pain level, start time, remedies, relief
+            {
+                name: "Pain Level",
+                type: "range buttons",
+                start: "1",
+                end: "10",
+                enabled: true
+            }, {
+                name: "Start Time",
+                type: "date",
+                enabled: true
+            }, {
+                name: "End Time",
+                type: "time",
+                enabled: true
+            }, {
+                name: "Woke With",
+                type: "true false",
+                enabled: true
+            }, {
+                name: "Pain Location",
+                type: "list",
+                list: ["forehead", "temple", "eyes", "left", "right"],
+                enabled: true
+            }, {
+                name: "Pain Type",
+                type: "list",
+                list: ["throbbing", "burning", "pressure", "sharp"],
+                //            list: [{"item":"throbbing"}, {"item":"burning"}, {"item":"pressure"}, {"item":"sharp"}],
+                enabled: true
+            }, {
+                name: "Sensitivities",
+                type: "list",
+                list: ["light", "sound"],
+                enabled: true
+            }, {
+                name: "Remedies",
+                type: "list",
+                // pull drug list from drugs.com sharing link (link not saved)
+                list: ["kepra", "relafin", "haldol", "cogentin", "benadryl", "compazine", "sleep"],
+                enabled: true
+            }, {
+                name: "Triggered By",
+                type: "list",
+                list: ["weather", "smells", "sleep", "light", "sound"],
+                enabled: true
+            }, {
+                name: "Warnings",
+                type: "list",
+                list: ["aura", "tunnel vision", "light sensitivity", "sound sensitivity", "smell sensitivity"],
+                enabled: true
+            }, {
+                name: "Relief Level",
+                type: "range buttons",
+                start: "5",
+                end: "1",
+                enabled: true
+            }, {
+                name: "Mood Level",
+                type: "range buttons",
+                start: "1",
+                end: "10",
+                enabled: true
+            }, {
+                name: "Weather",
+                type: "weather",
+                list: ["temp", "humidity", "pressure"],
+                // http://openweathermap.org/api
+                // https://developer.yahoo.com/weather/
+                enabled: true
+            }, {
+                name: "Blood Pressure",
+                type: "blood pressure",
+                enabled: true
+            }, {
+                name: "Weight",
+                type: "number",
+                enabled: true
+            }
+        ];
 
         generateTabs();
         generatePanels();
@@ -198,9 +185,9 @@
                 `
                     <div id="pnl-idname" class="w3-container w3-border-gray w3-white w3-small" style="display: none">
                         <div id="ttl-idname" class "w3-container w3-row w3-row-padding">
-                            <div id="ttl-title" class="w3-cell w3-third w3-large">ttitle</div>
-                            <button id="edittrackerbtn" type="button" class="w3-btn w3-cell w3-twelfth w3-light-gray w3-tiny w3-border w3-round w3-ripple">Edit</button>
-                            <input id="enabledeleteck" type="checkbox" class="w3-check w3-cell w3-twelfth" style="width:12px">Enable Delete Buttons</input>
+                            <div id="ttl-title" class="w3-cell w3-col w3-third w3-large">ttitle</div>
+                            <button id="edittrackerbtn" type="button" class="w3-btn w3-cell w3-light-gray w3-tiny w3-border w3-round w3-ripple">Edit</button>
+                            <input id="enabledeleteck" type="checkbox" class="w3-check w3-cell" style="width:12px">Enable Delete Buttons</input>
                         </div>
                         <div id="ttl-info" class="w3-tiny w3-container w3-border-bottom w3-border-gray">
                             used as checkbox list on entry page, drag to rearrange
@@ -209,16 +196,16 @@
             var panel_entries =
                 `
                         <div id="ent-idname" class "w3-container w3-row w3-row-padding">
-                            <div class="w3-container w3-cell w3-third" draggable="true">ttitle</div>
-                            <button id="editbtn" type="button" class="w3-btn w3-cell w3-twelfth w3-light-gray w3-tiny w3-border w3-round w3-ripple">Edit</button>
+                            <div class="w3-container w3-cell w3-col w3-third" draggable="true">ttitle</div>
+                            <button id="editbtn" type="button" class="w3-btn w3-cell w3-light-gray w3-tiny w3-border w3-round w3-ripple">Edit</button>
                             <button id="delbtn" type="button" class="w3-btn w3-cell w3-light-gray w3-tiny w3-border w3-round w3-ripple w3-disabled">Delete</button>
                         </div>
                 `;
             var panel_bottom =
                 `
                         <div id="botm-idname" class "w3-container w3-row w3-row-padding">
-                            <input id="addinp" class="w3-cell w3-third w3-input w3-border w3-round" type="text" placeholder="ttitle">
-                            <button id="addbtn" type="button" class="w3-btn w3-cell w3-twelfth w3-light-gray w3-tiny w3-border w3-round w3-ripple">Add</button>
+                            <input id="addinp" class="w3-cell w3-col w3-third w3-input w3-border w3-round" type="text" placeholder="ttitle">
+                            <button id="addbtn" type="button" class="w3-btn w3-cell w3-cell w3-light-gray w3-tiny w3-border w3-round w3-ripple">Add</button>
                         </div>
                         <br>
                     </div>
@@ -228,30 +215,26 @@
             // w3.displayObject(selector)
             // w3.getHttpObject("customers.js", myFunction);
 
-            for (var i = 0; i < trackinglist.length; ++i) {
-                var item = trackinglist[i];
+            for (var i = 0; i < trackerslist.length; ++i) {
+                var item = trackerslist[i];
 
                 if (item.type === "list") {
                     var id = / /g [Symbol.replace](item.name, "-");
                     var title = /idname/g [Symbol.replace](panel_title, id);
                     title = /ttitle/g [Symbol.replace](title, item.name);
 
-                    var panel = title;
-
-                    // panel entries
-                    for (var j = 0; j < item.list.length; ++j) {
-                        var lid = / /g [Symbol.replace](item.list[j], "-");
-                        var entry = /idname/g [Symbol.replace](panel_entries, lid);
-                        entry = /ttitle/g [Symbol.replace](entry, name);
-
-                        panel += entry;
-                    }
-
                     var bottom = /idname/g [Symbol.replace](panel_bottom, id);
                     bottom = /ttitle/g [Symbol.replace](bottom, item.name);
 
-                    panel += bottom;
-                    $("#panels").append(panel);
+                    // panel entries
+                    var entries = "";
+                    for (var j = 0; j < item.list.length; ++j) {
+                        id = / /g [Symbol.replace](item.list[j], "-");
+                        var entry = /idname/g [Symbol.replace](panel_entries, id);
+                        entries += /ttitle/g [Symbol.replace](entry, item.list[j]);
+                    }
+
+                    $("#panels").append(title + entries + bottom);
                 }
             }
         }
@@ -259,10 +242,10 @@
         function generateTrackerPanel() {
             var tracker_title =
                 `
-                    <div id="pnl-idname" class="w3-container w3-border-gray w3-white w3-small" style="display: none">
-                        <div id="ttl-idname" class "w3-row w3-row-padding">
-                            <div id="ttl-title" class="w3-large w3-cell w3-twothird">ttitle</div>
-                            <input id="enabledeletebtns" type="checkbox" class="w3-check w3-cell w3-twelfth" style="width:12px">Enable Delete Buttons</input>
+                    <div id="pnl-trackers" class="w3-container w3-border-gray w3-white w3-small" style="display: none">
+                        <div id="ttl-trackers" class "w3-row w3-row-padding">
+                            <div id="ttl-title" class="w3-large w3-cell w3-twothird">Trackers</div>
+                            <input id="enabledeleteck" type="checkbox" class="w3-check w3-cell w3-twelfth" style="width:12px">Enable Delete Buttons</input>
                         </div>
                         <div id="ttl-info" class="w3-tiny w3-container w3-border-bottom w3-border-gray">
                             controls what parameters are tracked on entry page, drag to rearrange, disable with "Use" checkbox
@@ -276,16 +259,16 @@
                             <div class="w3-container w3-cell w3-col w3-sixth">
                                 <div ifrange>startrange-endrange</div>&nbsp;
                             </div>
-                            <button id="edittrackerbtn" type="button" class="w3-btn w3-cell w3-twelfthw3-light-gray w3-tiny w3-border w3-round w3-ripple">Edit</button>
-                            <button id="deltrackerbtn" type="button" class="w3-btn w3-cell w3-twelfthw3-light-gray w3-tiny w3-border w3-round w3-ripple w3-disabled">Delete</button>
-                            <input id="usetrackerckb" type="checkbox" class="w3-check w3-cell w3-twelfth" style="width:12px" checked>Use</input>
-                            <button id="editlistbtn" type="button" class="w3-btn w3-cell w3-sixthw3-light-gray w3-tiny w3-border w3-round w3-ripple" iflist>Edit List</button>
+                            <button id="edittrackerbtn" type="button" class="w3-btn w3-cell w3-light-gray w3-tiny w3-border w3-round w3-ripple">Edit</button>
+                            <button id="delbtn" type="button" class="w3-btn w3-cell w3-light-gray w3-tiny w3-border w3-round w3-ripple w3-disabled">Delete</button>
+                            <input id="usetrackerckb" type="checkbox" class="w3-check w3-cell" style="width:12px" checked>Use</input>
+                            <button id="editlistbtn" type="button" class="w3-btn w3-cell w3-light-gray w3-tiny w3-border w3-round w3-ripple" iflist>Edit List</button>
                         </div>
                 `;
             var tracker_bottom =
                 `
-                        <div id="botm-idname" class="w3-row w3-row-padding">
-                            <input id="addinp" class="w3-cell w3-col w3-quarter w3-input w3-border w3-round" type="text" placeholder="ttitle">
+                        <div id="botm-trackers" class="w3-row w3-row-padding">
+                            <input id="addinp" class="w3-cell w3-col w3-quarter w3-input w3-border w3-round" type="text" placeholder="Trackers">
                             <div id="typemenu" class="w3-cell w3-col w3-sixth w3-dropdown-hover">
                                 Type
                                 <div class="w3-dropdown-content w3-bar-block">
@@ -302,45 +285,45 @@
                                 <input id="startrangeinp" class="w3-input w3-cell w3-col w3-twelfth w3-border w3-round" type="text" placeholder="1">
                                 <input id="endrangeinp" class="w3-input w3-cell w3-col w3-twelfth w3-border w3-round" type="text" placeholder="10">
                             </div>
-                            <button id="addtrackerbtn" type="button" class="w3-cell w3-btn w3-twelfth w3-tiny w3-border w3-round w3-ripple">Add</button>
+                            <button id="addtrackerbtn" type="button" class="w3-cell w3-btn w3-light-gray w3-tiny w3-border w3-round w3-ripple">Add</button>
                         </div>
                         <br>
                     </div>
                 `;
 
-            var tpanel = tracker_title.replace("ttitle", "Trackers").replace("idname", "trackers")
-                .replace("idname", "trackers");
+            var tpanel = "";
 
-            for (var i = 0; i < trackinglist.length; ++i) {
-                var item = trackinglist[i];
+            for (var i = 0; i < trackerslist.length; ++i) {
+                var item = trackerslist[i];
 
                 // setup buttons for range & list types
                 var t = tracker_entries;
                 if (item.type.indexOf("range") != -1) {
-                    t = t.replace("ifrange", "").replace("startrange", item.start).replace("endrange", item.end);
-                } else {
-                    t = t.replace("ifrange", 'style="display: none"');
-                }
+                    t = /ifrange/g [Symbol.replace](t, "");
+                    t = /startrange/g [Symbol.replace](t, item.start);
+                    t = /endrange/g [Symbol.replace](t, item.end);
+                } else
+                    t = /ifrange/g [Symbol.replace](t, 'style="display: none"');
 
-                if (item.type === "list") {
-                    t = t.replace("iflist", "");
-                } else {
-                    t = t.replace("iflist", "style='display: none'");
-                }
+                if (item.type === "list")
+                    t = /iflist/g [Symbol.replace](t, "");
+                else
+                    t = /iflist/g [Symbol.replace](t, 'style="display: none"');
 
-                var id = item.name.replace(" ", "-").replace(" ", "-").replace(" ", "-");
-                tpanel += t.replace("ttitle", item.name).replace("ttype", item.type)
-                    .replace("idname", id).replace("idname", id);
+                var id = / /g [Symbol.replace](item.name, "-");
+                t = /idname/g [Symbol.replace](t, id);
+                t = /ttitle/g [Symbol.replace](t, item.name);
+                tpanel += /ttype/g [Symbol.replace](t, item.type);
             }
 
-            tpanel += tracker_bottom.replace("ttitle", "Trackers").replace("idname", "trackers");
+            var tmenu = "";
 
             // generate type menu
-            for (var i = 0; i < trackingtypes.length; ++i) {
-                tpanel += tracker_menu.replace("ttype", trackingtypes[i]);
+            for (var i = 0; i < trackerstypes.length; ++i) {
+                tmenu += /ttype/g [Symbol.replace](tracker_menu, trackerstypes[i]);
             }
 
-            $("#panels").append(tpanel + tracker_bottom_rem);
+            $("#panels").append(tracker_title + tpanel + tracker_bottom + tmenu + tracker_bottom_rem);
         }
 
         function generateTabs() {
@@ -349,24 +332,25 @@
                        <div id="pnl-account" class="w3-btn w3-mobile w3-hover-dark-gray w3-dark-gray">Account</div>
                        <div id="pnl-trackers" class="w3-btn w3-mobile w3-hover-dark-gray w3-border-right w3-border-gray">Trackers</div>
                 `;
-            var tab_html =
+            var tab_entries =
                 `
                     <div id="pnl-idname" class="w3-btn w3-mobile w3-hover-dark-gray">ttitle</div>
                 `;
 
-            var tabs = tab_first;
+            var tabs = "";
 
-            for (var i = 0; i < trackinglist.length; ++i) {
-                var item = trackinglist[i];
+            for (var i = 0; i < trackerslist.length; ++i) {
+                var item = trackerslist[i];
 
                 if (item.type === "list" && item.enabled) {
-                    var id = item.name.replace(" ", "-").replace(" ", "-").replace(" ", "-");
-                    tabs += tab_html.replace("ttitle", item.name).replace("idname", id);
+                    var id = / /g [Symbol.replace](item.name, "-");
+                    var tab = /idname/g [Symbol.replace](tab_entries, id);
+                    tabs += /ttitle/g [Symbol.replace](tab, item.name);
                 }
             }
 
             $("#tabs").empty();
-            $("#tabs").append(tabs);
+            $("#tabs").append(tab_first + tabs);
 
             $("#tabs div").click(function () {
                 openTab(this);
@@ -398,24 +382,26 @@
             var pt = evt.target.parentElement.parentElement.id;
 
             var list = [];
-            var found = false;
+            var found = 0;
             $("#panels #" + pt).children().each(function () {
                 var id = $(this).prop("id");
 
                 switch (id) {
-                    case dst:
-                        if (!found) {
+                    case dst: // move up
+                        if (found == 0) {
                             list.push($("#panels #" + src).detach());
                             list.push($("#panels #" + dst).detach());
-                            found = true;
+                            found = 2;
+                        }
+                        else if (found == 1) {
+                            list.push($("#panels #" + dst).detach());
+                            list.push($("#panels #" + src).detach());
+                            found = 2;
                         }
                         break;
-                    case src:
-                        if (!found) {
-                            list.push($("#panels #" + dst).detach());
-                            list.push($("#panels #" + src).detach());
-                            found = true;
-                        }
+                    case src: // move down
+                        if (found == 0) 
+                            found = 1;
                         break;
                     default: //$("#diag").append("add id " + id + "<br>");
                         list.push($(this).detach());
@@ -430,9 +416,9 @@
         function useTracker(evt) {
             var pnl = $(evt).parent().prop("id").replace(/.*?-(.*)/g, "$1");
 
-            for (var i = 0; i < trackinglist.length; ++i) {
-                var item = trackinglist[i];
-                var id = item.name.replace(" ", "-").replace(" ", "-").replace(" ", "-");
+            for (var i = 0; i < trackerslist.length; ++i) {
+                var item = trackerslist[i];
+                var id = / /g [Symbol.replace](item.name, "-");
 
                 if (id === pnl) {
                     item.enabled = $(evt).prop("checked");
