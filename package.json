@@ -15,5 +15,6 @@
   "bugs": {
     "url": "https://github.com/spip01/lightningpaindiary/issues"
   },
-  "homepage": "https://github.com/spip01/lightningpaindiary#readme"
+  "homepage": "https://github.com/spip01/lightningpaindiary#readme",
+  "dependencies": {}
 }
