@@ -126,6 +126,7 @@
             name: "Pain Type",
             type: "list",
             list: ["throbbing", "burning", "pressure", "sharp"],
+//            list: [{"item":"throbbing"}, {"item":"burning"}, {"item":"pressure"}, {"item":"sharp"}],
             enabled: true
         });
         trackinglist.push({
@@ -224,22 +225,32 @@
                 `;
 
 
+            // w3.displayObject(selector)
+            // w3.getHttpObject("customers.js", myFunction);
+
             for (var i = 0; i < trackinglist.length; ++i) {
                 var item = trackinglist[i];
 
                 if (item.type === "list") {
-                    var id = item.name.replace(" ", "-").replace(" ", "-").replace(" ", "-");
-                    var panel = panel_title.replace("ttitle", item.name).replace("idname", id).replace("idname", id);
+                    var id = / /g [Symbol.replace](item.name, "-");
+                    var title = /idname/g [Symbol.replace](panel_title, id);
+                    title = /ttitle/g [Symbol.replace](title, item.name);
+
+                    var panel = title;
 
                     // panel entries
                     for (var j = 0; j < item.list.length; ++j) {
-                        var name = item.list[j];
-                        var lid = name.replace(" ", "-").replace(" ", "-").replace(" ", "-");
+                        var lid = / /g [Symbol.replace](item.list[j], "-");
+                        var entry = /idname/g [Symbol.replace](panel_entries, lid);
+                        entry = /ttitle/g [Symbol.replace](entry, name);
 
-                        panel += panel_entries.replace("ttitle", name).replace("idname", lid);
+                        panel += entry;
                     }
 
-                    panel += panel_bottom.replace("ttitle", item.name).replace("idname", id);
+                    var bottom = /idname/g [Symbol.replace](panel_bottom, id);
+                    bottom = /ttitle/g [Symbol.replace](bottom, item.name);
+
+                    panel += bottom;
                     $("#panels").append(panel);
                 }
             }
