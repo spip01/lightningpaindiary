@@ -1,138 +1,65 @@
 <!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <title>Lightning Pain Diary</title>
-    <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+<html>
+  <head>
     <meta charset="utf-8">
-    <meta id="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-    <script src="https://www.w3schools.com/lib/w3.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="index.js"></script>
-</head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Welcome to Firebase Hosting</title>
 
-<body>
-    <div w3-include-html="https://raw.githubusercontent.com/spip01/lightningpaindiary/master/navbar.html"></div>
- 
-    <div id="javascript" class="w3-container w3-light-gray w3-card">
-        <div class="w3-bar">
-            <a href="index.html" class="w3-btn w3-bar-item w3-mobile w3-hover-dark-gray" style="color: rgb(0, 78, 0);">
-                <i class="fa fa-home" style="font-size:18px"></i>
-                Lightning Pain Diary
-            </a>
-            <a href="about.html" class="w3-btn w3-bar-item w3-mobile w3-hover-dark-gray"> About </a>
-        </div>
-        </br>
+    <!-- update the version number as needed -->
+    <script defer src="/__/firebase/4.10.1/firebase-app.js"></script>
+    <!-- include only the Firebase features as you need -->
+    <script defer src="/__/firebase/4.10.1/firebase-auth.js"></script>
+    <script defer src="/__/firebase/4.10.1/firebase-database.js"></script>
+    <script defer src="/__/firebase/4.10.1/firebase-messaging.js"></script>
+    <script defer src="/__/firebase/4.10.1/firebase-storage.js"></script>
+    <!-- initialize the SDK after all desired features are loaded -->
+    <script defer src="/__/firebase/init.js"></script>
 
-        <div id="javascript" class="w3-containerw3-card w3-light-gray" style="color: rgb(0, 78, 0);">
-            Unfortunately, this page cannot function without javasript.
-            <br>Please add this site to your "allowed" sites located at
-            <br>chrome://settings/content/javascript
-        </div>
-        </br>
+    <style media="screen">
+      body { background: #ECEFF1; color: rgba(0,0,0,0.87); font-family: Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
+      #message { background: white; max-width: 360px; margin: 100px auto 16px; padding: 32px 24px; border-radius: 3px; }
+      #message h2 { color: #ffa100; font-weight: bold; font-size: 16px; margin: 0 0 8px; }
+      #message h1 { font-size: 22px; font-weight: 300; color: rgba(0,0,0,0.6); margin: 0 0 16px;}
+      #message p { line-height: 140%; margin: 16px 0 24px; font-size: 14px; }
+      #message a { display: block; text-align: center; background: #039be5; text-transform: uppercase; text-decoration: none; color: white; padding: 16px; border-radius: 4px; }
+      #message, #message a { box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); }
+      #load { color: rgba(0,0,0,0.4); text-align: center; font-size: 13px; }
+      @media (max-width: 600px) {
+        body, #message { margin-top: 0; background: white; box-shadow: none; }
+        body { border-top: 16px solid #ffa100; }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="message">
+      <h2>Welcome</h2>
+      <h1>Firebase Hosting Setup Complete</h1>
+      <p>You're seeing this because you've successfully setup Firebase Hosting. Now it's time to go build something extraordinary!</p>
+      <a target="_blank" href="https://firebase.google.com/docs/hosting/">Open Hosting Documentation</a>
     </div>
-
-    <div id="jssite" data-generated class="w3-card" style="display: none">
-        <div id="painbuttons" class="w3-container w3-bar w3-round"></div>
-
-        <div data-generated id="detail" class="w3-container w3-small" style="display: none">
-
-            <header class="w3-container w3-light-gray" style="color: rgb(0, 78, 0);">
-                Date & Time
-            </header>
-            <input id="entryDate" class="w3-border w3-round" type="datetime-local">
-            <label for="entryDate" class="w3 - small">Diary Entry Date</label>
-            <br>
-
-            <div id="medications"></div>
-            <div id="painlocation"></div>
-            <div id="paintype"></div>
-            <div id="triggerlist"></div>
-            <div id="warninglist"></div>
-
-            <div id="reliefbuttons" class="w3-container w3-bar w3-round"></div>
-            <div id="moodbuttons" class="w3-container w3-bar w3-round"></div>
-
-            <div id="entrybuttons">
-                <button type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Update</button>
-                <button type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">New</button>
-                <button type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Cancel</button>
-                <button type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Make Default</button>
-            </div>
-        </div>
-        <br>
-
-    </div>
-    <br>
-
-    <p id="diag"></p>
-    <p id="diag2"></p>
+    <p id="load">Firebase SDK Loading&hellip;</p>
 
     <script>
-        w3.includeHTML();
+      document.addEventListener('DOMContentLoaded', function() {
+        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+        // // The Firebase SDK is initialized and available here!
+        //
+        // firebase.auth().onAuthStateChanged(user => { });
+        // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
+        // firebase.messaging().requestPermission().then(() => { });
+        // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
+        //
+        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
 
-        var neednew = true;
-
-        // entry values
-        var createdDate = new Date();
-        var changedDate = new Date();
-        var entryDate = new Date();
-        var painlevel = "";
-        var relieflevel = "";
-        var moodlevel = "";
-
-        var medicines = [];
-        var triggers = [];
-        var painlocation = [];
-        var paintype = [];
-        var warnings = [];
-
-        // get these from db
-        var medlist = ["kepra", "relafin", "haldol", "cogentin", "benadryl", "compazine"];
-        var triggerlist = ["weather", "smells", "sleep"];
-        var locationlist = ["forehead", "temple", "eyes", "left", "right", "all"];
-        var typelist = ["throbbing", "burning", "pressure", "sharp"];
-        var warninglist = ["aura"];
-
-        // previous entry values
-        var createdDateOld = createdDate;
-        var changedDateOld = changedDate;
-        var entryDateOld = entryDate;
-        var painlevelOld = painlevel;
-        var relieflevelOld = relieflevel;
-        var moodlevelOld = moodlevel;
-
-        var medicinesOld = medicines;
-        var triggersOld = triggers;
-        var painlocationOld = painlocation;
-        var paintypeOld = paintype;
-        var warningsOld = warnings;
-
-        $(document).ready(function () {
-            $("#painbuttons button").click(function () {
-                painlevel = painButtons(this, "painbuttons");
-            });
-            $("#reliefbuttons button").click(function () {
-                relieflevel = procButtons(this, "reliefbuttons");
-            });
-            $("#moodbuttons button").click(function () {
-                moodlevel = procButtons(this, "moodbuttons");
-            });
-            $("#entrybuttons button").click(function () {
-                entryButtons(this, "entrybuttons");
-            });
-
-            $("#javascript").empty();
-            $("#jssite").show();
-
-            setup();
-        });
+        try {
+          let app = firebase.app();
+          let features = ['auth', 'database', 'messaging', 'storage'].filter(feature => typeof app[feature] === 'function');
+          document.getElementById('load').innerHTML = `Firebase SDK loaded with ${features.join(', ')}`;
+        } catch (e) {
+          console.error(e);
+          document.getElementById('load').innerHTML = 'Error loading the Firebase SDK, check the console.';
+        }
+      });
     </script>
-
-    <div w3-include-html="https://raw.githubusercontent.com/spip01/lightningpaindiary/master/footer.html"></div>
-    <!-- div w3-include-html="file://C:\Users\spip\Documents\GitHub\lightningpaindiary\footer.html"></div -->
-</body>
-
+  </body>
 </html>
