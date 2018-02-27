@@ -110,7 +110,7 @@
                 enabled: true
             }, {
                 name: "Woke With",
-                type: "true false",
+                type: "true/false",
                 enabled: true
             }, {
                 name: "Pain Location",
@@ -174,46 +174,127 @@
             }
         ];
 
-        generateTabs();
-        generatePanels();
-        generateTrackerPanel();
-
         /******* parent of inputs always has idname *******/
+        var head =
+            `
+                <div id="pnl-idname" class="w3-container w3-border-gray w3-white w3-small" style="display: none">
+                    <div id="ttl-idname" class "w3-row w3-row-padding">
+                        <div id="ttl-title" class="w3-large w3-cell w3-third">ttitle</div>
+                        <button id="edittrackerbtn" type="button" class="w3-btn w3-cell w3-light-gray w3-tiny w3-border w3-round w3-ripple" ifpanel>Edit</button>
+                        <input id="enabledeleteck" type="checkbox" class="w3-check w3-cell" style="width:12px">Enable Delete Buttons</input>
+                    </div>
+                    <div class="w3-tiny w3-border-bottom w3-border-gray" ifpanel>
+                        controls what data is used as checkboxes and saved on the entry page. drag to rearrange which changes order on entry page.
+                        deleting items doesn't delete any saved data just the controls. the data can be recovered by re-adding the item.
+                    </div>
+                    <div class="w3-tiny w3-border-bottom w3-border-gray" iftracker>
+                        controls sections displayed and saved on the entry page. drag to rearrange which changes order on entry page.
+                        deleting items doesn't delete any saved data just the controls. the data can be recovered by re-adding the item.
+                    </div>
+            `;
+
+        var entry =
+            `
+                    <div id="ent-idname" class="w3-container w3-border-bottom w3-border-light-gray w3-row w3-row-padding">
+                        <div class="w3-cell w3-col w3-quarter" draggable="true">ttitle</div>
+                        <div iftracker>
+                            <div class="w3-cell w3-col w3-sixth">ttype</div>
+                            <div class="w3-container w3-cell w3-col w3-sixth">
+                                <div ifrange>startrange-endrange</div>&nbsp;
+                            </div>
+                        </div>
+                        <button id="editbtn" type="button" class="w3-btn w3-cell w3-light-gray w3-tiny w3-border w3-round w3-ripple">Edit</button>
+                        <button id="delbtn" type="button" class="w3-btn w3-cell w3-light-gray w3-tiny w3-border w3-round w3-ripple w3-disabled">Delete</button>
+                    </div>
+            `;
+
+        var tail =
+            `
+                    <div id="botm-idname" class="w3-container w3-border-top w3-border-gray w3-row w3-row-padding">
+                        <br>
+                        <input id="addinp" class="w3-cell w3-col w3-quarter w3-input w3-border w3-round" type="text" placeholder="ttitle">
+                        <div class="w3-cell w3-col w3-sixth w3-dropdown-hover" iftracker>
+                            Type
+                            <div id="mitem-idname" class="w3-dropdown-content w3-bar-block">
+            `;
+        var tail_tracker_menu =
+            `
+                                <button id="menuitem" class="w3-bar-item w3-btn">ttype</button>
+            `
+        var tail_end =
+        `
+                            </div>
+                        </div>
+                        <div id="rnge-tracker" ifrange">
+                            <input id="startrangeinp" class="w3-input w3-cell w3-col w3-twelfth w3-border w3-round" type="text" placeholder="1">
+                            <input id="endrangeinp" class="w3-input w3-cell w3-col w3-twelfth w3-border w3-round" type="text" placeholder="10">
+                        </div>
+                        <button id="addtrackerbtn" type="button" class="w3-cell w3-btn w3-light-gray w3-tiny w3-border w3-round w3-ripple">Add</button>
+                        <button id="recovertrackerbtn" type="button" class="w3-cell w3-btn w3-light-gray w3-tiny w3-border w3-round w3-ripple">Recover</button>
+                    </div>
+                    <br>
+                </div>
+            `;
+
+        var tab_head =
+            `
+                    <div id="pnl-account" class="w3-btn w3-mobile w3-hover-dark-gray w3-dark-gray">Account</div>
+                    <div id="pnl-tracker" class="w3-btn w3-mobile w3-hover-dark-gray w3-border-right w3-border-gray">Tracker</div>
+                `;
+        var tab_entries =
+            `
+                    <div id="pnl-idname" class="w3-btn w3-mobile w3-hover-dark-gray">ttitle</div>
+                `;
+
+
+        function generateTrackerPanel() {
+            var id = "tracker";
+            var name = "Tracker";
+
+            var ttitle = /idname/g [Symbol.replace](head, id);
+            ttitle = /ttitle/g [Symbol.replace](ttitle, name);
+            ttitle = /ifpanel/g [Symbol.replace](ttitle, "style='display: none'");
+            ttitle = /iftracker/g [Symbol.replace](ttitle, "");
+
+            var tentry = "";
+
+            for (var i = 0; i < trackerslist.length; ++i) {
+                var item = trackerslist[i];
+                var iid = / /g [Symbol.replace](item.name, "-");
+
+                var t = entry;
+                t = /idname/g [Symbol.replace](t, iid);
+                t = /ttitle/g [Symbol.replace](t, item.name);
+                t = /ttype/g [Symbol.replace](t, item.type);
+                t = /iftracker/g [Symbol.replace](t, "");
+
+                if (item.type.indexOf("range") != -1) {
+                    t = /ifrange/g [Symbol.replace](t, "");
+                    t = /startrange/g [Symbol.replace](t, item.start);
+                    t = /endrange/g [Symbol.replace](t, item.end);
+                } else
+                    t = /ifrange/g [Symbol.replace](t, 'style="display: none"');
+
+                tentry += t;
+            }
+
+            var tmenu = "";
+
+            // generate type menu
+            for (var i = 0; i < trackerstypes.length; ++i) {
+                tmenu += /ttype/g [Symbol.replace](tail_tracker_menu, trackerstypes[i]);
+            }
+
+            var ttail = /idname/g [Symbol.replace](tail, id);
+            ttail = /ttitle/g [Symbol.replace](ttail, name);
+            ttail = /iftracker/g [Symbol.replace](ttail, "");
+
+            var tend = /ifrange/g [Symbol.replace](tail_end, 'style="display: none"');
+
+            $("#panels").append(ttitle + tentry + ttail + tmenu + tend);
+        }
 
         function generatePanels() {
-            var panel_title =
-                `
-                    <div id="pnl-idname" class="w3-container w3-border-gray w3-white w3-small" style="display: none">
-                        <div id="ttl-idname" class "w3-container w3-row w3-row-padding">
-                            <div id="ttl-title" class="w3-cell w3-col w3-third w3-large">ttitle</div>
-                            <button id="edittrackerbtn" type="button" class="w3-btn w3-cell w3-light-gray w3-tiny w3-border w3-round w3-ripple">Edit</button>
-                            <input id="enabledeleteck" type="checkbox" class="w3-check w3-cell" style="width:12px">Enable Delete Buttons</input>
-                        </div>
-                        <div id="ttl-info" class="w3-tiny w3-container w3-border-bottom w3-border-gray">
-                            controls what data is used as checkboxes and saved on the entry page. drag to rearrange which changes order on entry page.
-                            deleting items doesn't delete any saved data just the controls. the data can be recovered by re-adding the item.
-                        </div>
-                `;
-            var panel_entries =
-                `
-                        <div id="ent-idname" class "w3-row w3-row-padding">
-                            <div class="w3-container w3-cell w3-col w3-third" draggable="true">ttitle</div>
-                            <button id="editbtn" type="button" class="w3-btn w3-cell w3-light-gray w3-tiny w3-border w3-round w3-ripple">Edit</button>
-                            <button id="delbtn" type="button" class="w3-btn w3-cell w3-light-gray w3-tiny w3-border w3-round w3-ripple w3-disabled">Delete</button>
-                        </div>
-                `;
-            var panel_bottom =
-                `
-                        <div id="botm-idname" class "w3-row w3-row-padding">
-                            <input id="addinp" class="w3-cell w3-col w3-third w3-input w3-border w3-round" type="text" placeholder="ttitle">
-                            <button id="addbtn" type="button" class="w3-btn w3-cell w3-cell w3-light-gray w3-tiny w3-border w3-round w3-ripple">Add</button>
-                            <button id="recoverbtn" type="button" class="w3-cell w3-btn w3-light-gray w3-tiny w3-border w3-round w3-ripple">Recover</button>
-                        </div>
-                        <br>
-                    </div>
-                `;
-
-
             // w3.displayObject(selector)
             // w3.getHttpObject("customers.js", myFunction);
 
@@ -222,123 +303,37 @@
 
                 if (item.type === "list") {
                     var id = / /g [Symbol.replace](item.name, "-");
-                    var title = /idname/g [Symbol.replace](panel_title, id);
-                    title = /ttitle/g [Symbol.replace](title, item.name);
+                    var name = item.name;
 
-                    var bottom = /idname/g [Symbol.replace](panel_bottom, id);
-                    bottom = /ttitle/g [Symbol.replace](bottom, item.name);
+                    var ttitle = /idname/g [Symbol.replace](head, id);
+                    ttitle = /ttitle/g [Symbol.replace](ttitle, name);
+                    ttitle = /ifpanel/g [Symbol.replace](ttitle, "");
+                    ttitle = /iftracker/g [Symbol.replace](ttitle, "style='display: none'");
 
-                    // panel entries
-                    var entries = "";
+                    tentry = "";
                     for (var j = 0; j < item.list.length; ++j) {
-                        id = / /g [Symbol.replace](item.list[j], "-");
-                        var entry = /idname/g [Symbol.replace](panel_entries, id);
-                        entries += /ttitle/g [Symbol.replace](entry, item.list[j]);
+                        var t = entry;
+                        var iid = / /g [Symbol.replace](item.list[j], "-");
+                        t = /idname/g [Symbol.replace](t, iid);
+                        t = /ttitle/g [Symbol.replace](t, item.list[j]);
+                        t = /iftracker/g [Symbol.replace](t, "style='display: none'");
+                        t = /ifrange/g [Symbol.replace](t, "style='display: none'");
+
+                        tentry += t;
                     }
 
-                    $("#panels").append(title + entries + bottom);
+                    var ttail = /idname/g [Symbol.replace](tail, id);
+                    ttail = /ttitle/g [Symbol.replace](ttail, name);
+                    ttail = /iftracker/g [Symbol.replace](ttail, 'style="display: none"');
+
+                    var tend = /ifrange/g [Symbol.replace](tail_end, 'style="display: none"');
+
+                    $("#panels").append(ttitle + tentry + ttail + tend);
                 }
             }
         }
 
-        function generateTrackerPanel() {
-            var tracker_title =
-                `
-                <div id="pnl-trackers" class="w3-container w3-border-gray w3-white w3-small" style="display: none">
-                        <div id="ttl-trackers" class "w3-row w3-row-padding">
-                            <div id="ttl-title" class="w3-large w3-cell w3-twothird">Trackers</div>
-                            <input id="enabledeleteck" type="checkbox" class="w3-check w3-cell" style="width:12px">Enable Delete Buttons</input>
-                        </div>
-                        <div id="ttl-info" class="w3-tiny w3-container w3-border-bottom w3-border-gray">
-                            controls sections displayed and saved on the entry page. drag to rearrange which changes order on entry page.
-                            deleting items doesn't delete any saved data just the controls. the data can be recovered by re-adding the item.
-                        </div>
-                `;
-            var tracker_entries =
-                `
-                        <div id="ent-idname" class="w3-row w3-row-padding">
-                            <div class="w3-cell w3-col w3-quarter" draggable="true">ttitle</div>
-                            <div class="w3-cell w3-col w3-sixth">ttype</div>
-                            <div class="w3-container w3-cell w3-col w3-sixth">
-                                <div ifrange>startrange-endrange</div>&nbsp;
-                            </div>
-                            <button id="editbtn" type="button" class="w3-btn w3-cell w3-light-gray w3-tiny w3-border w3-round w3-ripple">Edit</button>
-                            <button id="delbtn" type="button" class="w3-btn w3-cell w3-light-gray w3-tiny w3-border w3-round w3-ripple w3-disabled">Delete</button>
-                        </div>
-                `;
-            var tracker_bottom =
-                `
-                        <div id="botm-trackers" class="w3-row w3-row-padding">
-                            <input id="addinp" class="w3-cell w3-col w3-quarter w3-input w3-border w3-round" type="text" placeholder="Trackers">
-                            <div id="typemenu" class="w3-cell w3-col w3-sixth w3-dropdown-hover">
-                                Type
-                                <div class="w3-dropdown-content w3-bar-block">
-                `;
-            var tracker_menu =
-                `
-                                    <button id="trackermenu" class="w3-bar-item w3-btn">ttype</button>
-                `;
-            var tracker_bottom_rem =
-                `
-                                </div>
-                            </div>
-                            <div id="rangeinput" style="display: none">
-                                <input id="startrangeinp" class="w3-input w3-cell w3-col w3-twelfth w3-border w3-round" type="text" placeholder="1">
-                                <input id="endrangeinp" class="w3-input w3-cell w3-col w3-twelfth w3-border w3-round" type="text" placeholder="10">
-                            </div>
-                            <button id="addtrackerbtn" type="button" class="w3-cell w3-btn w3-light-gray w3-tiny w3-border w3-round w3-ripple">Add</button>
-                            <button id="recovertrackerbtn" type="button" class="w3-cell w3-btn w3-light-gray w3-tiny w3-border w3-round w3-ripple">Recover</button>
-                        </div>
-                        <br>
-                    </div>
-                `;
-
-            var tpanel = "";
-
-            for (var i = 0; i < trackerslist.length; ++i) {
-                var item = trackerslist[i];
-
-                // setup buttons for range & list types
-                var t = tracker_entries;
-                if (item.type.indexOf("range") != -1) {
-                    t = /ifrange/g [Symbol.replace](t, "");
-                    t = /startrange/g [Symbol.replace](t, item.start);
-                    t = /endrange/g [Symbol.replace](t, item.end);
-                } else
-                    t = /ifrange/g [Symbol.replace](t, 'style="display: none"');
-
-                if (item.type === "list")
-                    t = /iflist/g [Symbol.replace](t, "");
-                else
-                    t = /iflist/g [Symbol.replace](t, 'style="display: none"');
-
-                var id = / /g [Symbol.replace](item.name, "-");
-                t = /idname/g [Symbol.replace](t, id);
-                t = /ttitle/g [Symbol.replace](t, item.name);
-                tpanel += /ttype/g [Symbol.replace](t, item.type);
-            }
-
-            var tmenu = "";
-
-            // generate type menu
-            for (var i = 0; i < trackerstypes.length; ++i) {
-                tmenu += /ttype/g [Symbol.replace](tracker_menu, trackerstypes[i]);
-            }
-
-            $("#panels").append(tracker_title + tpanel + tracker_bottom + tmenu + tracker_bottom_rem);
-        }
-
         function generateTabs() {
-            var tab_first =
-                `
-                       <div id="pnl-account" class="w3-btn w3-mobile w3-hover-dark-gray w3-dark-gray">Account</div>
-                       <div id="pnl-trackers" class="w3-btn w3-mobile w3-hover-dark-gray w3-border-right w3-border-gray">Trackers</div>
-                `;
-            var tab_entries =
-                `
-                    <div id="pnl-idname" class="w3-btn w3-mobile w3-hover-dark-gray">ttitle</div>
-                `;
-
             var tabs = "";
 
             for (var i = 0; i < trackerslist.length; ++i) {
@@ -352,7 +347,7 @@
             }
 
             $("#tabs").empty();
-            $("#tabs").append(tab_first + tabs);
+            $("#tabs").append(tab_head + tabs);
 
             $("#tabs div").click(function () {
                 openTab(this);
@@ -366,8 +361,6 @@
             $("#panels").children().hide();
             $("#panels").children("#" + $(evt).prop("id")).show();
         }
-
-        function activateTab(evt) {}
 
         function dragover(evt) {
             evt.preventDefault();
@@ -394,15 +387,14 @@
                             list.push($("#panels #" + src).detach());
                             list.push($("#panels #" + dst).detach());
                             found = 2;
-                        }
-                        else if (found == 1) {
+                        } else if (found == 1) {
                             list.push($("#panels #" + dst).detach());
                             list.push($("#panels #" + src).detach());
                             found = 2;
                         }
                         break;
                     case src: // move down
-                        if (found == 0) 
+                        if (found == 0)
                             found = 1;
                         break;
                     default: //$("#diag").append("add id " + id + "<br>");
@@ -437,23 +429,12 @@
                 $("#" + pnl + " #delbtn").addClass("w3-disabled");
         }
 
-        function addEntry(evt) {}
-
-        function editEntry(evt) {}
-
-        function deleteEntry(evt) {}
-
-        function addTracker(evt) {}
-
-        function editTracker(evt) {}
-
-        function deleteTracker(evt) {}
-
-        function trackerMenu(evt) {}
-
-        function addTracker(evt) {}
 
         $(document).ready(function () {
+            generateTabs();
+            generatePanels();
+            generateTrackerPanel();
+
             //$("#tabs div").click(function () {
             //    openTab(this);
             //});
@@ -462,40 +443,8 @@
                 enableDeleteBtns(this);
             });
 
-            $("#panels #addbtn").click(function () {
-                addEntry(this);
-            });
-
-            $("#panels #editbtn").click(function () {
-                editEntry(this);
-            });
-
-            $("#panels #delbtn").click(function () {
-                deleteEntry(this);
-            });
-
             $("#panels #usetrackerckb").click(function () {
                 useTracker(this);
-            });
-
-            $("#panels #trackermenu").click(function () {
-                trackerMenu(this);
-            });
-
-            $("#panels #addtrackerbtn").click(function () {
-                addTracker(this);
-            });
-
-            $("#panels #edittrackerbtn").click(function () {
-                editTracker(this);
-            });
-
-            $("#panels #deltrackerbtn").click(function () {
-                delTracker(this);
-            });
-
-            $("#panels #editlistbtn").click(function () {
-                activateTab(this);
             });
 
             $("#javascript").empty();
