@@ -4,19 +4,10 @@ header("Access-Control-Allow-Origin: *");
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-
-    <nav class="navbar navbar-expand-sm bg-light background-gray">
+    <nav class="navbar navbar-expand-sm navbar-expand-md navbar-expand-lg background-gray">
         <ul class="navbar-nav">
             <li class="nav-item">
-                <a class="nav-link" href="about.html" class="btn">about</a>
-            </li>
-        </ul>
-    </nav>
-
-    <nav class="navbar navbar-expand-sm bg-light background-gray">
-        <ul class="navbar-nav">
-            <li class="nav-item">
-                <a href="index.html" class="w3-btn w3-bar-item w3-mobile w3-hover-dark-gray" style="color: rgb(0, 78, 0);">
+                <a href="index.html" class="btn" style="color: rgb(0, 78, 0);">
                     <i class="fa fa-home" style="font-size:18px"></i>
                     Lightning Pain Diary
                 </a>
@@ -28,10 +19,10 @@ header("Access-Control-Allow-Origin: *");
                 <a href="login.html" class="btn">Login</a>
             </li>
             <li class="nav-item">
-                <a href="settings.html" class="btn"></a>
+                <a href="settings.html" class="btn">
+                    <i class="btn fa fa-cog" style="font-size:18px"></i>
+                </a>
             </li>
-            <li>
-                <i class="btn fa fa-cog" style="font-size:18px"></i>
         </ul>
     </nav>
     <br>
@@ -40,6 +31,6 @@ header("Access-Control-Allow-Origin: *");
         var i = document.documentURI;
 
         $(document).ready(function () {
-            $("a [href |=" + document.documentURI).addClass("w3-dark-gray");
+            $("a [href |=" + document.documentURI).addClass("background-dark-gray");
         });
     </script>
