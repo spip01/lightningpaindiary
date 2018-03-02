@@ -32,41 +32,40 @@
         background-color: #c0c0c0;
     }
 
-    .btn-grey-green {
+    .btn-green {
         color: #008000;
-        background-color: #f0f0f0;
+        background-color: #eaf0ea;
         border-color: #008000
     }
 
-    .btn-grey-green:hover {
+    .btn-green:hover {
         color: #008000;
-        background-color: #f0f0f0;
+        background-color: #eaf0ea;
         border-color: #008000
     }
 
-    .btn-grey-green.focus,
-    .btn-grey-green:focus {
+    .btn-green.focus,
+    .btn-green:focus {
         box-shadow: 0 0 0 .2rem rgba(0, 60, 0, .5)
     }
 
-    .btn-grey-green.disabled,
-    .btn-grey-green:disabled {
+    .btn-green.disabled,
+    .btn-green:disabled {
         color: #008000;
-        background-color: #f0f0f0;
+        background-color: #eaf0ea;
         border-color: #008000
     }
 
-    .btn-grey-green:not(:disabled):not(.disabled).active,
-    .btn-grey-green:not(:disabled):not(.disabled):active,
-    .show>.btn-grey-green.dropdown-toggle {
-        color: #008000fff;
-        background-color: #f0f0f0;
+    .btn-green:not(:disabled):not(.disabled).active,
+    .btn-green:not(:disabled):not(.disabled):active,
+    .show>.btn-green.dropdown-toggle {
+        background-color: #eaf0ea;
         border-color: #008000
     }
 
-    .btn-grey-green:not(:disabled):not(.disabled).active:focus,
-    .btn-grey-green:not(:disabled):not(.disabled):active:focus,
-    .show>.btn-grey-green.dropdown-toggle:focus {
+    .btn-green:not(:disabled):not(.disabled).active:focus,
+    .btn-green:not(:disabled):not(.disabled):active:focus,
+    .show>.btn-green.dropdown-toggle:focus {
         box-shadow: 0 0 0 .2rem rgba(0, 60, 0, .5)
     }
 </style>
@@ -99,7 +98,7 @@
             <div id="pnl-account" class="card card-body d-flex" style="display: block">
                 <h4 class="card-title border-bottom">Account</h4>
 
-                <div class="container-fluid">
+                <div class="container-fluid pad-bottom">
                     <div class="row">
                         load medicines from drugs.com
                     </div>
@@ -107,18 +106,17 @@
                     <div class="container-fluid">
                         <div class="row">
                             <input id="drugs-com" type="text" class="rounded col-lg-3 col-md-3 col-sm-3" placeholder="drugs.com/mn/xxxxx">&nbsp;
-                            <button id="loaddrugscom" type="button" class="btn btn-sm btn-grey-green col-lg-2 col-md-2 col-sm-2">Load</button>
+                            <button id="loaddrugscom" type="button" class="btn btn-sm btn-green col-lg-2 col-md-2 col-sm-2">Load</button>
                         </div>
                     </div>
                 </div>
-                <br>
 
                 <label>
                     <input id="reminderbtn" type="checkbox"> Complete these entries or notify at end of day</input>
                 </label>
 
                 <!-- generated ck box for each tracked item, hitting submit closes all entries, notification would only happen by pressing "pain level" to create and then leaving -->
-                <div id="build-notifications" class="container-fluid">
+                <div id="build-notifications" class="container-fluid pad-bottom">
                     <div class="row">
                         <div class="col-lg-3 col-md-3 col-sm-3">
                             <label>
@@ -132,7 +130,6 @@
                         </div>
                     </div>
                 </div>
-                <br>
 
                 <label>
                     <input id="notificationbtn" type="checkbox"> Complete entry reminder notification via: (this is the only personal data saved)</input>
@@ -166,7 +163,6 @@
             </div>
         </div>
     </div>
-
 
     <div id="diag"></div>
 
@@ -267,7 +263,7 @@
                 <div id="pnl-idname" class="card card-body d-flex" style="display: none">
                     <div id="ttl-idname">
                         <div id="ttl-title" class="card-title"><h4>ttitle</h4></div>
-                        <button id="edittrackerbtn" type="button" class="btn btn-sm btn-border btn-grey-green" ifpanel>Edit</button>
+                        <button id="edittrackerbtn" type="button" class="btn btn-sm btn-border btn-green" ifpanel>Edit</button>
                         <input id="enabledeleteck" type="checkbox">Enable Delete Buttons</input>
                     </div>
                     <div class="border-bottom" ifpanel>
@@ -295,8 +291,8 @@
                                 </div>
 
                                 <!-- edit disables all other buttons -->
-                                <button id="editbtn" type="button col-lg-2 col-md-2 col-sm-2" class="btn btn-sm btn-border btn-grey-green">Edit</button>
-                                <button id="delbtn" type="button col-lg-2 col-md-2 col-sm-2" class="btn btn-sm btn-border btn-grey-green">Delete</button>
+                                <button id="editbtn" type="button col-lg-2 col-md-2 col-sm-2" class="btn btn-sm btn-border btn-green">Edit</button>
+                                <button id="delbtn" type="button col-lg-2 col-md-2 col-sm-2" class="btn btn-sm btn-border btn-green">Delete</button>
                             </div>
                         </div>
             `;
@@ -321,8 +317,8 @@
                                     <input id="startrangeinp" class="rounded" type="text" placeholder="1">
                                     <input id="endrangeinp" class="rounded" type="text" placeholder="10">
                                 </div>
-                                <button id="addtrackerbtn" type="button" class="btn btn-sm btn-border btn-grey-green">Add</button>
-                                <button id="recovertrackerbtn" type="button" class="btn btn-sm btn-border btn-grey-green">Recover</button>
+                                <button id="addtrackerbtn" type="button" class="btn btn-sm btn-border btn-green">Add</button>
+                                <button id="recovertrackerbtn" type="button" class="btn btn-sm btn-border btn-green">Recover</button>
                             </div>
                         </div>
                     </div>
