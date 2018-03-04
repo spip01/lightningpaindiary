@@ -24,23 +24,39 @@
         color: #008000;
     }
 
-    .bgd-light-gray {
+    .bgd-light-green {
         background-color: #f0f0f0;
+    }
+
+    .bgd-light-green {
+        background-color: #f9fff9;
     }
 
     .bgd-dark-gray {
         background-color: #c0c0c0;
     }
 
+    .nav-menu {
+        background-color: #f9fff9;
+    }
+
+    .nav-text {
+        color: #008000;
+    }
+
+    .card-title {
+        color: #008000;
+    }
+
     .btn-green {
         color: #008000;
-        background-color: #eaf0ea;
+        background-color: #f9fff9;
         border-color: #008000
     }
 
     .btn-green:hover {
         color: #008000;
-        background-color: #eaf0ea;
+        background-color: #f9fff9;
         border-color: #008000
     }
 
@@ -52,14 +68,14 @@
     .btn-green.disabled,
     .btn-green:disabled {
         color: #008000;
-        background-color: #eaf0ea;
+        background-color: #f9fff9;
         border-color: #008000
     }
 
     .btn-green:not(:disabled):not(.disabled).active,
     .btn-green:not(:disabled):not(.disabled):active,
     .show>.btn-green.dropdown-toggle {
-        background-color: #eaf0ea;
+        background-color: #f9fff9;
         border-color: #008000
     }
 
@@ -93,68 +109,63 @@
     <div id="jssite" class="" style="display: none">
         <div id="tabs"></div>
 
-        <div id="panels" class="card card-body d-flex bgd-light-gray">
+        <div id="panels" class="card card-body bgd-light-green pad-bottom">
 
-            <div id="pnl-account" class="card card-body d-flex" style="display: block">
+            <div id="pnl-account" class="card card-body" style="display: block">
                 <h4 class="card-title border-bottom">Account</h4>
-
-                <div class="container-fluid pad-bottom">
+                <div class="container">
                     <div class="row">
                         load medicines from drugs.com
                     </div>
 
-                    <div class="container-fluid">
+                    <div class="row container">
+                        <input id="drugs-com" type="text" class="rounded col-lg-3 col-md-3 col-sm-3" placeholder="drugs.com/mn/xxxxx">&nbsp;
+                        <button id="loaddrugscom" type="button" class="btn btn-sm btn-green col-lg-2 col-md-2 col-sm-2">Load</button>
+                    </div>
+
+                    <div class="row">
+                        <label>
+                            <input id="reminderbtn" type="checkbox"> Complete these entries or notify at end of day</input>
+                        </label>
+                    </div>
+
+                    <!-- generated ck box for each tracked item, hitting submit closes all entries, notification would only happen by pressing "pain level" to create and then leaving -->
+                    <div class="row container">
+                        <label class="col-lg-3 col-md-3 col-sm-3">
+                            <input id="Pain-Type" type="checkbox"> Pain Type</input>
+                        </label>
+                        <label class="col-lg-3 col-md-3 col-sm-3">
+                            <input id="Pain-Type" type="checkbox"> Relief Level</input>
+                        </label>
+                    </div>
+
+                    <div class="row">
+                        <label>
+                            <input id="notificationbtn" type="checkbox"> Complete entry reminder notification via: (this is the only personal data saved)</input>
+                        </label>
+                    </div>
+                    <div class="container">
                         <div class="row">
-                            <input id="drugs-com" type="text" class="rounded col-lg-3 col-md-3 col-sm-3" placeholder="drugs.com/mn/xxxxx">&nbsp;
-                            <button id="loaddrugscom" type="button" class="btn btn-sm btn-green col-lg-2 col-md-2 col-sm-2">Load</button>
-                        </div>
-                    </div>
-                </div>
+                            <label class=" col-lg-2 col-md-2 col-sm-2">
+                                <input id="ifemail" type="checkbox"> email</input>
+                            </label>
 
-                <label>
-                    <input id="reminderbtn" type="checkbox"> Complete these entries or notify at end of day</input>
-                </label>
+                            <div class="col-lg-3 col-md-3 col-sm-3">
+                                <input id="email" type="text" class="rounded" placeholder="email address">
+                            </div>
 
-                <!-- generated ck box for each tracked item, hitting submit closes all entries, notification would only happen by pressing "pain level" to create and then leaving -->
-                <div id="build-notifications" class="container-fluid pad-bottom">
-                    <div class="row">
-                        <div class="col-lg-3 col-md-3 col-sm-3">
-                            <label>
-                                <input id="Pain-Type" type="checkbox"> Pain Type</input>
+                            <label class="col-lg-2 col-md-2 col-sm-2">
+                                <input id="vfyemail" type="checkbox"> verified</input>
                             </label>
                         </div>
-                        <div class="col-lg-3 col-md-3 col-sm-3">
+
+                        <div class="row">
                             <label>
-                                <input id="Pain-Type" type="checkbox"> Relief Level</input>
+                                <input id="ifsms" type="checkbox"> &nbsp;sms (if you are still charged for sms you should change carriers &#x1f609;)
+                                </input>
                             </label>
-                        </div>
-                    </div>
-                </div>
 
-                <label>
-                    <input id="notificationbtn" type="checkbox"> Complete entry reminder notification via: (this is the only personal data saved)</input>
-                </label>
-
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class=" col-lg-2 col-md-2 col-sm-2">
-                            <input id="ifemail" type="checkbox"> email</input>
-                        </div>
-
-                        <input id="email" type="text" class="rounded col-lg-3 col-md-3 col-sm-3" placeholder="email address">
-                        <div class=" col-lg-2 col-md-2 col-sm-2">
-                            <input id="vfyemail" type="checkbox"> verified</input>
-                        </div>
-                    </div>
-
-                    <label>
-                        <input id="ifsms" type="checkbox"> &nbsp;sms (if you are still charged for sms you should change carriers &#x1f609;)
-                        </input>
-                    </label>
-
-                    <div class="row">
-                        <div class="container-fluid">
-                            <div class="container-fluid">
+                            <div class="container">
                                 <input id="phone" type="text" class="rounded col-lg-3 col-md-3 col-sm-3" placeholder="phone number">
                             </div>
                         </div>
@@ -260,66 +271,66 @@
         /******* parent of inputs always has idname *******/
         var head =
             `            
-                <div id="pnl-idname" class="card card-body d-flex" style="display: none">
-                    <div id="ttl-idname">
-                        <div id="ttl-title" class="card-title"><h4>ttitle</h4></div>
-                        <button id="edittrackerbtn" type="button" class="btn btn-sm btn-border btn-green" ifpanel>Edit</button>
+                <div id="pnl-idname" class="card card-body container-flex" style="display: none">
+                    <div id="ttl-idname" class="row">
+                        <div id="ttl-title" class="card-title col-lg-4 col-md-4 col-sm-4"><h4>ttitle</h4></div>
+                        <div class="col-lg-1 col-md-1 col-sm-1">
+                            <button id="edittrackerbtn" type="button" class="btn btn-sm btn-border btn-green" style="height:32px" ifpanel>Edit</button>
+                        </div>
                         <input id="enabledeleteck" type="checkbox">Enable Delete Buttons</input>
                     </div>
-                    <div class="border-bottom" ifpanel>
-                        controls what data is used as checkboxes and saved on the entry page. drag to rearrange which changes order on entry page.
-                        deleting items doesn't delete any saved data just the controls. the data can be recovered by re-adding the item.
+                    <div class="border-bottom" style="font-size: 12px">
+                        controls data displayed and saved on the entry page. drag to rearrange which changes order on entry page.
+                        deleting items doesn't delete any saved data just the controls. enter the name and hit recover to restore to the display.
                     </div>
-                    <div class="border-bottom" iftracker>
-                        controls sections displayed and saved on the entry page. drag to rearrange which changes order on entry page.
-                        deleting items doesn't delete any saved data just the controls. the data can be recovered by re-adding the item.
-                    </div>
+                    <br>
 
-                    <div class="container-fluid">
+                    <div class="container-fluid pad-bottom">
             `;
 
         var entry =
             `
-                        <div class="row border-bottom">
-                            <div id="ent-idname">
-                                <div class="col-lg-4 col-md-4 col-sm-4" draggable="true">ttitle</div>
-                                <div iftracker>
-                                    <div class="col-lg-3 col-md-3 col-sm-3">ttype</div>
-                                    <div class="col-lg-3 col-md-3 col-sm-3">
-                                        <div ifrange>startrange-endrange</div>
-                                    </div>
-                                </div>
-
-                                <!-- edit disables all other buttons -->
-                                <button id="editbtn" type="button col-lg-2 col-md-2 col-sm-2" class="btn btn-sm btn-border btn-green">Edit</button>
-                                <button id="delbtn" type="button col-lg-2 col-md-2 col-sm-2" class="btn btn-sm btn-border btn-green">Delete</button>
+                        <div id="ent-idname" class="row border-bottom">
+                            <div class="col-lg-4 col-md-4 col-sm-4" draggable="true">ttitle</div>
+                            <div class="col-lg-3 col-md-3 col-sm-3" iftracker>ttype</div>
+                            <div class="col-lg-3 col-md-3 col-sm-3" iftracker>
+                                <div ifrange>startrange-endrange</div>
                             </div>
+
+                            <!-- edit disables all other buttons -->
+                            <button id="editbtn" type="button" class="btn btn-sm btn-border btn-green">Edit</button>&nbsp;
+                            <button id="delbtn" type="button" class="btn btn-sm btn-border btn-green disabled">Delete</button>
                         </div>
+                        <br>
             `;
 
         var tail =
             `
-                       <div class="row">
-                            <div id="botm-idname" class="">
-                                <br>
-                                <input id="addinp" class="rounded col-lg-4 col-md-4 col-sm-43" type="text" placeholder="ttitle">
-                                <div class="" iftracker>
+                        <div  id="botm-idname" class="row">
+                            <div class="col-lg-4 col-md-4 col-sm-4">
+                                <input id="addinp" class="rounded" type="text" placeholder="ttitle">
+                            </div>
+                            <div id="mnu-idname" class="col-lg-2 col-md-2 col-sm-2 dropdown" iftracker>
+                                <button class="btn btn-sm btn-border btn-green dropdown-toggle disabled" type="button" data-toggle="dropdown">
                                     Type
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu">
             `;
         var tail_tracker_menu =
             `
-                                        <button id="menuitem" class="">ttype</button>
+                                    <li>ttype</li>
             `
         var tail_end =
             `
-                                </div>
-                                <div id="rnge-tracker" ifrange>
-                                    <input id="startrangeinp" class="rounded" type="text" placeholder="1">
-                                    <input id="endrangeinp" class="rounded" type="text" placeholder="10">
-                                </div>
-                                <button id="addtrackerbtn" type="button" class="btn btn-sm btn-border btn-green">Add</button>
-                                <button id="recovertrackerbtn" type="button" class="btn btn-sm btn-border btn-green">Recover</button>
+                                 </ul>
                             </div>
+                            <div id="rnge-tracker" ifrange>
+                                <input id="startrangeinp" class="rounded" type="text" placeholder="1">
+                                <input id="endrangeinp" class="rounded" type="text" placeholder="10">
+                            </div>
+                            <button id="addtrackerbtn" type="button" class="btn btn-sm btn-border btn-green disabled">Add</button>&nbsp;
+                            <button id="recovertrackerbtn" type="button" class="btn btn-sm btn-border btn-green disabled">Recover</button>
                         </div>
                     </div>
                 </div>
