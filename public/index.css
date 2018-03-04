@@ -40,7 +40,7 @@
 .btn-green:focus {
   box-shadow: 0 0 0 .2rem rgba(0, 128, 0, 0.2)
 }
-
+ 
 .btn-green.disabled,
 .btn-green:disabled {
   color: #408040;
