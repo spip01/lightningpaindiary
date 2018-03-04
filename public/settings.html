@@ -17,75 +17,10 @@
         crossorigin="anonymous"></script>
     <script src="https://www.w3schools.com/lib/w3.js"></script>
     <script src="https://unpkg.com/xregexp/xregexp-all.js"></script>
+    <link rel="stylesheet" href="https://raw.githubusercontent.com/spip01/lightningpaindiary/bootstrap/public/index.css">
 </head>
 
-<style>
-    .clr-dark-green {
-        color: #008000;
-    }
-
-    .bgd-light-green {
-        background-color: #f0f0f0;
-    }
-
-    .bgd-light-green {
-        background-color: #f9fff9;
-    }
-
-    .bgd-dark-gray {
-        background-color: #c0c0c0;
-    }
-
-    .nav-menu {
-        background-color: #f9fff9;
-    }
-
-    .nav-text {
-        color: #008000;
-    }
-
-    .card-title {
-        color: #008000;
-    }
-
-    .btn-green {
-        color: #008000;
-        background-color: #f9fff9;
-        border-color: #008000
-    }
-
-    .btn-green:hover {
-        color: #008000;
-        background-color: #f9fff9;
-        border-color: #008000
-    }
-
-    .btn-green.focus,
-    .btn-green:focus {
-        box-shadow: 0 0 0 .2rem rgba(0, 60, 0, .5)
-    }
-
-    .btn-green.disabled,
-    .btn-green:disabled {
-        color: #008000;
-        background-color: #f9fff9;
-        border-color: #008000
-    }
-
-    .btn-green:not(:disabled):not(.disabled).active,
-    .btn-green:not(:disabled):not(.disabled):active,
-    .show>.btn-green.dropdown-toggle {
-        background-color: #f9fff9;
-        border-color: #008000
-    }
-
-    .btn-green:not(:disabled):not(.disabled).active:focus,
-    .btn-green:not(:disabled):not(.disabled):active:focus,
-    .show>.btn-green.dropdown-toggle:focus {
-        box-shadow: 0 0 0 .2rem rgba(0, 60, 0, .5)
-    }
-</style>
-
+]
 <body>
     <div w3-include-html="https://raw.githubusercontent.com/spip01/lightningpaindiary/bootstrap/public/navbar.html"></div>
 
@@ -109,7 +44,7 @@
     <div id="jssite" class="" style="display: none">
         <div id="tabs"></div>
 
-        <div id="panels" class="card card-body bgd-light-green pad-bottom">
+        <div id="panels" class="card card-body bkg-light-green pad-bottom">
 
             <div id="pnl-account" class="card card-body" style="display: block">
                 <h4 class="card-title border-bottom">Account</h4>
@@ -337,14 +272,22 @@
             `;
 
         var tab_head =
-            `
-                    <div id="pnl-account" class="">Account</div>
-                    <div id="pnl-tracker" class="">Tracker</div>
-                `;
+            ` 
+                <div class="card bkg-light-green">
+                    <div id="tabs" class="btn-group row">
+                        <button id="pnl-account" class="col-lg-2 col-md-2 col-sm-2 btn-green no-border">Account</button>
+                        <button id="pnl-tracker" class="col-lg-2 col-md-2 col-sm-2 btn-green no-border"">Tracker</button>
+             `;
         var tab_entries =
             `
-                    <div id="pnl-idname" class="">ttitle</div>
-                `;
+                        <button id="pnl-idname" class="col-lg-2 col-md-2 col-sm-2 btn-green no-border"">ttitle</button>
+            `;
+         var tab_tail =
+            `
+                    </div>
+                </div>
+                <br>
+            `;
 
 
         function generateTrackerPanel() {
@@ -433,7 +376,7 @@
             }
         }
 
-        function generateTabs() {
+        function generateTabs(evt) {
             var tabs = "";
 
             for (var i = 0; i < trackerslist.length; ++i) {
@@ -447,17 +390,14 @@
             }
 
             $("#tabs").empty();
-            $("#tabs").append(tab_head + tabs);
+            $("#tabs").append(tab_head + tabs + tab_tail);
 
-            $("#tabs div").click(function () {
+            $(evt).click(function () {
                 openTab(this);
             });
         }
 
         function openTab(evt) {
-            $("#tabs div").removeClass("bgd-dark-gray");
-            $(evt).addClass("bgd-dark-gray");
-
             $("#panels").children().hide();
             $("#panels").children("#" + $(evt).prop("id")).show();
         }
@@ -535,9 +475,9 @@
             generatePanels();
             generateTrackerPanel();
 
-            //$("#tabs div").click(function () {
-            //    openTab(this);
-            //});
+            $("#tabs button").click(function () {
+                openTab(this);
+            });
 
             $("#panels #enabledeleteck").click(function () {
                 enableDeleteBtns(this);
