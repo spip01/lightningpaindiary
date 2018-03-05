@@ -32,15 +32,19 @@ function generateTrackerPanel() {
   var tmenu = "";
 
   // generate type menu
-  for (var i = 0; i < trackerstypes.length; ++i) {
-    tmenu += /ttype/g [Symbol.replace](tail_tracker_menu, trackerstypes[i]);
+  for (var i = 0; i < trackertypes.length; ++i) {
+    var mid = / /g [Symbol.replace](trackertypes[i], "-");
+    var mitem = /idname/g [Symbol.replace](tail_tracker_menu, mid);
+    mitem = /ttype/g [Symbol.replace](mitem, trackertypes[i]);
+
+    tmenu += mitem;
   }
 
   var ttail = /idname/g [Symbol.replace](tail, id);
   ttail = /ttitle/g [Symbol.replace](ttail, name);
   ttail = /iftracker/g [Symbol.replace](ttail, "");
 
-  var tend = /ifrange/g [Symbol.replace](tail_end, 'style="display: none"');
+  var tend = /iftracker/g [Symbol.replace](tail_end, "");
 
   $("#panels").append(ttitle + tentry + ttail + tmenu + tend);
 }
@@ -77,7 +81,7 @@ function generatePanels() {
       ttail = /ttitle/g [Symbol.replace](ttail, name);
       ttail = /iftracker/g [Symbol.replace](ttail, 'style="display: none"');
 
-      var tend = /ifrange/g [Symbol.replace](tail_end, 'style="display: none"');
+      var tend = /iftracker/g [Symbol.replace](tail_end, 'style="display: none"');
 
       $("#panels").append(ttitle + tentry + ttail + tend);
     }
@@ -86,19 +90,26 @@ function generatePanels() {
 
 function generateTabs(evt) {
   var tabs = "";
+  var rmds = "";
 
   for (var i = 0; i < trackerlist.length; ++i) {
     var item = trackerlist[i];
+    var id = / /g [Symbol.replace](item.name, "-");
 
     if (item.type === "list" && item.enabled) {
-      var id = / /g [Symbol.replace](item.name, "-");
       var tab = /idname/g [Symbol.replace](tab_entries, id);
       tabs += /ttitle/g [Symbol.replace](tab, item.name);
     }
+
+    var rmd = /idname/g [Symbol.replace](rmd_entries, id);
+    rmds += /ttitle/g [Symbol.replace](rmd, item.name);
   }
 
   $("#tabs").empty();
   $("#tabs").append(tab_head + tabs + tab_tail);
+
+  $("#reminders").empty();
+  $("#reminders").append(rmds);
 
   $(evt).click(function () {
     openTab(this);
@@ -107,7 +118,8 @@ function generateTabs(evt) {
 
 function openTab(evt) {
   $("#panels").children().hide();
-  $("#panels").children("#" + $(evt).prop("id")).show();
+  var pnl = $(evt).prop("id").replace(/^\S+?-(.*)/g, "pnl-$1");
+  $("#panels #"+pnl).show();
 }
 
 function dragover(evt) {
@@ -115,14 +127,14 @@ function dragover(evt) {
 }
 
 function dragstart(evt) {
-  evt.originalEvent.dataTransfer.setData("text/html", this.parentElement.id);
+  evt.originalEvent.dataTransfer.setData("text/html", $(this).parent().prop("id"));
 }
 
 function drop(evt) {
   evt.preventDefault();
   var src = evt.originalEvent.dataTransfer.getData("text/html");
-  var dst = evt.target.parentElement.id;
-  var pt = evt.target.parentElement.parentElement.id.replace(/^\S+?-(.*)/g, "cont-$1");
+  var dst = $(evt).parent().prop("id");
+  var pt = $(evt).parent().parent().prop("id").replace(/^\S+?-(.*)/g, "cont-$1");
 
   var list = [];
   var found = 0;
@@ -181,6 +193,14 @@ function enableDeleteBtns(evt) {
     $("#" + pnl + " #delbtn").removeClass("disabled");
 }
 
+function enableAddRecall(evt){
+  var pnl = $(evt).parent().prop("id").replace(/^\S+?-(.*)/g, "pnl-$1");
+
+  $("#" + pnl + " #menu").removeClass("disabled");
+  $("#" + pnl + " #addent").removeClass("disabled");
+  $("#" + pnl + " #startrangeinp").removeClass("disabled");
+  $("#" + pnl + " #endrangeinp").removeClass("disabled");
+}
 
 $(document).ready(function () {
   generateTabs();
@@ -197,6 +217,10 @@ $(document).ready(function () {
 
   $("#panels #delbtn").click(function () {
     deleteButton(this);
+  });
+
+  $("#panels #addinp").focus(function () {
+    enableAddRecall(this);
   });
 
   $("#javascript").empty();

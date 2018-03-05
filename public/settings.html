@@ -18,7 +18,7 @@
     <script src="https://www.w3schools.com/lib/w3.js"></script>
     <script src="https://unpkg.com/xregexp/xregexp-all.js"></script>
 
-    <link rel="stylesheet" type="text/plain" href="index.css">
+    <link rel="stylesheet" type="text/plain" href="local.css">
     <script src="settings.js"></script>
 </head>
 
@@ -27,12 +27,12 @@
         color: #008000;
     }
 
-    .bkg-green {
-        background-color: #e0ffe0;
+    .clr-light-green {
+        color: #e8ffe8;
     }
 
     .bkg-light-green {
-        background-color: #f9fff9;
+        background-color: #e8ffe8;
     }
 
     .bkg-dark-gray {
@@ -40,7 +40,7 @@
     }
 
     .nav-menu {
-        background-color: #f9fff9;
+        background-color: #e8ffe8;
     }
 
     .nav-text {
@@ -53,8 +53,8 @@
 
     .btn-green {
         color: #008000;
-        background-color: #f9fff9;
-        border-color: #008000
+        background-color: #e8ffe8;
+        border-color: #008000;
     }
 
     .btn-green:hover {
@@ -63,23 +63,23 @@
 
     .btn-green.focus,
     .btn-green:focus {
-        box-shadow: 0 0 0 .2rem rgba(0, 128, 0, 0.2)
+        box-shadow: 0 0 0 .2rem rgba(0, 128, 0, .1);
     }
 
     .btn-green.disabled,
     .btn-green:disabled {
         color: #408040;
-        border-color: #708070
+        border: 0px;
     }
 
     .btn-green:not(:disabled):not(.disabled).active:focus,
     .btn-green:not(:disabled):not(.disabled):active:focus,
     .show>.btn-green.dropdown-toggle:focus {
-        box-shadow: 0 0 0 .2rem rgba(0, 128, 0, 0.2)
+        box-shadow: 0 0 0 .2rem rgba(0, 128, 0, 0.1);
     }
 
     .no-border {
-        border: 0px
+        border: 0px;
     }
 </style>
 
@@ -109,56 +109,49 @@
         <div id="panels" class="card card-body bkg-light-green pad-bottom">
 
             <div id="pnl-account" class="card card-body" style="display: block">
-                <h4 class="card-title border-bottom">Account</h4>
-                <div class="container">
+                <h4 class="card-title">Account</h4>
+                <h6 class="border-bottom">No entries are required unless you want reminder notifications.</h6>
+                <div class="container border-bottom">
                     <div class="row">
-                        load medicines from drugs.com
+                        Load medicines from drugs.com.  Added to and editable from the "Remedies" panel.
                     </div>
 
                     <div class="row container">
-                        <input id="drugs-com" type="text" class="rounded col-lg-3 col-md-3 col-sm-3" placeholder="drugs.com/mn/xxxxx">&nbsp;
-                        <button id="loaddrugscom" type="button" class="btn btn-sm btn-green col-lg-2 col-md-2 col-sm-2">Load</button>
+                        <input id="drugs-com" type="text" class="rounded col-lg-4 col-md-4 col-sm-4" placeholder="drugs.com/mn/xxxxx">&nbsp;
+                        <button id="loaddrugscom" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 col-sm-2">Load</button>
                     </div>
 
                     <div class="row">
                         <label>
-                            <input id="reminderbtn" type="checkbox"> Complete these entries or notify at end of day</input>
+                            <input id="reminderbtn" type="checkbox"> Remind me if these aren't completed by the end of today.<br></input>
                         </label>
                     </div>
-
-                    <!-- generated ck box for each tracked item, hitting submit closes all entries, notification would only happen by pressing "pain level" to create and then leaving -->
-                    <div class="row container">
-                        <label class="col-lg-3 col-md-3 col-sm-3">
-                            <input id="Pain-Type" type="checkbox"> Pain Type</input>
-                        </label>
-                        <label class="col-lg-3 col-md-3 col-sm-3">
-                            <input id="Pain-Type" type="checkbox"> Relief Level</input>
-                        </label>
-                    </div>
+                    
+                    <div class="container" style="font-size: 12px">Pressing "Update" button on entry page marks all items completed.</div>
+                    
+                    <div id="reminders" class="container"></div>
 
                     <div class="row">
                         <label>
                             <input id="notificationbtn" type="checkbox"> Complete entry reminder notification via: (this is the only personal data saved)</input>
                         </label>
                     </div>
+
                     <div class="container">
                         <div class="row">
                             <label class=" col-lg-2 col-md-2 col-sm-2">
                                 <input id="ifemail" type="checkbox"> email</input>
                             </label>
 
-                            <div class="col-lg-3 col-md-3 col-sm-3">
-                                <input id="email" type="text" class="rounded" placeholder="email address">
-                            </div>
+                            <input id="email" type="text" class="rounded col-lg-3 col-md-3 col-sm-3" placeholder="email address">&nbsp;
 
-                            <label class="col-lg-2 col-md-2 col-sm-2">
-                                <input id="vfyemail" type="checkbox"> verified</input>
-                            </label>
+                            <i id="everified" class="fa fa-check-circle clr-dark-green" style="display: none"></i>
+                            <i id="enotverified" class="fa fa-circle"></i>
                         </div>
 
                         <div class="row">
                             <label>
-                                <input id="ifsms" type="checkbox"> &nbsp;sms (if you are still charged for sms you should change carriers &#x1f609;)
+                                <input id="ifsms" type="checkbox"> &nbsp;text (If you are still charged for text messages you should change carriers &#x1f609;)
                                 </input>
                             </label>
 
@@ -167,7 +160,11 @@
                             </div>
                         </div>
                     </div>
+                    <br>
                 </div>
+
+                <br>
+                <button id="submit-acct" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 col-sm-2">Submit</button>
             </div>
         </div>
     </div>
@@ -177,7 +174,7 @@
     <script>
         w3.includeHTML();
 
-        var trackerstypes = ["blood pressure", "date", "list", "number",
+        var trackertypes = ["blood pressure", "date", "list", "number",
             "range", "range buttons", "range slider", "time", "true/false", "weather"
         ];
 
@@ -272,13 +269,13 @@
                     <div id="ctrl-idname" class="row">
                         <div class="card-title col-lg-4 col-md-4 col-sm-4"><h4>ttitle</h4></div>
                         <div class="col-lg-1 col-md-1 col-sm-1" ifpanel>
-                            <button id="edittrackerbtn" type="button" class="btn btn-sm btn-border btn-green" style="height:32px">Edit</button>
+                            <button id="edittrackerbtn" type="button" class="btn border btn-sm btn-green" style="height:32px">Edit</button>
                         </div>
                         <input id="enabledeleteck" type="checkbox" class="clr-dark-green">Enable Delete Buttons</input>
                     </div>
                     <div class="border-bottom" style="font-size: 12px">
                         Controls data displayed and saved on the entry page. Drag to rearrange which changes the order on the entry page.
-                        Deleting items doesn't delete any saved data just the controls. Enter the name and hit recover to restore to the display.
+                        Deleting items doesn't delete any saved data just the controls. Enter the name and hit add to restore it to the display.
                     </div>
                     <br>
 
@@ -295,8 +292,8 @@
                             </div>
 
                             <!-- edit disables all other buttons -->
-                            <button id="editbtn" type="button" class="btn btn-sm btn-border btn-green">Edit</button>&nbsp;
-                            <button id="delbtn" type="button" class="btn btn-sm btn-border btn-green disabled">Delete</button>
+                            <button id="editbtn" type="button" class="btn border btn-sm btn-green">Edit</button>&nbsp;
+                            <button id="delbtn" type="button" class="btn border btn-sm btn-green disabled">Delete</button>
                         </div>
             `;
 
@@ -305,11 +302,9 @@
                     </div>
                     <br>
                     <div  id="btm-idname" class="row">
-                        <div id="add-idname" class="col-lg-4 col-md-4 col-sm-4">
-                            <input id="addinp" class="rounded" type="text" placeholder="ttitle">
-                        </div>
-                        <div id="menu-idname" class="col-lg-2 col-md-2 col-sm-2 dropdown" iftracker>
-                            <button class="btn btn-sm btn-border btn-green dropdown-toggle disabled" type="button" data-toggle="dropdown">
+                        <input id="addinp" class="rounded col-lg-4 col-md-4 col-sm-4" type="text" placeholder="ttitle">
+                        <div class="col-lg-2 col-md-2 col-sm-2 dropdown" iftracker>
+                            <button id="menu" class="btn border btn-sm btn-green dropdown-toggle disabled" type="button" data-toggle="dropdown">
                                 Type
                                 <span class="caret"></span>
                             </button>
@@ -317,18 +312,15 @@
             `;
         var tail_tracker_menu =
             `
-                                <li>ttype</li>
+                                <li id="menu-idname">ttype</li>
             `
         var tail_end =
             `
                              </ul>
                         </div>
-                        <div id="rnge-idname" ifrange>
-                            <input id="startrangeinp" class="rounded" type="text" placeholder="1">
-                            <input id="endrangeinp" class="rounded" type="text" placeholder="10">
-                        </div>
-                        <button id="addtrackerbtn" type="button" class="btn btn-sm btn-border btn-green disabled">Add</button>&nbsp;
-                        <button id="recovertrackerbtn" type="button" class="btn btn-sm btn-border btn-green disabled">Recover</button>
+                        <input id="startrangeinp" class="rounded col-lg-1 col-md-1 col-sm-1 disabled" type="text" placeholder="1">&nbsp;
+                        <input id="endrangeinp" class="rounded col-lg-1 col-md-1 col-sm-1 disabled" type="text" placeholder="10">&nbsp;
+                        <button id="addent" type="button" class="btn border btn-sm btn-green disabled">Add</button>
                     </div>
                 </div>
             `;
@@ -337,18 +329,25 @@
             ` 
                 <div class="card bkg-light-green">
                     <div id="tabs" class="btn-group row">
-                        <button id="pnl-account" class="col-lg-2 col-md-2 col-sm-2 btn-green no-border">Account</button>
-                        <button id="pnl-tracker" class="col-lg-2 col-md-2 col-sm-2 btn-green no-border"">Tracker</button>
+                        <button id="tab-account" class="col-lg-2 col-md-2 col-sm-2 btn-green no-border">Account</button>
+                        <button id="tab-tracker" class="col-lg-2 col-md-2 col-sm-2 btn-green no-border"">Tracker</button>
              `;
         var tab_entries =
             `
-                        <button id="pnl-idname" class="col-lg-2 col-md-2 col-sm-2 btn-green no-border"">ttitle</button>
+                        <button id="tab-idname" class="col-lg-2 col-md-2 col-sm-2 btn-green no-border"">ttitle</button>
             `;
         var tab_tail =
             `
                     </div>
                 </div>
                 <br>
+            `;
+
+        var rmd_entries =
+            `
+                <label class="col-lg-3 col-md-3 col-sm-3">
+                    <input id="idname" type="checkbox"> ttitle</input>
+                </label>
             `;
     </script>
 
