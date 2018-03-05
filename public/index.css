@@ -16,16 +16,18 @@
 
 .nav-menu {
   background-color: #f9fff9;
+  font-size: 1.75rem;
 }
 
 .nav-text {
   color: #008000;
+  font-size: 1.75rem;
 }
 
 .card-title {
   color: #008000;
 }
-
+s
 .btn-green {
   color: #008000;
   background-color: #f9fff9;
@@ -40,7 +42,7 @@
 .btn-green:focus {
   box-shadow: 0 0 0 .2rem rgba(0, 128, 0, 0.2)
 }
- 
+
 .btn-green.disabled,
 .btn-green:disabled {
   color: #408040;
