@@ -1,3 +1,6 @@
+loadFile("http://raw.githubusercontent.com/spip01/lightningpaindiary/bootstrap/public/navbar.html", "#navbar");
+loadFile("http://raw.githubusercontent.com/spip01/lightningpaindiary/bootstrap/public/footer.html", "#footer");
+
 function generateTrackerPanel() {
   var id = "tracker";
   var name = "Tracker";
@@ -50,9 +53,6 @@ function generateTrackerPanel() {
 }
 
 function generatePanels() {
-  // w3.displayObject(selector)
-  // w3.getHttpObject("customers.js", myFunction);
-
   for (var i = 0; i < trackerlist.length; ++i) {
     var item = trackerlist[i];
 
@@ -88,16 +88,21 @@ function generatePanels() {
   }
 }
 
-function generateTabs(evt) {
+function generateTabs() {
   var tabs = "";
   var rmds = "";
+
+  var tab = /idname/g [Symbol.replace](tab_entries, "account");
+  tabs += /ttitle/g [Symbol.replace](tab, "Account");
+  tab = /idname/g [Symbol.replace](tab_entries, "tracker");
+  tabs += /ttitle/g [Symbol.replace](tab, "Tracker");
 
   for (var i = 0; i < trackerlist.length; ++i) {
     var item = trackerlist[i];
     var id = / /g [Symbol.replace](item.name, "-");
 
     if (item.type === "list" && item.enabled) {
-      var tab = /idname/g [Symbol.replace](tab_entries, id);
+      tab = /idname/g [Symbol.replace](tab_entries, id);
       tabs += /ttitle/g [Symbol.replace](tab, item.name);
     }
 
@@ -105,13 +110,11 @@ function generateTabs(evt) {
     rmds += /ttitle/g [Symbol.replace](rmd, item.name);
   }
 
-  $("#tabs").empty();
-  $("#tabs").append(tab_head + tabs + tab_tail);
+  $("#tabs").html(tab_head + tabs + tab_tail);
 
-  $("#reminders").empty();
-  $("#reminders").append(rmds);
+  $("#reminders").html(rmds);
 
-  $(evt).click(function () {
+  $("#tabs button").click(function () {
     openTab(this);
   });
 }
@@ -119,7 +122,7 @@ function generateTabs(evt) {
 function openTab(evt) {
   $("#panels").children().hide();
   var pnl = $(evt).prop("id").replace(/^\S+?-(.*)/g, "pnl-$1");
-  $("#panels #"+pnl).show();
+  $("#panels #" + pnl).show();
 }
 
 function dragover(evt) {
@@ -183,33 +186,130 @@ function deleteButton(evt) {
   }
 
   $("#ent-" + ent).detach();
+  generateTabs();
 }
 
 function enableDeleteBtns(evt) {
   var pnl = $(evt).parent().prop("id").replace(/^\S+?-(.*)/g, "pnl-$1");
 
   $("#" + pnl + " #delbtn").addClass("disabled");
-  if ($(evt).prop("checked"))
+  $("#" + pnl + " #delbtn").prop("disabled", "true");
+  if ($(evt).prop("checked")) {
     $("#" + pnl + " #delbtn").removeClass("disabled");
+    $("#" + pnl + " #delbtn").removeAttr("disabled");
+}
 }
 
-function enableAddRecall(evt){
+function enableAdd(evt) {
   var pnl = $(evt).parent().prop("id").replace(/^\S+?-(.*)/g, "pnl-$1");
 
   $("#" + pnl + " #menu").removeClass("disabled");
+  $("#" + pnl + " #menu").removeAttr("disabled");
   $("#" + pnl + " #addent").removeClass("disabled");
+  $("#" + pnl + " #addent").removeAttr("disabled");
   $("#" + pnl + " #startrangeinp").removeClass("disabled");
+  $("#" + pnl + " #startrangeinp").removeAttr("disabled");
   $("#" + pnl + " #endrangeinp").removeClass("disabled");
+  $("#" + pnl + " #endrangeinp").removeAttr("disabled");
+}
+
+function loadDrugsCom(evt) {
+  var url = $("#urldrugscom").val();
+  if (!url.startsWith("http"))
+    url = "https://www.drugs.com/mn/"+url;
+  loadDrugs(url);
+}
+
+function  loadDrugs(url) {
+  var h = [];
+  $.getJSON('http://www.whateverorigin.org/get?url=' + encodeURIComponent(url) + '&callback=?', function (data, status) {})
+    .done(function (data, status) {
+      var t = data.contents.split("<");
+      var h = [];
+
+      for (var i = 0; i < t.length; ++i) {
+        var start;
+        var l = t[i];
+
+        if (l === "h2>Medication List") {
+          start = true;
+        }
+        if (l === "/ul>") {
+          start = false;
+        }
+
+        if (start) {
+          if (l.search(/^h4>/) != -1) {
+            var m = l.replace(/^h4>(.*)/, "$1");
+            h.push(m);
+          }
+        }
+      }
+
+      applyMeds(h);
+    })
+    .fail(function (data, status) {
+      console.log(status);
+    });
+}
+
+function applyMeds(ml) {
+  var entry =
+    `
+      <label class=" col-lg-3 col-md-3 col-sm-3">
+        <input id="med-midname" type="checkbox"> midname</input>
+      </label>
+    `;
+
+  var list = '<dev class="row">';
+  for (var i = 0; i < ml.length; ++i) {
+    list += /midname/g [Symbol.replace](entry, ml[i]);
+  }
+  list += '<dev>';
+
+  $("#druglist").html(list);
+  $("#useselecteddrugs").removeClass("disabled");
+  $("#useselecteddrugs").removeAttr("disabled");
+}
+
+function useSelectedDrugs(evt) {
+  var remedies = [];
+  if (i = trackerlist.findIndex(trackerlist => trackerlist.name === "Remedies") != -1) {
+    remedies = trackerlist[i];
+  } else {
+    remedies.name = "Remedies";
+    remedies.type = "list";
+    remedies.list = "";
+    remedies.removeable = true;
+    remedies.enabled = true;
+    trackerlist.push(remedies);
+  }
+
+  $("#druglist input").foreach(function () {
+    if ($(this).prop("checked")) {
+      if (remedies.list.findIndex(remedies => remedies.list === $(this).text()) != -1) {
+        remedies.list.push($(this).text());
+      }
+    }
+  });
+}
+
+function enableLoadDrugs(evt){
+  $("#loaddrugscom").removeClass("disabled");
+  $("#loaddrugscom").removeAttr("disabled");
 }
 
 $(document).ready(function () {
+  $("#javascript").hide();
+  $("#jssite").show();
+
   generateTabs();
   generatePanels();
   generateTrackerPanel();
 
-  $("#tabs button").click(function () {
-    openTab(this);
-  });
+  //$("#tabs button").click(function () {
+  //  openTab(this);
+  //});
 
   $("#panels #enabledeleteck").click(function () {
     enableDeleteBtns(this);
@@ -223,8 +323,21 @@ $(document).ready(function () {
     enableAddRecall(this);
   });
 
-  $("#javascript").empty();
-  $("#jssite").show();
+  $("#urldrugscom").focus(function () {
+    enableLoadDrugs(this);
+  })
+
+  $("#loaddrugscom").click(function () {
+    loadDrugsCom(this);
+  });
+
+  $("#useselecteddrugs").click(function () {
+    useSelectedDrugs(this);
+  });
+
+  $("#demoloaddrugs").click(function () {
+    loadDrugs("https://www.drugs.com/mn/wx7s49r");
+  });
 
   $("#panels [draggable|='true']").on({
     //"mouseleave": $.proxy(mouseLeave),
@@ -233,4 +346,17 @@ $(document).ready(function () {
     "dragover": $.proxy(dragover),
     "dragstart": $.proxy(dragstart)
   });
+
 });
+
+function loadFile(url, selector) {
+  $.getJSON('http://www.whateverorigin.org/get?url=' + encodeURIComponent(url) + '&callback=?', function (data, status) {
+    if (status != "success")
+      alert(status);
+
+    //(http|ftp|https)://([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?
+
+    var html = data.contents.replace(/(?:.*?\n)*?<body>((?:.*?\n)+?)<\/body>(.*?\n?)*/g, "$1");
+    $(selector).append(html);
+  });
+}

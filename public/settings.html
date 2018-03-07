@@ -9,13 +9,12 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
         crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-        crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
         crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
-    <script src="https://www.w3schools.com/lib/w3.js"></script>
+    <!--script src="https://www.w3schools.com/lib/w3.js"></script-->
     <script src="https://unpkg.com/xregexp/xregexp-all.js"></script>
 
     <link rel="stylesheet" type="text/plain" href="local.css">
@@ -45,6 +44,10 @@
 
     .nav-text {
         color: #008000;
+    }
+
+    .nav-text:hover {
+        background-color: #f9fff9;
     }
 
     .card-title {
@@ -84,17 +87,26 @@
 </style>
 
 <body>
-    <div w3-include-html="https://raw.githubusercontent.com/spip01/lightningpaindiary/bootstrap/public/navbar.html"></div>
+    <!--div w3-include-html="https://raw.githubusercontent.com/spip01/lightningpaindiary/bootstrap/public/navbar.html"></div-->
+    <div id="navbar"></div>
 
     <div id="javascript" class="">
-        <div class="">
-            <a href="index.html" class="" style="color: rgb(0, 78, 0);">
-                <i class="" style="font-size:18px"></i>
-                Lightning Pain Diary
-            </a>
-            <a href="about.html" class=""> About </a>
+        <div class="card container-fluid nav-menu">
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-6">
+                    <a href="index.html" class="nav-text">
+                        <i class="fa fa-home"></i>
+                        Lightning Pain Diary
+                    </a>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-2">
+                    <a href="about.html" class="nav-text">
+                        About
+                    </a>
+                </div>
+            </div>
+            </br>
         </div>
-        </br>
 
         <div id="javascript" class="" style="color: rgb(0, 78, 0);">
             Unfortunately, this page cannot function without javasript. Please add this site to your "allowed" sites. For chrome it's
@@ -103,32 +115,26 @@
         </br>
     </div>
 
-    <div id="jssite" class="" style="display: none">
+    <div id="jssite" style="display: none">
         <div id="tabs"></div>
 
         <div id="panels" class="card card-body bkg-light-green pad-bottom">
 
             <div id="pnl-account" class="card card-body" style="display: block">
                 <h4 class="card-title">Account</h4>
-                <h6 class="border-bottom">No entries are required unless you want reminder notifications.</h6>
                 <div class="container border-bottom">
-                    <div class="row">
-                        Load medicines from drugs.com.  Added to and editable from the "Remedies" panel.
-                    </div>
-
-                    <div class="row container">
-                        <input id="drugs-com" type="text" class="rounded col-lg-4 col-md-4 col-sm-4" placeholder="drugs.com/mn/xxxxx">&nbsp;
-                        <button id="loaddrugscom" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 col-sm-2">Load</button>
-                    </div>
+                    <h6 class="border-bottom clr-dark-green">No entries are required unless you want reminder notifications.</h6>
 
                     <div class="row">
                         <label>
-                            <input id="reminderbtn" type="checkbox"> Remind me if these aren't completed by the end of today.<br></input>
+                            <input id="reminderbtn" type="checkbox"> Remind me if these aren't completed by the end of today.
+                            <br>
+                            </input>
                         </label>
                     </div>
-                    
+
                     <div class="container" style="font-size: 12px">Pressing "Update" button on entry page marks all items completed.</div>
-                    
+
                     <div id="reminders" class="container"></div>
 
                     <div class="row">
@@ -165,14 +171,29 @@
 
                 <br>
                 <button id="submit-acct" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 col-sm-2">Submit</button>
+
+                <br>
+                <br>
+                <div class="row border-top" style="font-size: 12px">
+                        To load medicines from Drugs.com enter the page name and hit "Load". Select which medicines you want to copy to the "Remedies"
+                        section. Then hit "Copy Selected"
+                    </div>
+
+                <div class="row container">
+                        <input id="urldrugscom" type="text" class="rounded col-lg-3 col-md-3 col-sm-3" placeholder="wx7s49r">&nbsp;
+                        <button id="loaddrugscom" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 col-sm-2 disabled" disabled>Load</button>&nbsp;
+                        <button id="useselecteddrugs" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 col-sm-2 disabled" disabled>Copy Selected</button>&nbsp;
+                        <button id="demoloaddrugs" type="button" class="btn border btn-sm btn-green col-lg-3 col-md-3 col-sm-3">Demo wx7s49r</button>
+                        <div id="druglist" class="container"></div>
+                        <br>
+                    </div>
+
             </div>
         </div>
     </div>
 
-    <div id="diag"></div>
-
     <script>
-        w3.includeHTML();
+        //w3.includeHTML();
 
         var trackertypes = ["blood pressure", "date", "list", "number",
             "range", "range buttons", "range slider", "time", "true/false", "weather"
@@ -185,45 +206,54 @@
                 type: "range buttons",
                 start: "1",
                 end: "10",
+                removeable: false,
                 enabled: true
             }, {
                 name: "Start Time",
                 type: "date",
+                removeable: false,
                 enabled: true
             }, {
                 name: "End Time",
                 type: "time",
+                removeable: false,
                 enabled: true
             }, {
                 name: "Woke With",
                 type: "true/false",
+                removeable: true,
                 enabled: true
             }, {
                 name: "Pain Location",
                 type: "list",
                 list: ["forehead", "temple", "eyes", "left", "right"],
+                removeable: true,
                 enabled: true
             }, {
                 name: "Pain Type",
                 type: "list",
                 list: ["throbbing", "burning", "pressure", "sharp"],
                 //            list: [{"item":"throbbing"}, {"item":"burning"}, {"item":"pressure"}, {"item":"sharp"}],
+                removeable: true,
                 enabled: true
             }, {
                 name: "Sensitivities",
                 type: "list",
                 list: ["light", "sound"],
+                removeable: true,
                 enabled: true
             }, {
                 name: "Remedies",
                 type: "list",
                 // pull drug list from drugs.com sharing link (link not saved)
                 list: ["kepra", "relafin", "haldol", "cogentin", "benadryl", "compazine", "sleep"],
+                removeable: true,
                 enabled: true
             }, {
                 name: "Triggered By",
                 type: "list",
                 list: ["weather", "smells", "sleep", "light", "sound"],
+                removeable: true,
                 enabled: true
             }, {
                 name: "Warnings",
@@ -231,18 +261,21 @@
                 list: ["aura", "tunnel vision", "light sensitivity", "sound sensitivity",
                     "smell sensitivity"
                 ],
+                removeable: true,
                 enabled: true
             }, {
                 name: "Pain Relief",
                 type: "range buttons",
                 start: "5",
                 end: "1",
+                removeable: true,
                 enabled: true
             }, {
                 name: "Mood Level",
                 type: "range buttons",
                 start: "1",
                 end: "10",
+                removeable: true,
                 enabled: true
             }, {
                 name: "Weather",
@@ -250,14 +283,17 @@
                 list: ["temp", "humidity", "pressure"],
                 // http://openweathermap.org/api
                 // https://developer.yahoo.com/weather/
+                removeable: true,
                 enabled: true
             }, {
                 name: "Blood Pressure",
                 type: "blood pressure",
+                removeable: true,
                 enabled: true
             }, {
                 name: "Weight",
                 type: "number",
+                removeable: true,
                 enabled: true
             }
         ];
@@ -293,7 +329,7 @@
 
                             <!-- edit disables all other buttons -->
                             <button id="editbtn" type="button" class="btn border btn-sm btn-green">Edit</button>&nbsp;
-                            <button id="delbtn" type="button" class="btn border btn-sm btn-green disabled">Delete</button>
+                            <button id="delbtn" type="button" class="btn border btn-sm btn-green disabled" disabled>Delete</button>
                         </div>
             `;
 
@@ -304,7 +340,7 @@
                     <div  id="btm-idname" class="row">
                         <input id="addinp" class="rounded col-lg-4 col-md-4 col-sm-4" type="text" placeholder="ttitle">
                         <div class="col-lg-2 col-md-2 col-sm-2 dropdown" iftracker>
-                            <button id="menu" class="btn border btn-sm btn-green dropdown-toggle disabled" type="button" data-toggle="dropdown">
+                            <button id="menu" class="btn border btn-sm btn-green dropdown-toggle disabled" disabled type="button" data-toggle="dropdown">
                                 Type
                                 <span class="caret"></span>
                             </button>
@@ -318,9 +354,9 @@
             `
                              </ul>
                         </div>
-                        <input id="startrangeinp" class="rounded col-lg-1 col-md-1 col-sm-1 disabled" type="text" placeholder="1">&nbsp;
-                        <input id="endrangeinp" class="rounded col-lg-1 col-md-1 col-sm-1 disabled" type="text" placeholder="10">&nbsp;
-                        <button id="addent" type="button" class="btn border btn-sm btn-green disabled">Add</button>
+                        <input id="startrangeinp" class="rounded col-lg-1 col-md-1 col-sm-1 disabled" disabled type="text" placeholder="1">&nbsp;
+                        <input id="endrangeinp" class="rounded col-lg-1 col-md-1 col-sm-1 disabled" disabled type="text" placeholder="10">&nbsp;
+                        <button id="addent" type="button" class="btn border btn-sm btn-green disabled" disabled>Add</button>
                     </div>
                 </div>
             `;
@@ -328,9 +364,7 @@
         var tab_head =
             ` 
                 <div class="card bkg-light-green">
-                    <div id="tabs" class="btn-group row">
-                        <button id="tab-account" class="col-lg-2 col-md-2 col-sm-2 btn-green no-border">Account</button>
-                        <button id="tab-tracker" class="col-lg-2 col-md-2 col-sm-2 btn-green no-border"">Tracker</button>
+                    <div class="btn-group row">
              `;
         var tab_entries =
             `
@@ -351,7 +385,12 @@
             `;
     </script>
 
-    <div w3-include-html="https://raw.githubusercontent.com/spip01/lightningpaindiary/bootstrap/public/footer.html"></div>
+    <!--div w3-include-html="https://raw.githubusercontent.com/spip01/lightningpaindiary/bootstrap/public/footer.html"></div-->
+    <div id="footer"></div>
+
+
+    <div id="diag"></div>
+
 </body>
 
 </html>
