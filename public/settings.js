@@ -197,7 +197,7 @@ function enableDeleteBtns(evt) {
   if ($(evt).prop("checked")) {
     $("#" + pnl + " #delbtn").removeClass("disabled");
     $("#" + pnl + " #delbtn").removeAttr("disabled");
-}
+  }
 }
 
 function enableAdd(evt) {
@@ -216,11 +216,11 @@ function enableAdd(evt) {
 function loadDrugsCom(evt) {
   var url = $("#urldrugscom").val();
   if (!url.startsWith("http"))
-    url = "https://www.drugs.com/mn/"+url;
+    url = "https://www.drugs.com/mn/" + url;
   loadDrugs(url);
 }
 
-function  loadDrugs(url) {
+function loadDrugs(url) {
   var h = [];
   $.getJSON('http://www.whateverorigin.org/get?url=' + encodeURIComponent(url) + '&callback=?', function (data, status) {})
     .done(function (data, status) {
@@ -254,16 +254,10 @@ function  loadDrugs(url) {
 }
 
 function applyMeds(ml) {
-  var entry =
-    `
-      <label class=" col-lg-3 col-md-3 col-sm-3">
-        <input id="med-midname" type="checkbox"> midname</input>
-      </label>
-    `;
 
   var list = '<dev class="row">';
   for (var i = 0; i < ml.length; ++i) {
-    list += /midname/g [Symbol.replace](entry, ml[i]);
+    list += /midname/g [Symbol.replace](med_import, ml[i]);
   }
   list += '<dev>';
 
@@ -294,9 +288,21 @@ function useSelectedDrugs(evt) {
   });
 }
 
-function enableLoadDrugs(evt){
+function enableLoadDrugs(evt) {
   $("#loaddrugscom").removeClass("disabled");
   $("#loaddrugscom").removeAttr("disabled");
+}
+
+function loadFile(url, selector) {
+  $.getJSON('http://www.whateverorigin.org/get?url=' + encodeURIComponent(url) + '&callback=?', function (data, status) {
+    if (status != "success")
+      alert(status);
+
+    //(http|ftp|https)://([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?
+
+    var html = data.contents.replace(/(?:.*?\n)*?<body>((?:.*?\n)+?)<\/body>(.*?\n?)*/g, "$1");
+    $(selector).append(html);
+  });
 }
 
 $(document).ready(function () {
@@ -349,14 +355,4 @@ $(document).ready(function () {
 
 });
 
-function loadFile(url, selector) {
-  $.getJSON('http://www.whateverorigin.org/get?url=' + encodeURIComponent(url) + '&callback=?', function (data, status) {
-    if (status != "success")
-      alert(status);
 
-    //(http|ftp|https)://([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?
-
-    var html = data.contents.replace(/(?:.*?\n)*?<body>((?:.*?\n)+?)<\/body>(.*?\n?)*/g, "$1");
-    $(selector).append(html);
-  });
-}

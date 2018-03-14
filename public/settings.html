@@ -14,7 +14,6 @@
         crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
-    <!--script src="https://www.w3schools.com/lib/w3.js"></script-->
     <script src="https://unpkg.com/xregexp/xregexp-all.js"></script>
 
     <link rel="stylesheet" type="text/plain" href="local.css">
@@ -93,13 +92,13 @@
     <div id="javascript" class="">
         <div class="card container-fluid nav-menu">
             <div class="row">
-                <div class="col-lg-6 col-md-6 col-sm-6">
+                <div class="col-lg-6 col-md-6">
                     <a href="index.html" class="nav-text">
                         <i class="fa fa-home"></i>
                         Lightning Pain Diary
                     </a>
                 </div>
-                <div class="col-lg-2 col-md-2 col-sm-2">
+                <div class="col-lg-2 col-md-2">
                     <a href="about.html" class="nav-text">
                         About
                     </a>
@@ -121,7 +120,16 @@
         <div id="panels" class="card card-body bkg-light-green pad-bottom">
 
             <div id="pnl-account" class="card card-body" style="display: block">
-                <h4 class="card-title">Account</h4>
+                <div class="row">
+                    <h4 class="card-title col-lg-2 col-md-2">Account</h4>
+                    <!-- https://developers.google.com/drive/v3/web/savetodrive -->
+                    <div style="text-indent: 0px; margin: 0px; padding: 0px; background: transparent; border-style: none; float: none; line-height: normal; font-size: 1px; vertical-align: middle; display: inline-block; width: 58px; height: 29px;"
+                        id="___savetodrive_0">
+                        <iframe ng-non-bindable="" frameborder="0" hspace="0" marginheight="0" marginwidth="0" scrolling="no" style="position: static; top: 0px; width: 58px; margin: 0px; border-style: none; left: 0px; visibility: visible; height: 29px;"
+                            tabindex="0" vspace="0" width="100%" id="I0_1520998225533" name="I0_1520998225533" src="https://drive.google.com/savetodrivebutton?usegapi=1&amp;src=%2F%2Fcors-files.appspot.com%2FStray_Kitten.jpg&amp;filename=Save%20to%20Drive%20Stray_Kitten%20demo.jpg&amp;sitename=Google%20Developers&amp;origin=https%3A%2F%2Fgoogle-developers.appspot.com&amp;gsrc=3p&amp;ic=1&amp;jsh=m%3B%2F_%2Fscs%2Fapps-static%2F_%2Fjs%2Fk%3Doz.gapi.en.R_YwodJb5EM.O%2Fm%3D__features__%2Fam%3DAQI%2Frt%3Dj%2Fd%3D1%2Frs%3DAGLTcCNZfyttL0MPLeEvWVmInXtToxOp6Q#_methods=onPlusOne%2C_ready%2C_close%2C_open%2C_resizeMe%2C_renderstart%2Concircled%2Cdrefresh%2Cerefresh%2Csave%2Conload&amp;id=I0_1520998225533&amp;_gfid=I0_1520998225533&amp;parent=https%3A%2F%2Fgoogle-developers.appspot.com&amp;pfname=&amp;rpctoken=18697450"
+                            data-gapiattached="true"></iframe>
+                    </div>
+                </div>
                 <div class="container border-bottom">
                     <h6 class="border-bottom clr-dark-green">No entries are required unless you want reminder notifications.</h6>
 
@@ -145,11 +153,11 @@
 
                     <div class="container">
                         <div class="row">
-                            <label class=" col-lg-2 col-md-2 col-sm-2">
+                            <label class=" col-lg-2 col-md-2">
                                 <input id="ifemail" type="checkbox"> email</input>
                             </label>
 
-                            <input id="email" type="text" class="rounded col-lg-3 col-md-3 col-sm-3" placeholder="email address">&nbsp;
+                            <input id="email" type="text" class="rounded col-lg-3 col-md-3" placeholder="email address">&nbsp;
 
                             <i id="everified" class="fa fa-check-circle clr-dark-green" style="display: none"></i>
                             <i id="enotverified" class="fa fa-circle"></i>
@@ -162,7 +170,7 @@
                             </label>
 
                             <div class="container">
-                                <input id="phone" type="text" class="rounded col-lg-3 col-md-3 col-sm-3" placeholder="phone number">
+                                <input id="phone" type="text" class="rounded col-lg-3 col-md-3" placeholder="phone number">
                             </div>
                         </div>
                     </div>
@@ -170,23 +178,23 @@
                 </div>
 
                 <br>
-                <button id="submit-acct" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 col-sm-2">Submit</button>
+                <button id="submit-acct" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2">Submit</button>
 
                 <br>
                 <br>
                 <div class="row border-top" style="font-size: 12px">
-                        To load medicines from Drugs.com enter the page name and hit "Load". Select which medicines you want to copy to the "Remedies"
-                        section. Then hit "Copy Selected"
-                    </div>
+                    To load medicines from Drugs.com enter the page name and hit "Load". Select which medicines you want to copy to the "Remedies"
+                    section. Then hit "Copy Selected"
+                </div>
 
                 <div class="row container">
-                        <input id="urldrugscom" type="text" class="rounded col-lg-3 col-md-3 col-sm-3" placeholder="wx7s49r">&nbsp;
-                        <button id="loaddrugscom" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 col-sm-2 disabled" disabled>Load</button>&nbsp;
-                        <button id="useselecteddrugs" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 col-sm-2 disabled" disabled>Copy Selected</button>&nbsp;
-                        <button id="demoloaddrugs" type="button" class="btn border btn-sm btn-green col-lg-3 col-md-3 col-sm-3">Demo wx7s49r</button>
-                        <div id="druglist" class="container"></div>
-                        <br>
-                    </div>
+                    <input id="urldrugscom" type="text" class="rounded col-lg-3 col-md-3" placeholder="wx7s49r">&nbsp;
+                    <button id="loaddrugscom" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 disabled" disabled>Load</button>&nbsp;
+                    <button id="useselecteddrugs" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 disabled" disabled>Copy Selected</button>&nbsp;
+                    <button id="demoloaddrugs" type="button" class="btn border btn-sm btn-green col-lg-3 col-md-3">Demo wx7s49r</button>
+                    <div id="druglist" class="container"></div>
+                    <br>
+                </div>
 
             </div>
         </div>
@@ -303,8 +311,8 @@
             `            
                 <div id="pnl-idname" class="card card-body container-flex" style="display: none">
                     <div id="ctrl-idname" class="row">
-                        <div class="card-title col-lg-4 col-md-4 col-sm-4"><h4>ttitle</h4></div>
-                        <div class="col-lg-1 col-md-1 col-sm-1" ifpanel>
+                        <div class="card-title col-lg-4 col-md-4"><h4>ttitle</h4></div>
+                        <div class="col-lg-1 col-md-1" ifpanel>
                             <button id="edittrackerbtn" type="button" class="btn border btn-sm btn-green" style="height:32px">Edit</button>
                         </div>
                         <input id="enabledeleteck" type="checkbox" class="clr-dark-green">Enable Delete Buttons</input>
@@ -321,9 +329,9 @@
         var entry =
             `
                         <div id="ent-idname" class="row border-bottom">
-                            <div class="col-lg-4 col-md-4 col-sm-4" draggable="true">ttitle</div>
-                            <div class="col-lg-3 col-md-3 col-sm-3" iftracker>ttype</div>
-                            <div class="col-lg-3 col-md-3 col-sm-3" iftracker>
+                            <div class="col-lg-4 col-md-4" draggable="true">ttitle</div>
+                            <div class="col-lg-3 col-md-3" iftracker>ttype</div>
+                            <div class="col-lg-3 col-md-3" iftracker>
                                 <div ifrange>startrange-endrange</div>
                             </div>
 
@@ -338,8 +346,8 @@
                     </div>
                     <br>
                     <div  id="btm-idname" class="row">
-                        <input id="addinp" class="rounded col-lg-4 col-md-4 col-sm-4" type="text" placeholder="ttitle">
-                        <div class="col-lg-2 col-md-2 col-sm-2 dropdown" iftracker>
+                        <input id="addinp" class="rounded col-lg-4 col-md-4" type="text" placeholder="ttitle">
+                        <div class="col-lg-2 col-md-2 dropdown" iftracker>
                             <button id="menu" class="btn border btn-sm btn-green dropdown-toggle disabled" disabled type="button" data-toggle="dropdown">
                                 Type
                                 <span class="caret"></span>
@@ -354,8 +362,8 @@
             `
                              </ul>
                         </div>
-                        <input id="startrangeinp" class="rounded col-lg-1 col-md-1 col-sm-1 disabled" disabled type="text" placeholder="1">&nbsp;
-                        <input id="endrangeinp" class="rounded col-lg-1 col-md-1 col-sm-1 disabled" disabled type="text" placeholder="10">&nbsp;
+                        <input id="startrangeinp" class="rounded col-lg-1 col-md-1 disabled" disabled type="text" placeholder="1">&nbsp;
+                        <input id="endrangeinp" class="rounded col-lg-1 col-md-1 disabled" disabled type="text" placeholder="10">&nbsp;
                         <button id="addent" type="button" class="btn border btn-sm btn-green disabled" disabled>Add</button>
                     </div>
                 </div>
@@ -368,7 +376,7 @@
              `;
         var tab_entries =
             `
-                        <button id="tab-idname" class="col-lg-2 col-md-2 col-sm-2 btn-green no-border"">ttitle</button>
+                        <button id="tab-idname" class="col-lg-2 col-md-2 btn-green no-border"">ttitle</button>
             `;
         var tab_tail =
             `
@@ -379,8 +387,15 @@
 
         var rmd_entries =
             `
-                <label class="col-lg-3 col-md-3 col-sm-3">
+                <label class="col-lg-3 col-md-3">
                     <input id="idname" type="checkbox"> ttitle</input>
+                </label>
+            `;
+
+        var med_import =
+            `
+                <label class=" col-lg-3 col-md-3">
+                    <input id="med-midname" type="checkbox"> midname</input>
                 </label>
             `;
     </script>

@@ -2,6 +2,10 @@
 /functions/node_modules/
 *.log
 bootstrap.min.css
+todo.js
+
+
+
 
 .metadata
 
