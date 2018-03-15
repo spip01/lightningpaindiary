@@ -2,7 +2,7 @@ loadFile("http://raw.githubusercontent.com/spip01/lightningpaindiary/bootstrap/p
 loadFile("http://raw.githubusercontent.com/spip01/lightningpaindiary/bootstrap/public/footer.html", "#footer");
 
 function generateTrackerPanel() {
-  var id = "tracker";
+  var id = "Tracker";
   var name = "Tracker";
 
   var ttitle = /idname/g [Symbol.replace](head, id);
@@ -10,111 +10,135 @@ function generateTrackerPanel() {
   ttitle = /ifpanel/g [Symbol.replace](ttitle, "style='display: none'");
   ttitle = /iftracker/g [Symbol.replace](ttitle, "");
 
-  var tentry = "";
+  $("#panels #pnl-" + id).remove();
+  $("#panels").append(ttitle);
 
-  for (var i = 0; i < trackerlist.length; ++i) {
-    var item = trackerlist[i];
-    var iid = / /g [Symbol.replace](item.name, "-");
+  var transaction = db.transaction(["tracking"], "readwrite");
+  var objectStore = transaction.objectStore("tracking");
+  var myIndex = objectStore.index('by_position');
 
+  myIndex.openCursor().onsuccess = function (event) {
+    var cursor = event.target.result;
+    if (cursor) {
+
+      var item = cursor.value;
+      var iid = / /g [Symbol.replace](item.name, "-");
+
+      var t = entry;
+      t = /idname/g [Symbol.replace](t, iid);
+      t = /ttitle/g [Symbol.replace](t, item.name);
+      t = /ttype/g [Symbol.replace](t, item.type);
+      t = /iftracker/g [Symbol.replace](t, "");
+
+      if (item.type.indexOf("range") != -1) {
+        t = /ifrange/g [Symbol.replace](t, "");
+        t = /startrange/g [Symbol.replace](t, item.start);
+        t = /endrange/g [Symbol.replace](t, item.end);
+      } else
+        t = /ifrange/g [Symbol.replace](t, 'style="display: none"');
+
+      $("#panels #pnl-" + id).append(t);
+
+      cursor.continue();
+    } else {
+      var ttail = /idname/g [Symbol.replace](tail, id);
+      ttail = /ttitle/g [Symbol.replace](ttail, name);
+      ttail = /iftracker/g [Symbol.replace](ttail, "");
+
+      var tmenu = "";
+      for (var i = 0; i < trackertypes.length; ++i) {
+        var mid = / /g [Symbol.replace](trackertypes[i], "-");
+        var mitem = /idname/g [Symbol.replace](tail_tracker_menu, mid);
+        mitem = /ttype/g [Symbol.replace](mitem, trackertypes[i]);
+
+        tmenu += mitem;
+      }
+
+      var tend = /iftracker/g [Symbol.replace](tail_end, "");
+
+      $("#panels #pnl-" + id).append(ttail + tmenu + tend);
+    }
+  }
+}
+
+function generateTabsAndPanels(db) {
+  newTabBar();
+
+  var transaction = db.transaction(["tracking"], "readwrite");
+  var objectStore = transaction.objectStore("tracking");
+  var myIndex = objectStore.index('by_type');
+
+  myIndex.openCursor(IDBKeyRange.only("list")).onsuccess = function (event) {
+    var cursor = event.target.result;
+    if (cursor) {
+      data = cursor.value;
+
+      addTab(data);
+      addPanel(data);
+
+      cursor.continue();
+    }
+  }
+}
+
+function addPanel(item) {
+  var id = / /g [Symbol.replace](item.name, "-");
+  var name = item.name;
+
+  var ttitle = /idname/g [Symbol.replace](head, id);
+  ttitle = /ttitle/g [Symbol.replace](ttitle, name);
+  ttitle = /ifpanel/g [Symbol.replace](ttitle, "");
+  ttitle = /iftracker/g [Symbol.replace](ttitle, "style='display: none'");
+
+  tentry = "";
+  for (var j = 0; j < item.list.length; ++j) {
     var t = entry;
+    var iid = / /g [Symbol.replace](item.list[j], "-");
     t = /idname/g [Symbol.replace](t, iid);
-    t = /ttitle/g [Symbol.replace](t, item.name);
-    t = /ttype/g [Symbol.replace](t, item.type);
-    t = /iftracker/g [Symbol.replace](t, "");
-
-    if (item.type.indexOf("range") != -1) {
-      t = /ifrange/g [Symbol.replace](t, "");
-      t = /startrange/g [Symbol.replace](t, item.start);
-      t = /endrange/g [Symbol.replace](t, item.end);
-    } else
-      t = /ifrange/g [Symbol.replace](t, 'style="display: none"');
+    t = /ttitle/g [Symbol.replace](t, item.list[j]);
+    t = /iftracker/g [Symbol.replace](t, "style='display: none'");
+    t = /ifrange/g [Symbol.replace](t, "style='display: none'");
 
     tentry += t;
   }
 
-  var tmenu = "";
-
-  // generate type menu
-  for (var i = 0; i < trackertypes.length; ++i) {
-    var mid = / /g [Symbol.replace](trackertypes[i], "-");
-    var mitem = /idname/g [Symbol.replace](tail_tracker_menu, mid);
-    mitem = /ttype/g [Symbol.replace](mitem, trackertypes[i]);
-
-    tmenu += mitem;
-  }
-
   var ttail = /idname/g [Symbol.replace](tail, id);
   ttail = /ttitle/g [Symbol.replace](ttail, name);
-  ttail = /iftracker/g [Symbol.replace](ttail, "");
+  ttail = /iftracker/g [Symbol.replace](ttail, 'style="display: none"');
 
-  var tend = /iftracker/g [Symbol.replace](tail_end, "");
+  var tend = /iftracker/g [Symbol.replace](tail_end, 'style="display: none"');
 
-  $("#panels").append(ttitle + tentry + ttail + tmenu + tend);
+  $("#panels #" + id).remove();
+  $("#panels").append(ttitle + tentry + ttail + tend);
 }
 
-function generatePanels() {
-  for (var i = 0; i < trackerlist.length; ++i) {
-    var item = trackerlist[i];
+function newTabBar() {
+  $("#tabs").html(tab_head);
 
-    if (item.type === "list") {
-      var id = / /g [Symbol.replace](item.name, "-");
-      var name = item.name;
+  addTab({
+    name: "Account"
+  });
+  addTab({
+    name: "Tracker"
+  });
 
-      var ttitle = /idname/g [Symbol.replace](head, id);
-      ttitle = /ttitle/g [Symbol.replace](ttitle, name);
-      ttitle = /ifpanel/g [Symbol.replace](ttitle, "");
-      ttitle = /iftracker/g [Symbol.replace](ttitle, "style='display: none'");
-
-      tentry = "";
-      for (var j = 0; j < item.list.length; ++j) {
-        var t = entry;
-        var iid = / /g [Symbol.replace](item.list[j], "-");
-        t = /idname/g [Symbol.replace](t, iid);
-        t = /ttitle/g [Symbol.replace](t, item.list[j]);
-        t = /iftracker/g [Symbol.replace](t, "style='display: none'");
-        t = /ifrange/g [Symbol.replace](t, "style='display: none'");
-
-        tentry += t;
-      }
-
-      var ttail = /idname/g [Symbol.replace](tail, id);
-      ttail = /ttitle/g [Symbol.replace](ttail, name);
-      ttail = /iftracker/g [Symbol.replace](ttail, 'style="display: none"');
-
-      var tend = /iftracker/g [Symbol.replace](tail_end, 'style="display: none"');
-
-      $("#panels").append(ttitle + tentry + ttail + tend);
-    }
-  }
+  $("#tabs").append(tab_tail);
+  $("#reminders").empty();
 }
 
-function generateTabs() {
-  var tabs = "";
-  var rmds = "";
+function addTab(item) {
+  var id = / /g [Symbol.replace](item.name, "-");
 
-  var tab = /idname/g [Symbol.replace](tab_entries, "account");
-  tabs += /ttitle/g [Symbol.replace](tab, "Account");
-  tab = /idname/g [Symbol.replace](tab_entries, "tracker");
-  tabs += /ttitle/g [Symbol.replace](tab, "Tracker");
+  var tab = /idname/g [Symbol.replace](tab_entries, id);
+  tab = /ttitle/g [Symbol.replace](tab, item.name);
 
-  for (var i = 0; i < trackerlist.length; ++i) {
-    var item = trackerlist[i];
-    var id = / /g [Symbol.replace](item.name, "-");
+  var rmd = /idname/g [Symbol.replace](rmd_entries, id);
+  rmd = /ttitle/g [Symbol.replace](rmd, item.name);
 
-    if (item.type === "list" && item.enabled) {
-      tab = /idname/g [Symbol.replace](tab_entries, id);
-      tabs += /ttitle/g [Symbol.replace](tab, item.name);
-    }
+  $("#tablist").append(tab);
+  $("#reminders").append(rmd);
 
-    var rmd = /idname/g [Symbol.replace](rmd_entries, id);
-    rmds += /ttitle/g [Symbol.replace](rmd, item.name);
-  }
-
-  $("#tabs").html(tab_head + tabs + tab_tail);
-
-  $("#reminders").html(rmds);
-
-  $("#tabs button").click(function () {
+  $("#tabs #tab-"+id).click(function () {
     openTab(this);
   });
 }
@@ -257,7 +281,7 @@ function applyMeds(ml) {
 
   var list = '<dev class="row">';
   for (var i = 0; i < ml.length; ++i) {
-    list += /midname/g [Symbol.replace](med_import, ml[i]);
+    list += /idname/g [Symbol.replace](med_import, ml[i]);
   }
   list += '<dev>';
 
@@ -305,13 +329,29 @@ function loadFile(url, selector) {
   });
 }
 
+var db = NaN;
+
 $(document).ready(function () {
   $("#javascript").hide();
   $("#jssite").show();
 
-  generateTabs();
-  generatePanels();
-  generateTrackerPanel();
+  if (!('indexedDB' in window)) {
+    console.log('This browser doesn\'t support IndexedDB');
+  }
+
+  var request = indexedDB.open("diary", 1);
+  request.onupgradeneeded = function () {
+    doUpgrade(request);
+  }
+  request.onerror = function (event) {
+    console.log("error loading db: " + request.error);
+  }
+  request.onsuccess = function () {
+    db = request.result;
+
+    generateTabsAndPanels(db);
+    generateTrackerPanel(db);
+  }
 
   //$("#tabs button").click(function () {
   //  openTab(this);
@@ -355,14 +395,9 @@ $(document).ready(function () {
 });
 
 /************************************************** */
-if (!('indexedDB' in window)) {
-  console.log('This browser doesn\'t support IndexedDB');
-}
 
-var request = indexedDB.open("diary", 1);
-var db = NaN;
 
-request.onupgradeneeded = function () {
+function doUpgrade(request) {
   db = request.result;
   var store = db.createObjectStore("tracking", {
     autoIncrement: true
@@ -383,51 +418,4 @@ request.onupgradeneeded = function () {
   for (var i = 0; i < trackerlist.length; ++i) {
     store.put(trackerlist[i]);
   }
-};
-
-request.onerror = function (event) {
-  console.log("error loading db: " + request.error);
-};
-
-request.onsuccess = function () {
-  db = request.result;
-
-  var transaction = db.transaction(["tracking"], "readwrite");
-
-  transaction.oncomplete = function (event) {
-    console.log("Transaction completed: database modification finished");
-  };
-
-  transaction.onerror = function (event) {
-    console.log("Transaction not opened due to error: " + transaction.error);
-  };
-
-  var objectStore = transaction.objectStore("tracking");
-
-  objectStore.onsuccess = function (event) {
-    console.log("Request successful");
-  }
-
-  var myIndex = objectStore.index('by_type');
-
-  myIndex.openCursor(IDBKeyRange.bound("list")).onsuccess = function (event) {
-    var cursor = event.target.result;
-    if (cursor) {
-      console.log(cursor.value.position + ' ' + cursor.value.name + ' ' + cursor.value.type, cursor.value.list);
-
-      var updateData = cursor.value;
-          
-      updateData.position += 20;
-      var request = cursor.update(updateData);
-      request.onsuccess = function() {
-        console.log('updated');
-      };
-    
-      cursor.continue();
-    } else {
-      console.log('Entries all displayed.');
-    }
-  };
-
-
-};
+}
