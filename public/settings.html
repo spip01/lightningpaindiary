@@ -123,12 +123,12 @@
                 <div class="row">
                     <h4 class="card-title col-lg-2 col-md-2">Account</h4>
                     <!-- https://developers.google.com/drive/v3/web/savetodrive -->
-                    <div style="text-indent: 0px; margin: 0px; padding: 0px; background: transparent; border-style: none; float: none; line-height: normal; font-size: 1px; vertical-align: middle; display: inline-block; width: 58px; height: 29px;"
+                    <!-- div style="text-indent: 0px; margin: 0px; padding: 0px; background: transparent; border-style: none; float: none; line-height: normal; font-size: 1px; vertical-align: middle; display: inline-block; width: 58px; height: 29px;"
                         id="___savetodrive_0">
                         <iframe ng-non-bindable="" frameborder="0" hspace="0" marginheight="0" marginwidth="0" scrolling="no" style="position: static; top: 0px; width: 58px; margin: 0px; border-style: none; left: 0px; visibility: visible; height: 29px;"
                             tabindex="0" vspace="0" width="100%" id="I0_1520998225533" name="I0_1520998225533" src="https://drive.google.com/savetodrivebutton?usegapi=1&amp;src=%2F%2Fcors-files.appspot.com%2FStray_Kitten.jpg&amp;filename=Save%20to%20Drive%20Stray_Kitten%20demo.jpg&amp;sitename=Google%20Developers&amp;origin=https%3A%2F%2Fgoogle-developers.appspot.com&amp;gsrc=3p&amp;ic=1&amp;jsh=m%3B%2F_%2Fscs%2Fapps-static%2F_%2Fjs%2Fk%3Doz.gapi.en.R_YwodJb5EM.O%2Fm%3D__features__%2Fam%3DAQI%2Frt%3Dj%2Fd%3D1%2Frs%3DAGLTcCNZfyttL0MPLeEvWVmInXtToxOp6Q#_methods=onPlusOne%2C_ready%2C_close%2C_open%2C_resizeMe%2C_renderstart%2Concircled%2Cdrefresh%2Cerefresh%2Csave%2Conload&amp;id=I0_1520998225533&amp;_gfid=I0_1520998225533&amp;parent=https%3A%2F%2Fgoogle-developers.appspot.com&amp;pfname=&amp;rpctoken=18697450"
                             data-gapiattached="true"></iframe>
-                    </div>
+                    </div-->
                 </div>
                 <div class="container border-bottom">
                     <h6 class="border-bottom clr-dark-green">No entries are required unless you want reminder notifications.</h6>
@@ -210,6 +210,7 @@
         var trackerlist = [ // sql, can't reuse names with stored data unless confirmed by user for deletion
             // new user start pain level, start time, remedies, relief
             {
+                position: 0,
                 name: "Pain Level",
                 type: "range buttons",
                 start: "1",
@@ -217,27 +218,32 @@
                 removeable: false,
                 enabled: true
             }, {
+                position: 1,
                 name: "Start Time",
                 type: "date",
                 removeable: false,
                 enabled: true
             }, {
+                position: 2,
                 name: "End Time",
                 type: "time",
                 removeable: false,
                 enabled: true
             }, {
+                position: 3,
                 name: "Woke With",
                 type: "true/false",
                 removeable: true,
                 enabled: true
             }, {
+                position: 4,
                 name: "Pain Location",
                 type: "list",
                 list: ["forehead", "temple", "eyes", "left", "right"],
                 removeable: true,
                 enabled: true
             }, {
+                position: 5,
                 name: "Pain Type",
                 type: "list",
                 list: ["throbbing", "burning", "pressure", "sharp"],
@@ -245,12 +251,14 @@
                 removeable: true,
                 enabled: true
             }, {
+                position: 6,
                 name: "Sensitivities",
                 type: "list",
                 list: ["light", "sound"],
                 removeable: true,
                 enabled: true
             }, {
+                position: 7,
                 name: "Remedies",
                 type: "list",
                 // pull drug list from drugs.com sharing link (link not saved)
@@ -258,12 +266,14 @@
                 removeable: true,
                 enabled: true
             }, {
+                position: 8,
                 name: "Triggered By",
                 type: "list",
                 list: ["weather", "smells", "sleep", "light", "sound"],
                 removeable: true,
                 enabled: true
             }, {
+                position: 9,
                 name: "Warnings",
                 type: "list",
                 list: ["aura", "tunnel vision", "light sensitivity", "sound sensitivity",
@@ -272,6 +282,7 @@
                 removeable: true,
                 enabled: true
             }, {
+                position: 10,
                 name: "Pain Relief",
                 type: "range buttons",
                 start: "5",
@@ -279,6 +290,7 @@
                 removeable: true,
                 enabled: true
             }, {
+                position: 11,
                 name: "Mood Level",
                 type: "range buttons",
                 start: "1",
@@ -286,6 +298,7 @@
                 removeable: true,
                 enabled: true
             }, {
+                position: 12,
                 name: "Weather",
                 type: "weather",
                 list: ["temp", "humidity", "pressure"],
@@ -294,11 +307,13 @@
                 removeable: true,
                 enabled: true
             }, {
+                position: 13,
                 name: "Blood Pressure",
                 type: "blood pressure",
                 removeable: true,
                 enabled: true
             }, {
+                position: 14,
                 name: "Weight",
                 type: "number",
                 removeable: true,

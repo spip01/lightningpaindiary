@@ -352,7 +352,82 @@ $(document).ready(function () {
     "dragover": $.proxy(dragover),
     "dragstart": $.proxy(dragstart)
   });
-
 });
 
+/************************************************** */
+if (!('indexedDB' in window)) {
+  console.log('This browser doesn\'t support IndexedDB');
+}
 
+var request = indexedDB.open("diary", 1);
+var db = NaN;
+
+request.onupgradeneeded = function () {
+  db = request.result;
+  var store = db.createObjectStore("tracking", {
+    autoIncrement: true
+  });
+
+  var titleIndex = store.createIndex("by_position", "position", {
+    unique: true
+  });
+
+  var titleIndex = store.createIndex("by_name", "name", {
+    unique: true
+  });
+
+  var authorIndex = store.createIndex("by_type", "type", {
+    unique: false
+  });
+
+  for (var i = 0; i < trackerlist.length; ++i) {
+    store.put(trackerlist[i]);
+  }
+};
+
+request.onerror = function (event) {
+  console.log("error loading db: " + request.error);
+};
+
+request.onsuccess = function () {
+  db = request.result;
+
+  var transaction = db.transaction(["tracking"], "readwrite");
+
+  transaction.oncomplete = function (event) {
+    console.log("Transaction completed: database modification finished");
+  };
+
+  transaction.onerror = function (event) {
+    console.log("Transaction not opened due to error: " + transaction.error);
+  };
+
+  var objectStore = transaction.objectStore("tracking");
+
+  objectStore.onsuccess = function (event) {
+    console.log("Request successful");
+  }
+
+  var myIndex = objectStore.index('by_type');
+
+  myIndex.openCursor(IDBKeyRange.bound("list")).onsuccess = function (event) {
+    var cursor = event.target.result;
+    if (cursor) {
+      console.log(cursor.value.position + ' ' + cursor.value.name + ' ' + cursor.value.type, cursor.value.list);
+
+      var updateData = cursor.value;
+          
+      updateData.position += 20;
+      var request = cursor.update(updateData);
+      request.onsuccess = function() {
+        console.log('updated');
+      };
+    
+      cursor.continue();
+    } else {
+      console.log('Entries all displayed.');
+    }
+  };
+
+
+};
