@@ -1,23 +1,22 @@
 loadFile("http://raw.githubusercontent.com/spip01/lightningpaindiary/bootstrap/public/navbar.html", "#navbar");
 loadFile("http://raw.githubusercontent.com/spip01/lightningpaindiary/bootstrap/public/footer.html", "#footer");
 
-function generateTrackerPanel() {
-  var id = "Tracker";
-  var name = "Tracker";
+function generateTrackersPanel(db) {
+  var id = "Trackers";
+  var name = "Trackers";
+
+  $("#panels #pnl-" + id).remove();
 
   var ttitle = /idname/g [Symbol.replace](head, id);
   ttitle = /ttitle/g [Symbol.replace](ttitle, name);
   ttitle = /ifpanel/g [Symbol.replace](ttitle, "style='display: none'");
-  ttitle = /iftracker/g [Symbol.replace](ttitle, "");
+  ttitle = /iftrackers/g [Symbol.replace](ttitle, "");
 
-  $("#panels #pnl-" + id).remove();
   $("#panels").append(ttitle);
 
-  var transaction = db.transaction(["tracking"], "readwrite");
-  var objectStore = transaction.objectStore("tracking");
-  var myIndex = objectStore.index('by_position');
-
-  myIndex.openCursor().onsuccess = function (event) {
+  var store = db.transaction(["tracking"], "readwrite").objectStore("tracking");
+  var cursor = store.index('by_position').openCursor();
+  cursor.onsuccess = function (event) {
     var cursor = event.target.result;
     if (cursor) {
 
@@ -28,7 +27,8 @@ function generateTrackerPanel() {
       t = /idname/g [Symbol.replace](t, iid);
       t = /ttitle/g [Symbol.replace](t, item.name);
       t = /ttype/g [Symbol.replace](t, item.type);
-      t = /iftracker/g [Symbol.replace](t, "");
+      t = /iftrackers/g [Symbol.replace](t, "");
+      t = /000/g [Symbol.replace](t, item.position);
 
       if (item.type.indexOf("range") != -1) {
         t = /ifrange/g [Symbol.replace](t, "");
@@ -37,44 +37,43 @@ function generateTrackerPanel() {
       } else
         t = /ifrange/g [Symbol.replace](t, 'style="display: none"');
 
-      $("#panels #pnl-" + id).append(t);
+      $("#panels #cont-" + id).append(t);
 
       cursor.continue();
     } else {
       var ttail = /idname/g [Symbol.replace](tail, id);
       ttail = /ttitle/g [Symbol.replace](ttail, name);
-      ttail = /iftracker/g [Symbol.replace](ttail, "");
+      ttail = /iftrackers/g [Symbol.replace](ttail, "");
+      $("#panels #pnl-" + id).append(ttail);
 
-      var tmenu = "";
-      for (var i = 0; i < trackertypes.length; ++i) {
-        var mid = / /g [Symbol.replace](trackertypes[i], "-");
-        var mitem = /idname/g [Symbol.replace](tail_tracker_menu, mid);
-        mitem = /ttype/g [Symbol.replace](mitem, trackertypes[i]);
+      for (var i = 0; i < trackerstypes.length; ++i) {
+        var mid = / /g [Symbol.replace](trackerstypes[i], "-");
+        var mitem = /idname/g [Symbol.replace](tail_trackers_menu, mid);
+        mitem = /ttype/g [Symbol.replace](mitem, trackerstypes[i]);
 
-        tmenu += mitem;
+        $("#panels #pnl-" + id).append(mitem);
       }
 
-      var tend = /iftracker/g [Symbol.replace](tail_end, "");
+      var tend = /iftrackers/g [Symbol.replace](tail_end, "");
 
-      $("#panels #pnl-" + id).append(ttail + tmenu + tend);
+      $("#panels #pnl-" + id).append(tend);
     }
   }
 }
 
-function generateTabsAndPanels(db) {
+function generateTabsAndPanels(db, tabonly) {
   newTabBar();
 
-  var transaction = db.transaction(["tracking"], "readwrite");
-  var objectStore = transaction.objectStore("tracking");
-  var myIndex = objectStore.index('by_type');
-
-  myIndex.openCursor(IDBKeyRange.only("list")).onsuccess = function (event) {
+  var store = db.transaction(["tracking"], "readwrite").objectStore("tracking");
+  var cursor = store.index('by_type').openCursor(IDBKeyRange.only("list"));
+  cursor.onsuccess = function (event) {
     var cursor = event.target.result;
     if (cursor) {
       data = cursor.value;
 
       addTab(data);
-      addPanel(data);
+      if (!tabonly)
+        addPanel(data);
 
       cursor.continue();
     }
@@ -85,31 +84,32 @@ function addPanel(item) {
   var id = / /g [Symbol.replace](item.name, "-");
   var name = item.name;
 
+  $("#panels #pnl-" + id).remove();
+
   var ttitle = /idname/g [Symbol.replace](head, id);
   ttitle = /ttitle/g [Symbol.replace](ttitle, name);
   ttitle = /ifpanel/g [Symbol.replace](ttitle, "");
-  ttitle = /iftracker/g [Symbol.replace](ttitle, "style='display: none'");
+  ttitle = /iftrackers/g [Symbol.replace](ttitle, "style='display: none'");
 
-  tentry = "";
+  $("#panels").append(ttitle);
+
   for (var j = 0; j < item.list.length; ++j) {
-    var t = entry;
     var iid = / /g [Symbol.replace](item.list[j], "-");
-    t = /idname/g [Symbol.replace](t, iid);
+    var t = /idname/g [Symbol.replace](entry, iid);
     t = /ttitle/g [Symbol.replace](t, item.list[j]);
-    t = /iftracker/g [Symbol.replace](t, "style='display: none'");
+    t = /iftrackers/g [Symbol.replace](t, "style='display: none'");
     t = /ifrange/g [Symbol.replace](t, "style='display: none'");
 
-    tentry += t;
+    $("#panels #cont-" + id).append(t);
   }
 
   var ttail = /idname/g [Symbol.replace](tail, id);
   ttail = /ttitle/g [Symbol.replace](ttail, name);
-  ttail = /iftracker/g [Symbol.replace](ttail, 'style="display: none"');
+  ttail = /iftrackers/g [Symbol.replace](ttail, 'style="display: none"');
 
-  var tend = /iftracker/g [Symbol.replace](tail_end, 'style="display: none"');
+  var tend = /iftrackers/g [Symbol.replace](tail_end, 'style="display: none"');
 
-  $("#panels #" + id).remove();
-  $("#panels").append(ttitle + tentry + ttail + tend);
+  $("#panels #pnl-" + id).append(ttail + tend);
 }
 
 function newTabBar() {
@@ -119,7 +119,7 @@ function newTabBar() {
     name: "Account"
   });
   addTab({
-    name: "Tracker"
+    name: "Trackers"
   });
 
   $("#tabs").append(tab_tail);
@@ -138,7 +138,7 @@ function addTab(item) {
   $("#tablist").append(tab);
   $("#reminders").append(rmd);
 
-  $("#tabs #tab-"+id).click(function () {
+  $("#tabs #tab-" + id).click(function () {
     openTab(this);
   });
 }
@@ -194,37 +194,19 @@ function drop(evt) {
   }
 }
 
-function deleteButton(evt) {
-  var ent = $(evt).parent().prop("id").replace(/\S+?-(.*)/g, "$1");
-  var pnl = $(evt).parent().parent().prop("id").replace(/\S+?-(.*)/g, "$1");
-  var name = /-/g [Symbol.replace](ent, " ");
-
-  var i = trackerlist.findIndex(trackerlist => trackerlist.name === name);
-  var list = trackerlist[i].list;
-
-  if (pnl === "tracker") {
-    trackerlist[i].enabled = false;
-  } else {
-    var j = trackerlist[i].list.findIndex(list => list === ent);
-    list.splice(j, 1);
-  }
-
-  $("#ent-" + ent).detach();
-  generateTabs();
-}
-
 function enableDeleteBtns(evt) {
   var pnl = $(evt).parent().prop("id").replace(/^\S+?-(.*)/g, "pnl-$1");
 
-  $("#" + pnl + " #delbtn").addClass("disabled");
-  $("#" + pnl + " #delbtn").prop("disabled", "true");
   if ($(evt).prop("checked")) {
     $("#" + pnl + " #delbtn").removeClass("disabled");
     $("#" + pnl + " #delbtn").removeAttr("disabled");
+  } else {
+    $("#" + pnl + " #delbtn").addClass("disabled");
+    $("#" + pnl + " #delbtn").prop("disabled", "true");
   }
 }
 
-function enableAdd(evt) {
+function enableAddBtns(evt) {
   var pnl = $(evt).parent().prop("id").replace(/^\S+?-(.*)/g, "pnl-$1");
 
   $("#" + pnl + " #menu").removeClass("disabled");
@@ -278,10 +260,9 @@ function loadDrugs(url) {
 }
 
 function applyMeds(ml) {
-
   var list = '<dev class="row">';
   for (var i = 0; i < ml.length; ++i) {
-    list += /idname/g [Symbol.replace](med_import, ml[i]);
+    list += /ttitle/g [Symbol.replace](med_import, ml[i]);
   }
   list += '<dev>';
 
@@ -290,26 +271,83 @@ function applyMeds(ml) {
   $("#useselecteddrugs").removeAttr("disabled");
 }
 
-function useSelectedDrugs(evt) {
-  var remedies = [];
-  if (i = trackerlist.findIndex(trackerlist => trackerlist.name === "Remedies") != -1) {
-    remedies = trackerlist[i];
+/********************************************************************* */
+
+function PanelAdd(db, evt) {
+  var ent = $(evt).parent().prop("id").replace(/\S+?-(.*)/g, "$1");
+  var pnl = $(evt).parent().parent().prop("id").replace(/\S+?-(.*)/g, "$1");
+  var name = /-/g [Symbol.replace](ent, " ");
+
+  generateTabsAndPanels(db, true);
+}
+
+function panelEdit(db, evt) {
+  var ent = $(evt).parent().prop("id").replace(/\S+?-(.*)/g, "$1");
+  var pnl = $(evt).parent().parent().prop("id").replace(/\S+?-(.*)/g, "$1");
+  var name = /-/g [Symbol.replace](ent, " ");
+
+  generateTabsAndPanels(db, true);
+}
+
+function panelDelete(db, evt) {
+  var ent = $(evt).parent().prop("id").replace(/\S+?-(.*)/g, "$1");
+  var pnl = $(evt).parent().parent().prop("id").replace(/\S+?-(.*)/g, "$1");
+  var name = /-/g [Symbol.replace](ent, " ");
+
+  var i = trackerslist.findIndex(trackerslist => trackerslist.name === name);
+  var list = trackerslist[i].list;
+
+  if (pnl === "trackers") {
+    trackerslist[i].enabled = false;
   } else {
-    remedies.name = "Remedies";
-    remedies.type = "list";
-    remedies.list = "";
-    remedies.removeable = true;
-    remedies.enabled = true;
-    trackerlist.push(remedies);
+    var j = trackerslist[i].list.findIndex(list => list === ent);
+    list.splice(j, 1);
   }
 
-  $("#druglist input").foreach(function () {
+  $("#ent-" + ent).detach();
+  generateTabsAndPanels(db, true);
+}
+
+function addSelectedDrugs(evt) {
+  var list = [];
+
+  $("#druglist input").each(function () {
     if ($(this).prop("checked")) {
-      if (remedies.list.findIndex(remedies => remedies.list === $(this).text()) != -1) {
-        remedies.list.push($(this).text());
-      }
+      var name = $(this).parent().text().replace(/^\s+(.*?)\s+$/m, "$1");
+      list.push(name);
     }
   });
+
+  var store = db.transaction(["tracking"], "readwrite").objectStore("tracking");
+  var cursor = store.index("by_name").openCursor(IDBKeyRange.only("Remedies"));
+  cursor.onsuccess = function () {
+    var cursor = event.target.result;
+
+    if (cursor) {
+      var remedies = cursor.value;
+      for (var i = 0; i < list.length; ++i)
+        if (!remedies.list.includes(list[i]))
+          remedies.list.push(list[i]);
+
+      cursor.update(remedies);
+    } else {
+      var pos = $("#cont-Trackers div:last-child").find("div:first").prop("id");
+      var remedies = {
+        position: Number(pos) + 1,
+        name: "Remedies",
+        type: "list",
+        list: list,
+        removeable: true
+      };
+
+      store.add(remedies);
+
+      generateTrackersPanel(db);
+      generateTabsAndPanels(db, false);
+    }
+
+    addPanel(remedies);
+  }
 }
 
 function enableLoadDrugs(evt) {
@@ -349,8 +387,8 @@ $(document).ready(function () {
   request.onsuccess = function () {
     db = request.result;
 
-    generateTabsAndPanels(db);
-    generateTrackerPanel(db);
+    generateTabsAndPanels(db, false);
+    generateTrackersPanel(db);
   }
 
   //$("#tabs button").click(function () {
@@ -361,12 +399,8 @@ $(document).ready(function () {
     enableDeleteBtns(this);
   });
 
-  $("#panels #delbtn").click(function () {
-    deleteButton(this);
-  });
-
   $("#panels #addinp").focus(function () {
-    enableAddRecall(this);
+    enableAddBtns(this);
   });
 
   $("#urldrugscom").focus(function () {
@@ -377,12 +411,24 @@ $(document).ready(function () {
     loadDrugsCom(this);
   });
 
-  $("#useselecteddrugs").click(function () {
-    useSelectedDrugs(this);
-  });
-
   $("#demoloaddrugs").click(function () {
     loadDrugs("https://www.drugs.com/mn/wx7s49r");
+  });
+
+  $("#panels #delbtn").click(function () {
+    panelDelete(db, this);
+  });
+
+  $("#panels #editbtn").click(function () {
+    panelEdit(db, this);
+  });
+
+  $("#panels #addbtn").click(function () {
+    panelAdd(db, this);
+  });
+
+  $("#useselecteddrugs").click(function () {
+    addSelectedDrugs(this);
   });
 
   $("#panels [draggable|='true']").on({
@@ -403,19 +449,19 @@ function doUpgrade(request) {
     autoIncrement: true
   });
 
-  var titleIndex = store.createIndex("by_position", "position", {
+  store.createIndex("by_position", "position", {
     unique: true
   });
 
-  var titleIndex = store.createIndex("by_name", "name", {
+  store.createIndex("by_name", "name", {
     unique: true
   });
 
-  var authorIndex = store.createIndex("by_type", "type", {
+  store.createIndex("by_type", "type", {
     unique: false
   });
 
-  for (var i = 0; i < trackerlist.length; ++i) {
-    store.put(trackerlist[i]);
+  for (var i = 0; i < trackerslist.length; ++i) {
+    store.put(trackerslist[i]);
   }
 }

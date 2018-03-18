@@ -184,13 +184,13 @@
                 <br>
                 <div class="row border-top" style="font-size: 12px">
                     To load medicines from Drugs.com enter the page name and hit "Load". Select which medicines you want to copy to the "Remedies"
-                    section. Then hit "Copy Selected"
+                    section. Then hit "Add"
                 </div>
 
                 <div class="row container">
                     <input id="urldrugscom" type="text" class="rounded col-lg-3 col-md-3" placeholder="wx7s49r">&nbsp;
                     <button id="loaddrugscom" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 disabled" disabled>Load</button>&nbsp;
-                    <button id="useselecteddrugs" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 disabled" disabled>Copy Selected</button>&nbsp;
+                    <button id="useselecteddrugs" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 disabled" disabled>Add</button>&nbsp;
                     <button id="demoloaddrugs" type="button" class="btn border btn-sm btn-green col-lg-3 col-md-3">Demo wx7s49r</button>
                     <div id="druglist" class="container"></div>
                     <br>
@@ -203,11 +203,11 @@
     <script>
         //w3.includeHTML();
 
-        var trackertypes = ["blood pressure", "date", "list", "number",
+        var trackerstypes = ["blood pressure", "date", "list", "number",
             "range", "range buttons", "range gradient buttons", "range slider", "time", "true/false", "weather"
         ];
 
-        var trackerlist = [ // sql, can't reuse names with stored data unless confirmed by user for deletion
+        var trackerslist = [ // sql, can't reuse names with stored data unless confirmed by user for deletion
             // new user start pain level, start time, remedies, relief
             {
                 position: 1,
@@ -251,13 +251,13 @@
                 list: ["light", "sound"],
                 removeable: true,
             }, {
-                position: 8,
-                name: "Remedies",
-                type: "list",
-                // pull drug list from drugs.com sharing link (link not saved)
-                list: ["kepra", "relafin", "haldol", "cogentin", "benadryl", "compazine", "sleep"],
-                removeable: true,
-            }, {
+//                position: 8,
+//                name: "Remedies",
+//                type: "list",
+//                // pull drug list from drugs.com sharing link (link not saved)
+//                list: ["Kepra", "Relafin", "Haldol", "Cogentin", "Benadryl", "Compazine", "sleep"],
+//                removeable: true,
+//            }, {
                 position: 9,
                 name: "Triggered By",
                 type: "list",
@@ -313,7 +313,7 @@
                     <div id="ctrl-idname" class="row">
                         <div class="card-title col-lg-4 col-md-4"><h4>ttitle</h4></div>
                         <div class="col-lg-1 col-md-1" ifpanel>
-                            <button id="edittrackerbtn" type="button" class="btn border btn-sm btn-green" style="height:32px">Edit</button>
+                            <button id="edittrackersbtn" type="button" class="btn border btn-sm btn-green" style="height:32px">Edit</button>
                         </div>
                         <input id="enabledeleteck" type="checkbox" class="clr-dark-green">Enable Delete Buttons</input>
                     </div>
@@ -329,9 +329,9 @@
         var entry =
             `
                         <div id="ent-idname" class="row border-bottom">
-                            <div class="col-lg-4 col-md-4" draggable="true">ttitle</div>
-                            <div class="col-lg-3 col-md-3" iftracker>ttype</div>
-                            <div class="col-lg-3 col-md-3" iftracker>
+                            <div id="000" class="col-lg-4 col-md-4" draggable="true">ttitle</div>
+                            <div class="col-lg-3 col-md-3" iftrackers>ttype</div>
+                            <div class="col-lg-3 col-md-3" iftrackers>
                                 <div ifrange>startrange-endrange</div>
                             </div>
 
@@ -347,14 +347,14 @@
                     <br>
                     <div  id="btm-idname" class="row">
                         <input id="addinp" class="rounded col-lg-4 col-md-4" type="text" placeholder="ttitle">
-                        <div class="col-lg-2 col-md-2 dropdown" iftracker>
+                        <div class="col-lg-2 col-md-2 dropdown" iftrackers>
                             <button id="menu" class="btn border btn-sm btn-green dropdown-toggle disabled" disabled type="button" data-toggle="dropdown">
                                 Type
                                 <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu">
             `;
-        var tail_tracker_menu =
+        var tail_trackers_menu =
             `
                                 <li id="menu-idname">ttype</li>
             `
@@ -362,8 +362,8 @@
             `
                              </ul>
                         </div>
-                        <input id="startrangeinp" class="rounded col-lg-1 col-md-1 disabled" disabled type="text" placeholder="1" iftracker>&nbsp;
-                        <input id="endrangeinp" class="rounded col-lg-1 col-md-1 disabled" disabled type="text" placeholder="10" iftracker>&nbsp;
+                        <input id="startrangeinp" class="rounded col-lg-1 col-md-1 disabled" disabled type="text" placeholder="1" iftrackers>&nbsp;
+                        <input id="endrangeinp" class="rounded col-lg-1 col-md-1 disabled" disabled type="text" placeholder="10" iftrackers>&nbsp;
                         <button id="addent" type="button" class="btn border btn-sm btn-green disabled" disabled>Add</button>
                     </div>
                 </div>
@@ -395,7 +395,7 @@
         var med_import =
             `
                 <label class=" col-lg-3 col-md-3">
-                    <input id="med-idname" type="checkbox"> idname</input>
+                    <input type="checkbox"> ttitle</input>
                 </label>
             `;
     </script>
