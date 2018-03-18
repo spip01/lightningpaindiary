@@ -5,7 +5,7 @@ function generateTrackersPanel(db) {
   var id = "Trackers";
   var name = "Trackers";
 
-  $("#panels #pnl-" + id).remove();
+  $("#pnl-" + id).remove();
 
   var ttitle = /idname/g [Symbol.replace](head, id);
   ttitle = /ttitle/g [Symbol.replace](ttitle, name);
@@ -13,6 +13,7 @@ function generateTrackersPanel(db) {
   ttitle = /iftrackers/g [Symbol.replace](ttitle, "");
 
   $("#panels").append(ttitle);
+  var pnl = $("#pnl-"+id);
 
   var store = db.transaction(["tracking"], "readwrite").objectStore("tracking");
   var cursor = store.index('by_position').openCursor();
@@ -37,28 +38,56 @@ function generateTrackersPanel(db) {
       } else
         t = /ifrange/g [Symbol.replace](t, 'style="display: none"');
 
-      $("#panels #cont-" + id).append(t);
+      $("#cont-" + id).append(t);
 
       cursor.continue();
     } else {
       var ttail = /idname/g [Symbol.replace](tail, id);
       ttail = /ttitle/g [Symbol.replace](ttail, name);
       ttail = /iftrackers/g [Symbol.replace](ttail, "");
-      $("#panels #pnl-" + id).append(ttail);
+      $(pnl).append(ttail);
 
       for (var i = 0; i < trackerstypes.length; ++i) {
         var mid = / /g [Symbol.replace](trackerstypes[i], "-");
         var mitem = /idname/g [Symbol.replace](tail_trackers_menu, mid);
         mitem = /ttype/g [Symbol.replace](mitem, trackerstypes[i]);
 
-        $("#panels #pnl-" + id).append(mitem);
+        $(pnl).append(mitem);
       }
 
       var tend = /iftrackers/g [Symbol.replace](tail_end, "");
 
-      $("#panels #pnl-" + id).append(tend);
+      $(pnl).append(tend);
     }
   }
+
+  $(pnl).find("#enabledeleteck").click(function () {
+    enableDeleteBtns(this);
+  });
+
+  $(pnl).find("#addinp").focus(function () {
+    enableAddBtns(this);
+  });
+
+  $(pnl).find("#delbtn").click(function () {
+    panelDelete(db, this);
+  });
+
+  $(pnl).find("#editbtn").click(function () {
+    panelEdit(db, this);
+  });
+
+  $(pnl).find("#addbtn").click(function () {
+    panelAdd(db, this);
+  });
+
+  $(pnl).find("[draggable|='true']").on({
+    //"mouseleave": $.proxy(mouseLeave),
+    //"mouseenter": $.proxy(mouseEnter),
+    "drop": $.proxy(drop),
+    "dragover": $.proxy(dragover),
+    "dragstart": $.proxy(dragstart)
+  });
 }
 
 function generateTabsAndPanels(db, tabonly) {
@@ -84,7 +113,7 @@ function addPanel(item) {
   var id = / /g [Symbol.replace](item.name, "-");
   var name = item.name;
 
-  $("#panels #pnl-" + id).remove();
+  $("#pnl-" + id).remove();
 
   var ttitle = /idname/g [Symbol.replace](head, id);
   ttitle = /ttitle/g [Symbol.replace](ttitle, name);
@@ -92,6 +121,7 @@ function addPanel(item) {
   ttitle = /iftrackers/g [Symbol.replace](ttitle, "style='display: none'");
 
   $("#panels").append(ttitle);
+  var pnl = $("#pnl-"+id);
 
   for (var j = 0; j < item.list.length; ++j) {
     var iid = / /g [Symbol.replace](item.list[j], "-");
@@ -100,7 +130,7 @@ function addPanel(item) {
     t = /iftrackers/g [Symbol.replace](t, "style='display: none'");
     t = /ifrange/g [Symbol.replace](t, "style='display: none'");
 
-    $("#panels #cont-" + id).append(t);
+    $("#cont-" + id).append(t);
   }
 
   var ttail = /idname/g [Symbol.replace](tail, id);
@@ -109,7 +139,35 @@ function addPanel(item) {
 
   var tend = /iftrackers/g [Symbol.replace](tail_end, 'style="display: none"');
 
-  $("#panels #pnl-" + id).append(ttail + tend);
+  $(pnl).append(ttail + tend);
+
+  $(pnl).find("#enabledeleteck").click(function () {
+    enableDeleteBtns(this);
+  });
+
+  $(pnl).find("#addinp").focus(function () {
+    enableAddBtns(this);
+  });
+
+  $(pnl).find("#delbtn").click(function () {
+    panelDelete(db, this);
+  });
+
+  $(pnl).find("#editbtn").click(function () {
+    panelEdit(db, this);
+  });
+
+  $(pnl).find("#addbtn").click(function () {
+    panelAdd(db, this);
+  });
+
+  $(pnl).find("[draggable|='true']").on({
+    //"mouseleave": $.proxy(mouseLeave),
+    //"mouseenter": $.proxy(mouseEnter),
+    "drop": $.proxy(drop),
+    "dragover": $.proxy(dragover),
+    "dragstart": $.proxy(dragstart)
+  });
 }
 
 function newTabBar() {
@@ -266,19 +324,32 @@ function applyMeds(ml) {
   }
   list += '<dev>';
 
-  $("#druglist").html(list);
-  $("#useselecteddrugs").removeClass("disabled");
-  $("#useselecteddrugs").removeAttr("disabled");
+  $("#pnl-Account #druglist").html(list);
+  $("#pnl-Account #useselecteddrugs").removeClass("disabled");
+  $("#pnl-Account #useselecteddrugs").removeAttr("disabled");
 }
 
 /********************************************************************* */
 
 function PanelAdd(db, evt) {
-  var ent = $(evt).parent().prop("id").replace(/\S+?-(.*)/g, "$1");
+  var ent = $(evt).val();
   var pnl = $(evt).parent().parent().prop("id").replace(/\S+?-(.*)/g, "$1");
   var name = /-/g [Symbol.replace](ent, " ");
 
-  generateTabsAndPanels(db, true);
+  var store = db.transaction(["tracking"], "readwrite").objectStore("tracking");
+  var cursor = store.index("by_name").openCursor(IDBKeyRange.only(pnl));
+  cursor.onsuccess = function () {
+    var cursor = event.target.result;
+
+    if (cursor) {
+      if (!cursor.value.list.includes(ent))
+        cursor.value.list.push(ent);
+
+      cursor.update(remedies);
+
+      generateTabsAndPanels(db, true);
+    }
+  }
 }
 
 function panelEdit(db, evt) {
@@ -331,7 +402,7 @@ function addSelectedDrugs(evt) {
 
       cursor.update(remedies);
     } else {
-      var pos = $("#cont-Trackers div:last-child").find("div:first").prop("id");
+      var pos = $("#cont-Trackers div:last-child").find("div:first").prop("id").replace(/\S+?-(.*)/g, "$1");
       var remedies = {
         position: Number(pos) + 1,
         name: "Remedies",
@@ -351,8 +422,8 @@ function addSelectedDrugs(evt) {
 }
 
 function enableLoadDrugs(evt) {
-  $("#loaddrugscom").removeClass("disabled");
-  $("#loaddrugscom").removeAttr("disabled");
+  $("#pnl-Account #loaddrugscom").removeClass("disabled");
+  $("#pnl-Account #loaddrugscom").removeAttr("disabled");
 }
 
 function loadFile(url, selector) {
@@ -389,54 +460,22 @@ $(document).ready(function () {
 
     generateTabsAndPanels(db, false);
     generateTrackersPanel(db);
-  }
-
-  //$("#tabs button").click(function () {
-  //  openTab(this);
-  //});
-
-  $("#panels #enabledeleteck").click(function () {
-    enableDeleteBtns(this);
-  });
-
-  $("#panels #addinp").focus(function () {
-    enableAddBtns(this);
-  });
-
-  $("#urldrugscom").focus(function () {
+  };
+  
+  $("#pnl-Account #urldrugscom").focus(function () {
     enableLoadDrugs(this);
   })
 
-  $("#loaddrugscom").click(function () {
+  $("#pnl-Account #loaddrugscom").click(function () {
     loadDrugsCom(this);
   });
 
-  $("#demoloaddrugs").click(function () {
+  $("#pnl-Account #demoloaddrugs").click(function () {
     loadDrugs("https://www.drugs.com/mn/wx7s49r");
   });
 
-  $("#panels #delbtn").click(function () {
-    panelDelete(db, this);
-  });
-
-  $("#panels #editbtn").click(function () {
-    panelEdit(db, this);
-  });
-
-  $("#panels #addbtn").click(function () {
-    panelAdd(db, this);
-  });
-
-  $("#useselecteddrugs").click(function () {
+  $("#pnl-Account #useselecteddrugs").click(function () {
     addSelectedDrugs(this);
-  });
-
-  $("#panels [draggable|='true']").on({
-    //"mouseleave": $.proxy(mouseLeave),
-    //"mouseenter": $.proxy(mouseEnter),
-    "drop": $.proxy(drop),
-    "dragover": $.proxy(dragover),
-    "dragstart": $.proxy(dragstart)
   });
 });
 

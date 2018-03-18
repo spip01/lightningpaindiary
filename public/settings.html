@@ -123,14 +123,22 @@
                 <div class="row">
                     <h4 class="card-title col-lg-2 col-md-2">Account</h4>
                     <!-- https://developers.google.com/drive/v3/web/savetodrive -->
-                    <!-- div style="text-indent: 0px; margin: 0px; padding: 0px; background: transparent; border-style: none; float: none; line-height: normal; font-size: 1px; vertical-align: middle; display: inline-block; width: 58px; height: 29px;"
-                        id="___savetodrive_0">
+                    <!--div id="___savetodrive_0" class="col-lg-2 col-md-2">
+                        <iframe ng-non-bindable="" frameborder="0" hspace="0" marginheight="0" marginwidth="0" scrolling="no" style="position: static; top: 0px; width: 58px; margin: 0px; border-style: none; left: 0px; visibility: visible; height: 29px;"
+                            tabindex="0" vspace="0" width="100%" id="I0_1520998225533" name="I0_1520998225533" src="https://drive.google.com/savetodrivebutton?usegapi=1&amp;src=%2F%2Fcors-files.appspot.com%2FStray_Kitten.jpg&amp;filename=Save%20to%20Drive%20Stray_Kitten%20demo.jpg&amp;sitename=Google%20Developers&amp;origin=https%3A%2F%2Fgoogle-developers.appspot.com&amp;gsrc=3p&amp;ic=1&amp;jsh=m%3B%2F_%2Fscs%2Fapps-static%2F_%2Fjs%2Fk%3Doz.gapi.en.R_YwodJb5EM.O%2Fm%3D__features__%2Fam%3DAQI%2Frt%3Dj%2Fd%3D1%2Frs%3DAGLTcCNZfyttL0MPLeEvWVmInXtToxOp6Q#_methods=onPlusOne%2C_ready%2C_close%2C_open%2C_resizeMe%2C_renderstart%2Concircled%2Cdrefresh%2Cerefresh%2Csave%2Conload&amp;id=I0_1520998225533&amp;_gfid=I0_1520998225533&amp;parent=https%3A%2F%2Fgoogle-developers.appspot.com&amp;pfname=&amp;rpctoken=18697450"
+                            data-gapiattached="true"></iframe>
+                    </div-->
+                    <!--div id="___openfromdrive_0" class="col-lg-2 col-md-2">
                         <iframe ng-non-bindable="" frameborder="0" hspace="0" marginheight="0" marginwidth="0" scrolling="no" style="position: static; top: 0px; width: 58px; margin: 0px; border-style: none; left: 0px; visibility: visible; height: 29px;"
                             tabindex="0" vspace="0" width="100%" id="I0_1520998225533" name="I0_1520998225533" src="https://drive.google.com/savetodrivebutton?usegapi=1&amp;src=%2F%2Fcors-files.appspot.com%2FStray_Kitten.jpg&amp;filename=Save%20to%20Drive%20Stray_Kitten%20demo.jpg&amp;sitename=Google%20Developers&amp;origin=https%3A%2F%2Fgoogle-developers.appspot.com&amp;gsrc=3p&amp;ic=1&amp;jsh=m%3B%2F_%2Fscs%2Fapps-static%2F_%2Fjs%2Fk%3Doz.gapi.en.R_YwodJb5EM.O%2Fm%3D__features__%2Fam%3DAQI%2Frt%3Dj%2Fd%3D1%2Frs%3DAGLTcCNZfyttL0MPLeEvWVmInXtToxOp6Q#_methods=onPlusOne%2C_ready%2C_close%2C_open%2C_resizeMe%2C_renderstart%2Concircled%2Cdrefresh%2Cerefresh%2Csave%2Conload&amp;id=I0_1520998225533&amp;_gfid=I0_1520998225533&amp;parent=https%3A%2F%2Fgoogle-developers.appspot.com&amp;pfname=&amp;rpctoken=18697450"
                             data-gapiattached="true"></iframe>
                     </div-->
                 </div>
-                <div class="container border-bottom">
+                <div class="container">
+                    <h6 class="border-bottom clr-dark-green">All information is kept with the local browser.</h6>
+                </div>
+
+                <!--div class="container border-bottom">
                     <h6 class="border-bottom clr-dark-green">No entries are required unless you want reminder notifications.</h6>
 
                     <div class="row">
@@ -180,15 +188,16 @@
                 <br>
                 <button id="submit-acct" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2">Submit</button>
 
-                <br>
+                <br-->
                 <br>
                 <div class="row border-top" style="font-size: 12px">
-                    To load medicines from Drugs.com enter the page name and hit "Load". Select which medicines you want to copy to the "Remedies"
-                    section. Then hit "Add"
+                    To load medicines from Drugs.com enter the url found under "Med List", "Share" and hit "Load". Select which medicines
+                    you want to copy to the "Remedies" section. Then hit the "Add" button .  The "Remedies" section will be created if necessary.
                 </div>
+                <br>
 
                 <div class="row container">
-                    <input id="urldrugscom" type="text" class="rounded col-lg-3 col-md-3" placeholder="wx7s49r">&nbsp;
+                    <input id="urldrugscom" value="https://drugs.com/mn/" type="text" class="rounded col-lg-3 col-md-3">&nbsp;
                     <button id="loaddrugscom" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 disabled" disabled>Load</button>&nbsp;
                     <button id="useselecteddrugs" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 disabled" disabled>Add</button>&nbsp;
                     <button id="demoloaddrugs" type="button" class="btn border btn-sm btn-green col-lg-3 col-md-3">Demo wx7s49r</button>
@@ -233,13 +242,13 @@
                 type: "true/false",
                 removeable: true,
             }, {
-                position:5,
+                position: 5,
                 name: "Pain Location",
                 type: "list",
                 list: ["forehead", "temple", "eyes", "left", "right"],
                 removeable: true,
             }, {
-                position:6,
+                position: 6,
                 name: "Pain Type",
                 type: "list",
                 list: ["throbbing", "burning", "pressure", "sharp"],
@@ -251,13 +260,13 @@
                 list: ["light", "sound"],
                 removeable: true,
             }, {
-//                position: 8,
-//                name: "Remedies",
-//                type: "list",
-//                // pull drug list from drugs.com sharing link (link not saved)
-//                list: ["Kepra", "Relafin", "Haldol", "Cogentin", "Benadryl", "Compazine", "sleep"],
-//                removeable: true,
-//            }, {
+                //                position: 8,
+                //                name: "Remedies",
+                //                type: "list",
+                //                // pull drug list from drugs.com sharing link (link not saved)
+                //                list: ["Kepra", "Relafin", "Haldol", "Cogentin", "Benadryl", "Compazine", "sleep"],
+                //                removeable: true,
+                //            }, {
                 position: 9,
                 name: "Triggered By",
                 type: "list",
@@ -329,7 +338,7 @@
         var entry =
             `
                         <div id="ent-idname" class="row border-bottom">
-                            <div id="000" class="col-lg-4 col-md-4" draggable="true">ttitle</div>
+                            <div id="pos-000" class="col-lg-4 col-md-4" draggable="true">ttitle</div>
                             <div class="col-lg-3 col-md-3" iftrackers>ttype</div>
                             <div class="col-lg-3 col-md-3" iftrackers>
                                 <div ifrange>startrange-endrange</div>
