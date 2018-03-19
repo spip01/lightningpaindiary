@@ -5,7 +5,7 @@
     <title>Lightning Pain Diary</title>
     <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
     <meta charset="utfoot-8">
-    <meta name="viewport" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
         crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -90,7 +90,7 @@
     <div id="navbar"></div>
 
     <div id="javascript" class="">
-        <div class="card container-fluid nav-menu">
+        <div class="card container nav-menu">
             <div class="row">
                 <div class="col-lg-6 col-md-6">
                     <a href="index.html" class="nav-text">
@@ -160,24 +160,24 @@
 
                         <div class="container">
                             <div class="row">
-                                <label class=" col-lg-2 col-md-2">
+                                <label class=" col-lg-2 col-md-2 col-sm-3 col-5">
                                     <input id="ifemail" type="checkbox"> email
                                 </label>
 
-                                <input id="email" type="text" class="rounded col-lg-3 col-md-3" placeholder="email address">&nbsp;
+                                <input id="email" type="text" class="rounded col-lg-3 col-md-3 col-sm-6 col-8" placeholder="email address">&nbsp;
 
                                 <i id="everified" class="fa fa-check-circle clr-dark-green" style="display: none"></i>
                                 <i id="enotverified" class="fa fa-circle"></i>
                             </div>
 
                             <div class="row">
-                                <label class="col-lg-12 col-md-12">
+                                <label">
                                     <input id="ifsms" type="checkbox"> text (If you are still charged for text messages you should change carriers &#x1f609;)
                                 </label>
                             </div>
 
                             <div class="container">
-                                <input id="phone" type="text" class="rounded col-lg-3 col-md-3" placeholder="phone number">
+                                <input id="phone" type="text" class="rounded col-lg-4 col-md-5 col-sm-6 col-10" placeholder="phone number">
                             </div>
                         </div>
                         <br>
@@ -185,7 +185,7 @@
                     </div>
                     <br>
 
-                    <button id="submit-acct" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2">Submit</button>
+                    <button id="submit-acct" type="button" class="btn border btn-sm btn-green">Submit</button>
                 </div>
                 <br>
 
@@ -300,8 +300,8 @@
             `            
                 <div id="pnl-idname" class="card card-body container-fluid" style="display: none">
                     <div id="ctrl-idname" class="row clr-dark-green">
-                        <div class="col-lg-4 col-md-4 h4">ttitle</div>
-                        <label class="col-lg-4 col-md-4">
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-4 h4">ttitle</div>
+                        <label class="col-lg-4 col-md-4 col-sm-6 col-8">
                             <input id="enabledeleteck" type="checkbox">
                             Enable Delete Buttons
                         </label>
@@ -319,25 +319,25 @@
         var entry =
             `
                         <div id="ent-idname" class="row border-bottom">
-                            <div id="pos-000" class="col-lg-4 col-md-4" draggable="true">ttitle</div>
-                            <div class="col-lg-3 col-md-3" iftrackers>ttype</div>
-                            <div class="col-lg-2 col-md-2" iftrackers>
+                            <div id="pos-000" class="col-lg-3 col-md-3 col-sm-3 col-5" draggable="true">ttitle</div>
+                            <div class="col-lg-3 col-md-4 col-sm-5 col-8" iftrackers>ttype</div>
+                            <div class="col-lg-1 col-md-2 col-sm-2 col-3" iftrackers>
                                 <div ifrange>startrange-endrange</div><!--colored-->
                             </div>
 
                             <!-- edit disables all other buttons -->
-                            <button id="editbtn" type="button" class="btn border btn-sm btn-green">Edit</button>&nbsp;
-                            <button id="delbtn" type="button" class="btn border btn-sm btn-green disabled" disabled ifremove>Delete</button>
+                                <button id="editbtn" type="button" class="btn border btn-sm btn-green">Edit</button>&nbsp;
+                                <button id="delbtn" type="button" class="btn border btn-sm btn-green disabled" disabled ifremove>Delete</button>
                         </div>
-            `;
+                    `;
 
         var tail =
             `
                     </div>
                     <br>
                     <div id="btm-idname" class="row">
-                        <input id="addinp" class="rounded col-lg-4 col-md-4" type="text" placeholder="ttitle">
-                        <div class="col-lg-2 col-md-2 dropdown" iftrackers>
+                        <input id="addinp" class="rounded col-lg-3 col-md-3 col-sm-4 col-4" type="text" placeholder="ttitle">
+                        <div class="col-lg-2 col-md-2 col-sm-3 col-3 dropdown" iftrackers>
                             <button id="tkr-menu" class="btn border btn-sm btn-green dropdown-toggle disabled" disabled type="button" data-toggle="dropdown">
                                 Type
                                 <span class="caret"></span>
@@ -352,8 +352,8 @@
             `
                              </ul>
                         </div>
-                        <input id="startrangeinp" class="rounded col-lg-1 col-md-1 disabled" disabled type="text" placeholder="1" iftrackers>&nbsp;
-                        <input id="endrangeinp" class="rounded col-lg-1 col-md-1 disabled" disabled type="text" placeholder="10" iftrackers>&nbsp;
+                        <input id="startrangeinp" class="rounded col-lg-1 col-md-1 col-sm-1 col-2 disabled" disabled type="text" placeholder="1" iftrackers>&nbsp;
+                        <input id="endrangeinp" class="rounded col-lg-1 col-md-1 col-sm-1 col-2 disabled" disabled type="text" placeholder="10" iftrackers>&nbsp;
                         <button id="addent" type="button" class="btn border btn-sm btn-green disabled" disabled>Add</button>
                     </div>
                 </div>
@@ -366,7 +366,7 @@
              `;
         var tab_entries =
             `
-                        <button id="tab-idname" class="col-lg-2 col-md-2 btn-green no-border trborder tbborder">ttitle</button>
+                        <button id="tab-idname" class="col-lg-2 col-md-3 col-sm-4 col-6 btn-green no-border trborder tbborder">ttitle</button>
             `;
         var tab_tail =
             `
@@ -377,7 +377,7 @@
 
         var rmd_entries =
             `
-                <label class="col-lg-3 col-md-3">
+                <label class="col-lg-2 col-md-3 col-sm-4 col-8">
                     <input id="rmd-idname" type="checkbox">
                     ttitle
                 </label>
@@ -385,7 +385,7 @@
 
         var med_import =
             `
-                <label class=" col-lg-3 col-md-3">
+                <label class=" col-lg-2 col-md-3 col-sm-4 col-8">
                     <input type="checkbox">
                     ttitle
                 </label>

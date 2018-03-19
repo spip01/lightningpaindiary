@@ -261,10 +261,10 @@ function enableAddBtns(evt) {
 
   $(pnl).find("#tkr-menu").removeClass("disabled");
   $(pnl).find("#tkr-menu").removeAttr("disabled");
-//  $(pnl).find("#startrangeinp").removeClass("disabled");
-//  $(pnl).find("#startrangeinp").removeAttr("disabled");
-//  $(pnl).find("#endrangeinp").removeClass("disabled");
-//  $(pnl).find("#endrangeinp").removeAttr("disabled");
+  //  $(pnl).find("#startrangeinp").removeClass("disabled");
+  //  $(pnl).find("#startrangeinp").removeAttr("disabled");
+  //  $(pnl).find("#endrangeinp").removeClass("disabled");
+  //  $(pnl).find("#endrangeinp").removeAttr("disabled");
 }
 
 function loadDrugsCom(evt) {
@@ -412,6 +412,18 @@ function enableLoadDrugs(evt) {
 }
 
 function loadFile(url, selector) {
+//  xhttp = new XMLHttpRequest();
+//  xhttp.onreadystatechange = function () {
+//    if (this.readyState == 4) {
+//      if (this.status == 200) {
+//        var html = this.responseText.replace(/(?:.*?\n)*?<body>((?:.*?\n)+?)<\/body>(.*?\n?)*/g, "$1");
+//        $(selector).append(html);
+//      }
+//    }
+//  }
+//  xhttp.open("GET", url, true);
+//  xhttp.send();
+
   $.getJSON('http://www.whateverorigin.org/get?url=' + encodeURIComponent(url) + '&callback=?', function (data, status) {
     if (status != "success")
       alert(status);
