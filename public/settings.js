@@ -4,28 +4,25 @@ loadFile("http://raw.githubusercontent.com/spip01/lightningpaindiary/bootstrap/p
 function generateTrackersPanel(db) {
   var id = "Trackers";
   var name = "Trackers";
-
-  $("#pnl-" + id).remove();
+  var reminders = "";
 
   var ttitle = /idname/g [Symbol.replace](head, id);
   ttitle = /ttitle/g [Symbol.replace](ttitle, name);
   ttitle = /ifpanel/g [Symbol.replace](ttitle, "style='display: none'");
   ttitle = /iftrackers/g [Symbol.replace](ttitle, "");
 
-  $("#panels").append(ttitle);
-  var pnl = $("#pnl-"+id);
+  var panels = ttitle;
 
   var store = db.transaction(["tracking"], "readwrite").objectStore("tracking");
   var cursor = store.index('by_position').openCursor();
   cursor.onsuccess = function (event) {
     var cursor = event.target.result;
-    if (cursor) {
 
+    if (cursor) {
       var item = cursor.value;
       var iid = / /g [Symbol.replace](item.name, "-");
 
-      var t = entry;
-      t = /idname/g [Symbol.replace](t, iid);
+      var t = /idname/g [Symbol.replace](entry, iid);
       t = /ttitle/g [Symbol.replace](t, item.name);
       t = /ttype/g [Symbol.replace](t, item.type);
       t = /iftrackers/g [Symbol.replace](t, "");
@@ -38,99 +35,85 @@ function generateTrackersPanel(db) {
       } else
         t = /ifrange/g [Symbol.replace](t, 'style="display: none"');
 
-      $("#cont-" + id).append(t);
+      t = /ifremove/g [Symbol.replace](t, item.removeable === false ? 'style="display: none"' : '');
+
+      panels += t;
+
+      if (item.remindable === undefined) {
+        var rmd = /idname/g [Symbol.replace](rmd_entries, iid);
+        rmd = /ttitle/g [Symbol.replace](rmd, item.name);
+        reminders += rmd;
+      }
 
       cursor.continue();
     } else {
       var ttail = /idname/g [Symbol.replace](tail, id);
       ttail = /ttitle/g [Symbol.replace](ttail, name);
       ttail = /iftrackers/g [Symbol.replace](ttail, "");
-      $(pnl).append(ttail);
+
+      panels += ttail;
 
       for (var i = 0; i < trackerstypes.length; ++i) {
         var mid = / /g [Symbol.replace](trackerstypes[i], "-");
         var mitem = /idname/g [Symbol.replace](tail_trackers_menu, mid);
         mitem = /ttype/g [Symbol.replace](mitem, trackerstypes[i]);
 
-        $(pnl).append(mitem);
+        panels += mitem;
       }
 
       var tend = /iftrackers/g [Symbol.replace](tail_end, "");
 
-      $(pnl).append(tend);
+      panels += tend;
+
+      $("#pnl-" + id).remove();
+      $("#panels").append(panels);
+      $("#reminders").html(reminders);
+      setPanelEvents("#pnl-" + id);
     }
-  }
-
-  $(pnl).find("#enabledeleteck").click(function () {
-    enableDeleteBtns(this);
-  });
-
-  $(pnl).find("#addinp").focus(function () {
-    enableAddBtns(this);
-  });
-
-  $(pnl).find("#delbtn").click(function () {
-    panelDelete(db, this);
-  });
-
-  $(pnl).find("#editbtn").click(function () {
-    panelEdit(db, this);
-  });
-
-  $(pnl).find("#addbtn").click(function () {
-    panelAdd(db, this);
-  });
-
-  $(pnl).find("[draggable|='true']").on({
-    //"mouseleave": $.proxy(mouseLeave),
-    //"mouseenter": $.proxy(mouseEnter),
-    "drop": $.proxy(drop),
-    "dragover": $.proxy(dragover),
-    "dragstart": $.proxy(dragstart)
-  });
+  };
 }
 
-function generateTabsAndPanels(db, tabonly) {
+function generateTabsAndPanels(db) {
   newTabBar();
 
   var store = db.transaction(["tracking"], "readwrite").objectStore("tracking");
   var cursor = store.index('by_type').openCursor(IDBKeyRange.only("list"));
   cursor.onsuccess = function (event) {
     var cursor = event.target.result;
-    if (cursor) {
-      data = cursor.value;
 
-      addTab(data);
-      if (!tabonly)
-        addPanel(data);
+    if (cursor) {
+      item = cursor.value;
+
+      addTab(item);
+      addPanel(item);
 
       cursor.continue();
     }
   }
 }
 
-function addPanel(item) {
-  var id = / /g [Symbol.replace](item.name, "-");
-  var name = item.name;
-
-  $("#pnl-" + id).remove();
+function addPanel(panel) {
+  var id = / /g [Symbol.replace](panel.name, "-");
+  var name = panel.name;
 
   var ttitle = /idname/g [Symbol.replace](head, id);
   ttitle = /ttitle/g [Symbol.replace](ttitle, name);
   ttitle = /ifpanel/g [Symbol.replace](ttitle, "");
   ttitle = /iftrackers/g [Symbol.replace](ttitle, "style='display: none'");
 
-  $("#panels").append(ttitle);
-  var pnl = $("#pnl-"+id);
+  var panels = ttitle;
 
-  for (var j = 0; j < item.list.length; ++j) {
-    var iid = / /g [Symbol.replace](item.list[j], "-");
+  for (var j = 0; j < panel.list.length; ++j) {
+    var item = panel.list[j];
+    var iid = / /g [Symbol.replace](item, "-");
+
     var t = /idname/g [Symbol.replace](entry, iid);
-    t = /ttitle/g [Symbol.replace](t, item.list[j]);
+    t = /ttitle/g [Symbol.replace](t, item);
     t = /iftrackers/g [Symbol.replace](t, "style='display: none'");
     t = /ifrange/g [Symbol.replace](t, "style='display: none'");
+    t = /ifremove/g [Symbol.replace](t, '');
 
-    $("#cont-" + id).append(t);
+    panels += t;
   }
 
   var ttail = /idname/g [Symbol.replace](tail, id);
@@ -139,29 +122,35 @@ function addPanel(item) {
 
   var tend = /iftrackers/g [Symbol.replace](tail_end, 'style="display: none"');
 
-  $(pnl).append(ttail + tend);
+  panels += ttail + tend;
 
-  $(pnl).find("#enabledeleteck").click(function () {
+  $("#pnl-" + id).remove();
+  $("#panels").append(panels);
+  setPanelEvents("#pnl-" + id);
+}
+
+function setPanelEvents(sel) {
+  $(sel + " #enabledeleteck").click(function () {
     enableDeleteBtns(this);
   });
 
-  $(pnl).find("#addinp").focus(function () {
+  $(sel + " #editbtn").click(function () {
+    panelEditBtn(db, this);
+  });
+
+  $(sel + " #delbtn").click(function () {
+    panelDeleteBtn(db, this);
+  });
+
+  $(sel + " #addinp").focus(function () {
     enableAddBtns(this);
   });
 
-  $(pnl).find("#delbtn").click(function () {
-    panelDelete(db, this);
+  $(sel + " #addbtn").click(function () {
+    panelAddBtn(db, this);
   });
 
-  $(pnl).find("#editbtn").click(function () {
-    panelEdit(db, this);
-  });
-
-  $(pnl).find("#addbtn").click(function () {
-    panelAdd(db, this);
-  });
-
-  $(pnl).find("[draggable|='true']").on({
+  $(sel + " [draggable|='true']").on({
     //"mouseleave": $.proxy(mouseLeave),
     //"mouseenter": $.proxy(mouseEnter),
     "drop": $.proxy(drop),
@@ -174,14 +163,16 @@ function newTabBar() {
   $("#tabs").html(tab_head);
 
   addTab({
-    name: "Account"
+    name: "Account",
+    borderbottom: true,
   });
   addTab({
-    name: "Trackers"
+    name: "Trackers",
+    borderright: true,
+    borderbottom: true,
   });
 
   $("#tabs").append(tab_tail);
-  $("#reminders").empty();
 }
 
 function addTab(item) {
@@ -189,12 +180,10 @@ function addTab(item) {
 
   var tab = /idname/g [Symbol.replace](tab_entries, id);
   tab = /ttitle/g [Symbol.replace](tab, item.name);
-
-  var rmd = /idname/g [Symbol.replace](rmd_entries, id);
-  rmd = /ttitle/g [Symbol.replace](rmd, item.name);
+  tab = /trborder/g [Symbol.replace](tab, item.borderright === true ? "border-right" : "");
+  tab = /tbborder/g [Symbol.replace](tab, item.borderbottom === true ? "border-bottom" : "");
 
   $("#tablist").append(tab);
-  $("#reminders").append(rmd);
 
   $("#tabs #tab-" + id).click(function () {
     openTab(this);
@@ -253,28 +242,29 @@ function drop(evt) {
 }
 
 function enableDeleteBtns(evt) {
-  var pnl = $(evt).parent().prop("id").replace(/^\S+?-(.*)/g, "pnl-$1");
+  var pnl = $(evt).parent().parent();
 
   if ($(evt).prop("checked")) {
-    $("#" + pnl + " #delbtn").removeClass("disabled");
-    $("#" + pnl + " #delbtn").removeAttr("disabled");
+    $(pnl).find("#delbtn").removeClass("disabled");
+    $(pnl).find("#delbtn").removeAttr("disabled");
   } else {
-    $("#" + pnl + " #delbtn").addClass("disabled");
-    $("#" + pnl + " #delbtn").prop("disabled", "true");
+    $(pnl).find("#delbtn").addClass("disabled");
+    $(pnl).find("#delbtn").prop("disabled", "true");
   }
 }
 
 function enableAddBtns(evt) {
-  var pnl = $(evt).parent().prop("id").replace(/^\S+?-(.*)/g, "pnl-$1");
+  var pnl = $(evt).parent().parent();
 
-  $("#" + pnl + " #menu").removeClass("disabled");
-  $("#" + pnl + " #menu").removeAttr("disabled");
-  $("#" + pnl + " #addent").removeClass("disabled");
-  $("#" + pnl + " #addent").removeAttr("disabled");
-  $("#" + pnl + " #startrangeinp").removeClass("disabled");
-  $("#" + pnl + " #startrangeinp").removeAttr("disabled");
-  $("#" + pnl + " #endrangeinp").removeClass("disabled");
-  $("#" + pnl + " #endrangeinp").removeAttr("disabled");
+  $(pnl).find("#addent").removeClass("disabled");
+  $(pnl).find("#addent").removeAttr("disabled");
+
+  $(pnl).find("#tkr-menu").removeClass("disabled");
+  $(pnl).find("#tkr-menu").removeAttr("disabled");
+//  $(pnl).find("#startrangeinp").removeClass("disabled");
+//  $(pnl).find("#startrangeinp").removeAttr("disabled");
+//  $(pnl).find("#endrangeinp").removeClass("disabled");
+//  $(pnl).find("#endrangeinp").removeAttr("disabled");
 }
 
 function loadDrugsCom(evt) {
@@ -302,11 +292,9 @@ function loadDrugs(url) {
           start = false;
         }
 
-        if (start) {
-          if (l.search(/^h4>/) != -1) {
-            var m = l.replace(/^h4>(.*)/, "$1");
-            h.push(m);
-          }
+        if (start && l.search(/^h4>/) != -1) {
+          var m = l.replace(/^h4>(.*)/, "$1");
+          h.push(m);
         }
       }
 
@@ -329,9 +317,7 @@ function applyMeds(ml) {
   $("#pnl-Account #useselecteddrugs").removeAttr("disabled");
 }
 
-/********************************************************************* */
-
-function PanelAdd(db, evt) {
+function PanelAddBtn(db, evt) {
   var ent = $(evt).val();
   var pnl = $(evt).parent().parent().prop("id").replace(/\S+?-(.*)/g, "$1");
   var name = /-/g [Symbol.replace](ent, " ");
@@ -347,20 +333,20 @@ function PanelAdd(db, evt) {
 
       cursor.update(remedies);
 
-      generateTabsAndPanels(db, true);
+      generateTabsAndPanels(db);
     }
   }
 }
 
-function panelEdit(db, evt) {
+function panelEditBtn(db, evt) {
   var ent = $(evt).parent().prop("id").replace(/\S+?-(.*)/g, "$1");
   var pnl = $(evt).parent().parent().prop("id").replace(/\S+?-(.*)/g, "$1");
   var name = /-/g [Symbol.replace](ent, " ");
 
-  generateTabsAndPanels(db, true);
+  generateTabsAndPanels(db);
 }
 
-function panelDelete(db, evt) {
+function panelDeleteBtn(db, evt) {
   var ent = $(evt).parent().prop("id").replace(/\S+?-(.*)/g, "$1");
   var pnl = $(evt).parent().parent().prop("id").replace(/\S+?-(.*)/g, "$1");
   var name = /-/g [Symbol.replace](ent, " ");
@@ -376,7 +362,7 @@ function panelDelete(db, evt) {
   }
 
   $("#ent-" + ent).detach();
-  generateTabsAndPanels(db, true);
+  generateTabsAndPanels(db);
 }
 
 function addSelectedDrugs(evt) {
@@ -408,13 +394,12 @@ function addSelectedDrugs(evt) {
         name: "Remedies",
         type: "list",
         list: list,
-        removeable: true
       };
 
       store.add(remedies);
 
       generateTrackersPanel(db);
-      generateTabsAndPanels(db, false);
+      generateTabsAndPanels(db);
     }
 
     addPanel(remedies);
@@ -449,22 +434,25 @@ $(document).ready(function () {
   }
 
   var request = indexedDB.open("diary", 1);
+
   request.onupgradeneeded = function () {
     doUpgrade(request);
-  }
+  };
+
   request.onerror = function (event) {
     console.log("error loading db: " + request.error);
-  }
+  };
+
   request.onsuccess = function () {
     db = request.result;
 
-    generateTabsAndPanels(db, false);
     generateTrackersPanel(db);
+    generateTabsAndPanels(db);
   };
-  
+
   $("#pnl-Account #urldrugscom").focus(function () {
     enableLoadDrugs(this);
-  })
+  });
 
   $("#pnl-Account #loaddrugscom").click(function () {
     loadDrugsCom(this);
@@ -480,7 +468,6 @@ $(document).ready(function () {
 });
 
 /************************************************** */
-
 
 function doUpgrade(request) {
   db = request.result;
@@ -501,6 +488,9 @@ function doUpgrade(request) {
   });
 
   for (var i = 0; i < trackerslist.length; ++i) {
-    store.put(trackerslist[i]);
+    var tracker = trackerslist[i];
+    tracker.position = i;
+
+    store.put(tracker);
   }
 }

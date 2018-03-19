@@ -120,91 +120,93 @@
         <div id="panels" class="card card-body bkg-light-green pad-bottom">
 
             <div id="pnl-Account" class="card card-body" style="display: block">
-                <div class="row">
-                    <h4 class="card-title col-lg-2 col-md-2">Account</h4>
-                    <!-- https://developers.google.com/drive/v3/web/savetodrive -->
-                    <!--div id="___savetodrive_0" class="col-lg-2 col-md-2">
+                <div class="card card-body">
+                    <div class="row">
+                        <h4 class="card-title col-lg-4 col-md-4">Account</h4>
+                        <!-- https://developers.google.com/drive/v3/web/savetodrive -->
+                        <!--div id="___savetodrive_0" class="col-lg-2 col-md-2">
                         <iframe ng-non-bindable="" frameborder="0" hspace="0" marginheight="0" marginwidth="0" scrolling="no" style="position: static; top: 0px; width: 58px; margin: 0px; border-style: none; left: 0px; visibility: visible; height: 29px;"
                             tabindex="0" vspace="0" width="100%" id="I0_1520998225533" name="I0_1520998225533" src="https://drive.google.com/savetodrivebutton?usegapi=1&amp;src=%2F%2Fcors-files.appspot.com%2FStray_Kitten.jpg&amp;filename=Save%20to%20Drive%20Stray_Kitten%20demo.jpg&amp;sitename=Google%20Developers&amp;origin=https%3A%2F%2Fgoogle-developers.appspot.com&amp;gsrc=3p&amp;ic=1&amp;jsh=m%3B%2F_%2Fscs%2Fapps-static%2F_%2Fjs%2Fk%3Doz.gapi.en.R_YwodJb5EM.O%2Fm%3D__features__%2Fam%3DAQI%2Frt%3Dj%2Fd%3D1%2Frs%3DAGLTcCNZfyttL0MPLeEvWVmInXtToxOp6Q#_methods=onPlusOne%2C_ready%2C_close%2C_open%2C_resizeMe%2C_renderstart%2Concircled%2Cdrefresh%2Cerefresh%2Csave%2Conload&amp;id=I0_1520998225533&amp;_gfid=I0_1520998225533&amp;parent=https%3A%2F%2Fgoogle-developers.appspot.com&amp;pfname=&amp;rpctoken=18697450"
                             data-gapiattached="true"></iframe>
                     </div-->
-                    <!--div id="___openfromdrive_0" class="col-lg-2 col-md-2">
+                        <!--div id="___openfromdrive_0" class="col-lg-2 col-md-2">
                         <iframe ng-non-bindable="" frameborder="0" hspace="0" marginheight="0" marginwidth="0" scrolling="no" style="position: static; top: 0px; width: 58px; margin: 0px; border-style: none; left: 0px; visibility: visible; height: 29px;"
                             tabindex="0" vspace="0" width="100%" id="I0_1520998225533" name="I0_1520998225533" src="https://drive.google.com/savetodrivebutton?usegapi=1&amp;src=%2F%2Fcors-files.appspot.com%2FStray_Kitten.jpg&amp;filename=Save%20to%20Drive%20Stray_Kitten%20demo.jpg&amp;sitename=Google%20Developers&amp;origin=https%3A%2F%2Fgoogle-developers.appspot.com&amp;gsrc=3p&amp;ic=1&amp;jsh=m%3B%2F_%2Fscs%2Fapps-static%2F_%2Fjs%2Fk%3Doz.gapi.en.R_YwodJb5EM.O%2Fm%3D__features__%2Fam%3DAQI%2Frt%3Dj%2Fd%3D1%2Frs%3DAGLTcCNZfyttL0MPLeEvWVmInXtToxOp6Q#_methods=onPlusOne%2C_ready%2C_close%2C_open%2C_resizeMe%2C_renderstart%2Concircled%2Cdrefresh%2Cerefresh%2Csave%2Conload&amp;id=I0_1520998225533&amp;_gfid=I0_1520998225533&amp;parent=https%3A%2F%2Fgoogle-developers.appspot.com&amp;pfname=&amp;rpctoken=18697450"
                             data-gapiattached="true"></iframe>
                     </div-->
-                </div>
-                <div class="container">
-                    <h6 class="border-bottom clr-dark-green">All information is kept with the local browser.</h6>
-                </div>
-
-                <!--div class="container border-bottom">
-                    <h6 class="border-bottom clr-dark-green">No entries are required unless you want reminder notifications.</h6>
-
-                    <div class="row">
-                        <label>
-                            <input id="reminderbtn" type="checkbox"> Remind me if these aren't completed by the end of today.
-                            <br>
-                            </input>
-                        </label>
                     </div>
-
-                    <div class="container" style="font-size: 12px">Pressing "Update" button on entry page marks all items completed.</div>
-
-                    <div id="reminders" class="container"></div>
-
-                    <div class="row">
-                        <label>
-                            <input id="notificationbtn" type="checkbox"> Complete entry reminder notification via: (this is the only personal data saved)</input>
-                        </label>
-                    </div>
-
                     <div class="container">
-                        <div class="row">
-                            <label class=" col-lg-2 col-md-2">
-                                <input id="ifemail" type="checkbox"> email</input>
-                            </label>
+                        <h6 class="clr-dark-green">All information is kept with the local browser.</h6>
+                    </div>
 
-                            <input id="email" type="text" class="rounded col-lg-3 col-md-3" placeholder="email address">&nbsp;
-
-                            <i id="everified" class="fa fa-check-circle clr-dark-green" style="display: none"></i>
-                            <i id="enotverified" class="fa fa-circle"></i>
-                        </div>
+                    <div class="container border-bottom">
+                        <h6 class="border-bottom clr-dark-green">No entries are required unless you want reminder notifications.</h6>
 
                         <div class="row">
                             <label>
-                                <input id="ifsms" type="checkbox"> &nbsp;text (If you are still charged for text messages you should change carriers &#x1f609;)
-                                </input>
+                                <input id="reminderbtn" type="checkbox"> Remind me if these aren't completed by the end of today.
                             </label>
+                        </div>
+
+                        <div class="container" style="font-size: 12px">Pressing "Update" button on entry page marks all items completed.</div>
+
+                        <div id="reminders" class="row container"></div>
+
+                        <div class="row">
+                            <label>
+                                <input id="notificationbtn" type="checkbox"> Complete entry reminder notification via: (this is the only personal data saved)
+                            </label>
+                        </div>
+
+                        <div class="container">
+                            <div class="row">
+                                <label class=" col-lg-2 col-md-2">
+                                    <input id="ifemail" type="checkbox"> email
+                                </label>
+
+                                <input id="email" type="text" class="rounded col-lg-3 col-md-3" placeholder="email address">&nbsp;
+
+                                <i id="everified" class="fa fa-check-circle clr-dark-green" style="display: none"></i>
+                                <i id="enotverified" class="fa fa-circle"></i>
+                            </div>
+
+                            <div class="row">
+                                <label class="col-lg-12 col-md-12">
+                                    <input id="ifsms" type="checkbox"> text (If you are still charged for text messages you should change carriers &#x1f609;)
+                                </label>
+                            </div>
 
                             <div class="container">
                                 <input id="phone" type="text" class="rounded col-lg-3 col-md-3" placeholder="phone number">
                             </div>
                         </div>
+                        <br>
+
                     </div>
                     <br>
-                </div>
 
-                <br>
-                <button id="submit-acct" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2">Submit</button>
-
-                <br-->
-                <br>
-                <div class="row border-top" style="font-size: 12px">
-                    To load medicines from Drugs.com enter the url found under "Med List", "Share" and hit "Load". Select which medicines
-                    you want to copy to the "Remedies" section. Then hit the "Add" button .  The "Remedies" section will be created if necessary.
+                    <button id="submit-acct" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2">Submit</button>
                 </div>
                 <br>
 
-                <div class="row container">
-                    <input id="urldrugscom" value="https://drugs.com/mn/" type="text" class="rounded col-lg-3 col-md-3">&nbsp;
-                    <button id="loaddrugscom" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 disabled" disabled>Load</button>&nbsp;
-                    <button id="useselecteddrugs" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 disabled" disabled>Add</button>&nbsp;
-                    <button id="demoloaddrugs" type="button" class="btn border btn-sm btn-green col-lg-3 col-md-3">Demo wx7s49r</button>
-                    <div id="druglist" class="container"></div>
+                <div class="card card-body">
+                    <div class="row" style="font-size: 12px">
+                        To load medicines from Drugs.com enter the url found under "Med List", "Share" and hit "Load". Select which medicines you
+                        want to copy to the "Remedies" section. Then hit the "Add" button . The "Remedies" section will be
+                        created if necessary.
+                    </div>
                     <br>
-                </div>
 
+                    <div class="row">
+                        <input id="urldrugscom" type="text" value="https://drugs.com/mn/" class="rounded col-lg-5 col-md-5">&nbsp;
+                        <button id="loaddrugscom" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 disabled" disabled>Load</button>&nbsp;
+                        <button id="useselecteddrugs" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 disabled" disabled>Add</button>&nbsp;
+                        <button id="demoloaddrugs" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2">Demo wx7s49r</button>
+                    </div>
+                    <br>
+
+                    <div id="druglist" class="row container"> </div>
+                </div>
             </div>
         </div>
     </div>
@@ -213,120 +215,99 @@
         //w3.includeHTML();
 
         var trackerstypes = ["blood pressure", "date", "list", "number",
-            "range", "range buttons", "range gradient buttons", "range slider", "time", "true/false", "weather"
+            "range", "range buttons", "range gradient buttons", "range slider",
+            "text", "time", "true false", "weather"
         ];
 
         var trackerslist = [ // sql, can't reuse names with stored data unless confirmed by user for deletion
             // new user start pain level, start time, remedies, relief
             {
-                position: 1,
                 name: "Pain Level",
                 type: "range gradient buttons",
                 start: "1",
                 end: "10",
                 removeable: false,
+                remindable: false,
             }, {
-                position: 2,
                 name: "Start Time",
                 type: "date",
                 removeable: false,
+                remindable: false,
             }, {
-                position: 3,
                 name: "End Time",
                 type: "time",
-                removeable: false,
-                enabled: true
             }, {
-                position: 4,
                 name: "Woke With",
-                type: "true/false",
-                removeable: true,
+                type: "true false",
             }, {
-                position: 5,
                 name: "Pain Location",
                 type: "list",
                 list: ["forehead", "temple", "eyes", "left", "right"],
-                removeable: true,
             }, {
-                position: 6,
                 name: "Pain Type",
                 type: "list",
                 list: ["throbbing", "burning", "pressure", "sharp"],
-                removeable: true,
             }, {
-                position: 7,
                 name: "Sensitivities",
                 type: "list",
                 list: ["light", "sound"],
-                removeable: true,
             }, {
-                //                position: 8,
                 //                name: "Remedies",
                 //                type: "list",
                 //                // pull drug list from drugs.com sharing link (link not saved)
                 //                list: ["Kepra", "Relafin", "Haldol", "Cogentin", "Benadryl", "Compazine", "sleep"],
                 //                removeable: true,
                 //            }, {
-                position: 9,
                 name: "Triggered By",
                 type: "list",
-                list: ["weather", "smells", "sleep", "light", "sound"],
-                removeable: true,
+                list: ["weather", "smells", "sleep", "bright light", "flashing light", "loud noises"],
             }, {
-                position: 10,
                 name: "Warnings",
                 type: "list",
                 list: ["aura", "tunnel vision", "light sensitivity", "sound sensitivity",
                     "smell sensitivity"
                 ],
-                removeable: true,
             }, {
-                position: 11,
                 name: "Pain Relief",
                 type: "range gradient buttons",
                 start: "5",
                 end: "1",
-                removeable: true,
             }, {
-                position: 12,
                 name: "Mood Level",
                 type: "range gradient buttons",
                 start: "1",
                 end: "10",
-                removeable: true,
             }, {
-                position: 13,
                 name: "Weather",
                 type: "weather",
                 list: ["temp", "humidity", "pressure"],
                 // http://openweathermap.org/api
                 // https://developer.yahoo.com/weather/
-                removeable: true,
             }, {
-                position: 14,
                 name: "Blood Pressure",
                 type: "blood pressure",
-                removeable: true,
             }, {
-                position: 15,
                 name: "Weight",
                 type: "number",
-                removeable: true,
+            }, {
+                name: "Notes",
+                type: "text",
             }
         ];
 
         /******* parent of inputs always has idname *******/
         var head =
             `            
-                <div id="pnl-idname" class="card card-body container-flex" style="display: none">
-                    <div id="ctrl-idname" class="row">
-                        <div class="card-title col-lg-4 col-md-4"><h4>ttitle</h4></div>
-                        <div class="col-lg-1 col-md-1" ifpanel>
-                            <button id="edittrackersbtn" type="button" class="btn border btn-sm btn-green" style="height:32px">Edit</button>
-                        </div>
-                        <input id="enabledeleteck" type="checkbox" class="clr-dark-green">Enable Delete Buttons</input>
+                <div id="pnl-idname" class="card card-body container-fluid" style="display: none">
+                    <div id="ctrl-idname" class="row clr-dark-green">
+                        <div class="col-lg-4 col-md-4 h4">ttitle</div>
+                        <label class="col-lg-4 col-md-4">
+                            <input id="enabledeleteck" type="checkbox">
+                            Enable Delete Buttons
+                        </label>
                     </div>
-                    <div class="border-bottom" style="font-size: 12px">
+
+                    <div class = "row border-bottom" style="font-size: 12px">
                         Controls data displayed and saved on the entry page. Drag to rearrange which changes the order on the entry page.
                         Deleting items doesn't delete any saved data just the controls. Enter the name and hit add to restore it to the display.
                     </div>
@@ -340,13 +321,13 @@
                         <div id="ent-idname" class="row border-bottom">
                             <div id="pos-000" class="col-lg-4 col-md-4" draggable="true">ttitle</div>
                             <div class="col-lg-3 col-md-3" iftrackers>ttype</div>
-                            <div class="col-lg-3 col-md-3" iftrackers>
-                                <div ifrange>startrange-endrange</div>
+                            <div class="col-lg-2 col-md-2" iftrackers>
+                                <div ifrange>startrange-endrange</div><!--colored-->
                             </div>
 
                             <!-- edit disables all other buttons -->
                             <button id="editbtn" type="button" class="btn border btn-sm btn-green">Edit</button>&nbsp;
-                            <button id="delbtn" type="button" class="btn border btn-sm btn-green disabled" disabled>Delete</button>
+                            <button id="delbtn" type="button" class="btn border btn-sm btn-green disabled" disabled ifremove>Delete</button>
                         </div>
             `;
 
@@ -354,10 +335,10 @@
             `
                     </div>
                     <br>
-                    <div  id="btm-idname" class="row">
+                    <div id="btm-idname" class="row">
                         <input id="addinp" class="rounded col-lg-4 col-md-4" type="text" placeholder="ttitle">
                         <div class="col-lg-2 col-md-2 dropdown" iftrackers>
-                            <button id="menu" class="btn border btn-sm btn-green dropdown-toggle disabled" disabled type="button" data-toggle="dropdown">
+                            <button id="tkr-menu" class="btn border btn-sm btn-green dropdown-toggle disabled" disabled type="button" data-toggle="dropdown">
                                 Type
                                 <span class="caret"></span>
                             </button>
@@ -385,7 +366,7 @@
              `;
         var tab_entries =
             `
-                        <button id="tab-idname" class="col-lg-2 col-md-2 btn-green no-border"">ttitle</button>
+                        <button id="tab-idname" class="col-lg-2 col-md-2 btn-green no-border trborder tbborder">ttitle</button>
             `;
         var tab_tail =
             `
@@ -397,14 +378,16 @@
         var rmd_entries =
             `
                 <label class="col-lg-3 col-md-3">
-                    <input id="rmd-idname" type="checkbox"> ttitle</input>
+                    <input id="rmd-idname" type="checkbox">
+                    ttitle
                 </label>
             `;
 
         var med_import =
             `
                 <label class=" col-lg-3 col-md-3">
-                    <input type="checkbox"> ttitle</input>
+                    <input type="checkbox">
+                    ttitle
                 </label>
             `;
     </script>
