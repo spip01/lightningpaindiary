@@ -116,7 +116,8 @@
 
     <div id="jssite" style="display: none">
         <div id="tabs"></div>
-
+        <br>
+        
         <div id="panels" class="card card-body bkg-light-green pad-bottom">
 
             <div id="pnl-Account" class="card card-body" style="display: block">
@@ -171,7 +172,7 @@
                             </div>
 
                             <div class="row">
-                                <label">
+                                <label>
                                     <input id="ifsms" type="checkbox"> text (If you are still charged for text messages you should change carriers &#x1f609;)
                                 </label>
                             </div>
@@ -226,12 +227,12 @@
                 type: "range gradient buttons",
                 start: "1",
                 end: "10",
-                removeable: false,
+                editable: false,
                 remindable: false,
             }, {
                 name: "Start Time",
                 type: "date",
-                removeable: false,
+                editable: false,
                 remindable: false,
             }, {
                 name: "End Time",
@@ -302,7 +303,7 @@
                     <div id="ctrl-idname" class="row clr-dark-green">
                         <div class="col-lg-4 col-md-4 col-sm-4 col-4 h4">ttitle</div>
                         <label class="col-lg-4 col-md-4 col-sm-6 col-8">
-                            <input id="enabledeleteck" type="checkbox">
+                            <input id="en-idname" type="checkbox">
                             Enable Delete Buttons
                         </label>
                     </div>
@@ -320,25 +321,36 @@
             `
                         <div id="ent-idname" class="row border-bottom">
                             <div id="pos-000" class="col-lg-3 col-md-3 col-sm-3 col-5" draggable="true">ttitle</div>
-                            <div class="col-lg-3 col-md-4 col-sm-5 col-8" iftrackers>ttype</div>
-                            <div class="col-lg-1 col-md-2 col-sm-2 col-3" iftrackers>
-                                <div ifrange>startrange-endrange</div><!--colored-->
+                            <div id="typ-tid" class="col-lg-3 col-md-4 col-sm-5 col-8" iftrackers>ttype</div>
+                            <div id="shrnge" class="col-lg-1 col-md-2 col-sm-2 col-3" iftrackers>
+                                <div id="rng-idname" ifrange>startrange-endrange</div><!--colored-->
                             </div>
 
                             <!-- edit disables all other buttons -->
-                                <button id="editbtn" type="button" class="btn border btn-sm btn-green">Edit</button>&nbsp;
-                                <button id="delbtn" type="button" class="btn border btn-sm btn-green disabled" disabled ifremove>Delete</button>
+                            <button id="edt-idname" type="button" class="edit-button btn border btn-sm btn-green" ifedit>Edit</button>&nbsp;
+                            <button id="del-idname" type="button" class="del-button btn border btn-sm btn-green disabled" disabled ifedit>Delete</button>
                         </div>
-                    `;
+            `;
+
+        var editname =
+            `
+                            <input id="edt-idname" class="rounded col-lg-3 col-md-3 col-sm-3 col-5" value="ttitle">
+            `;
+
+        var editrange =
+            `
+                            <input id="start-idname" class="rounded col-lg-1 col-md-1 col-sm-1 col-1" value="vstartrange">
+                            <input id="end-idname" class="rounded col-lg-1 col-md-1 col-sm-1 col-1" value="vendrange">
+            `;
 
         var tail =
             `
                     </div>
                     <br>
-                    <div id="btm-idname" class="row">
-                        <input id="addinp" class="rounded col-lg-3 col-md-3 col-sm-4 col-4" type="text" placeholder="ttitle">
+                    <div class="row">
+                        <input id="inp-idname" class="rounded col-lg-3 col-md-3 col-sm-4 col-4" type="text" placeholder="ttitle">
                         <div class="col-lg-2 col-md-2 col-sm-3 col-3 dropdown" iftrackers>
-                            <button id="tkr-menu" class="btn border btn-sm btn-green dropdown-toggle disabled" disabled type="button" data-toggle="dropdown">
+                            <button id="tkr-idname" class="btn border btn-sm btn-green dropdown-toggle disabled" disabled type="button" data-toggle="dropdown">
                                 Type
                                 <span class="caret"></span>
                             </button>
@@ -352,9 +364,9 @@
             `
                              </ul>
                         </div>
-                        <input id="startrangeinp" class="rounded col-lg-1 col-md-1 col-sm-1 col-2 disabled" disabled type="text" placeholder="1" iftrackers>&nbsp;
-                        <input id="endrangeinp" class="rounded col-lg-1 col-md-1 col-sm-1 col-2 disabled" disabled type="text" placeholder="10" iftrackers>&nbsp;
-                        <button id="addent" type="button" class="btn border btn-sm btn-green disabled" disabled>Add</button>
+                        <input id="sr-idname" class="rounded col-lg-1 col-md-1 col-sm-1 col-2 disabled" disabled type="text" placeholder="1" iftrackers>&nbsp;
+                        <input id="er-idname" class="rounded col-lg-1 col-md-1 col-sm-1 col-2 disabled" disabled type="text" placeholder="10" iftrackers>&nbsp;
+                        <button id="add-idname" type="button" class="btn border btn-sm btn-green disabled" disabled>Add</button>
                     </div>
                 </div>
             `;
@@ -386,7 +398,7 @@
         var med_import =
             `
                 <label class=" col-lg-2 col-md-3 col-sm-4 col-8">
-                    <input type="checkbox">
+                    <input id="med-idname" type="checkbox">
                     ttitle
                 </label>
             `;

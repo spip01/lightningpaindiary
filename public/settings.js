@@ -35,7 +35,7 @@ function generateTrackersPanel(db) {
       } else
         t = /ifrange/g [Symbol.replace](t, 'style="display: none"');
 
-      t = /ifremove/g [Symbol.replace](t, item.removeable === false ? 'style="display: none"' : '');
+      t = /ifedit/g [Symbol.replace](t, item.editable === false ? 'style="display: none"' : '');
 
       panels += t;
 
@@ -68,7 +68,17 @@ function generateTrackersPanel(db) {
       $("#pnl-" + id).remove();
       $("#panels").append(panels);
       $("#reminders").html(reminders);
-      setPanelEvents("#pnl-" + id);
+
+      setPanelEvents(id);
+      $("#pnl-" + id + " [id|='menu']").off();
+      $("#pnl-" + id + " [id|='menu']").click(function () {
+        selectType(this);
+      });
+
+      $("#tablist #tab-" + id).off();
+      $("#tablist #tab-" + id).click(function () {
+        openTab(this);
+      });
     }
   };
 }
@@ -89,7 +99,7 @@ function generateTabsAndPanels(db) {
 
       cursor.continue();
     }
-  }
+  };
 }
 
 function addPanel(panel) {
@@ -111,7 +121,7 @@ function addPanel(panel) {
     t = /ttitle/g [Symbol.replace](t, item);
     t = /iftrackers/g [Symbol.replace](t, "style='display: none'");
     t = /ifrange/g [Symbol.replace](t, "style='display: none'");
-    t = /ifremove/g [Symbol.replace](t, '');
+    t = /ifedit/g [Symbol.replace](t, '');
 
     panels += t;
   }
@@ -120,37 +130,56 @@ function addPanel(panel) {
   ttail = /ttitle/g [Symbol.replace](ttail, name);
   ttail = /iftrackers/g [Symbol.replace](ttail, 'style="display: none"');
 
-  var tend = /iftrackers/g [Symbol.replace](tail_end, 'style="display: none"');
+  var tend = /idname/g [Symbol.replace](tail_end, id);
+  tend = /iftrackers/g [Symbol.replace](tend, 'style="display: none"');
 
   panels += ttail + tend;
 
   $("#pnl-" + id).remove();
   $("#panels").append(panels);
-  setPanelEvents("#pnl-" + id);
+  setPanelEvents(id);
+
+  $("#tablist #tab-" + id).off();
+  $("#tablist #tab-" + id).click(function () {
+    openTab(this);
+  });
 }
 
-function setPanelEvents(sel) {
-  $(sel + " #enabledeleteck").click(function () {
+function setPanelEvents(id) {
+  $("#pnl-" + id + " [id|='en']").off();
+  $("#pnl-" + id + " [id|='edt']").off();
+  $("#pnl-" + id + " [id|='del']").off();
+  $("#pnl-" + id + " [id|='inp']").off();
+  $("#pnl-" + id + " [id|='add']").off();
+  $("#pnl-" + id + " [id|='inp']").off();
+  $("#pnl-" + id + " [draggable|='true']").off();
+
+  $("#pnl-" + id + " [id|='en']").click(function () {
     enableDeleteBtns(this);
   });
 
-  $(sel + " #editbtn").click(function () {
+  $("#pnl-" + id + " [id|='edt']").click(function () {
     panelEditBtn(db, this);
   });
 
-  $(sel + " #delbtn").click(function () {
+  $("#pnl-" + id + " [id|='del']").click(function () {
     panelDeleteBtn(db, this);
   });
 
-  $(sel + " #addinp").focus(function () {
+  $("#pnl-" + id + " [id|='inp']").focus(function () {
     enableAddBtns(this);
   });
 
-  $(sel + " #addbtn").click(function () {
+  $("#pnl-" + id + " [id|='add']").click(function () {
     panelAddBtn(db, this);
   });
 
-  $(sel + " [draggable|='true']").on({
+  $("#pnl-" + id + " [id|='inp']").keydown(function (event) {
+    if (event.which === 0x0a || event.which === 0x0d)
+      doneEdit(this);
+  });
+
+  $("#pnl-" + id + " [draggable|='true']").on({
     //"mouseleave": $.proxy(mouseLeave),
     //"mouseenter": $.proxy(mouseEnter),
     "drop": $.proxy(drop),
@@ -172,7 +201,12 @@ function newTabBar() {
     borderbottom: true,
   });
 
-  $("#tabs").append(tab_tail);
+  $("#tablist").append(tab_tail);
+
+  $("#tablist [id|=tab]").off();
+  $("#tablist [id|=tab]").click(function () {
+    openTab(this);
+  });
 }
 
 function addTab(item) {
@@ -183,12 +217,16 @@ function addTab(item) {
   tab = /trborder/g [Symbol.replace](tab, item.borderright === true ? "border-right" : "");
   tab = /tbborder/g [Symbol.replace](tab, item.borderbottom === true ? "border-bottom" : "");
 
+  $("#tablist #tab-" + id).remove();
   $("#tablist").append(tab);
 
-  $("#tabs #tab-" + id).click(function () {
+  $("#tablist #tab-" + id).off();
+  $("#tablist #tab-" + id).click(function () {
     openTab(this);
   });
 }
+
+/***********************************************/
 
 function openTab(evt) {
   $("#panels").children().hide();
@@ -207,12 +245,12 @@ function dragstart(evt) {
 function drop(evt) {
   evt.preventDefault();
   var src = evt.originalEvent.dataTransfer.getData("text/html");
-  var dst = $(evt).parent().prop("id");
-  var pt = $(evt).parent().parent().prop("id").replace(/^\S+?-(.*)/g, "cont-$1");
+  var dst = $(evt).prop("id");
+  var pnlid = $(evt).parent().parent().prop("id").replace(/^\S+?-(.*)/g, "$1");
 
   var list = [];
   var found = 0;
-  $("#" + pt).children().each(function () {
+  $("#pnl-" + pnlid).children().each(function () {
     var id = $(this).prop("id");
 
     switch (id) {
@@ -242,25 +280,25 @@ function drop(evt) {
 }
 
 function enableDeleteBtns(evt) {
-  var pnl = $(evt).parent().parent();
+  var pnl = $("#pnl-" + $(evt).prop("id").replace(/^\S+?-(.*)/g, "$1"));
 
   if ($(evt).prop("checked")) {
-    $(pnl).find("#delbtn").removeClass("disabled");
-    $(pnl).find("#delbtn").removeAttr("disabled");
+    $(pnl).find("[id|='del']").removeClass("disabled");
+    $(pnl).find("[id|='del']").removeAttr("disabled");
   } else {
-    $(pnl).find("#delbtn").addClass("disabled");
-    $(pnl).find("#delbtn").prop("disabled", "true");
+    $(pnl).find("[id|='del']").addClass("disabled");
+    $(pnl).find("[id|='del']").prop("disabled", "true");
   }
 }
 
 function enableAddBtns(evt) {
-  var pnl = $(evt).parent().parent();
+  var pnl = $("#pnl-" + $(evt).prop("id").replace(/^\S+?-(.*)/g, "$1"));
 
-  $(pnl).find("#addent").removeClass("disabled");
-  $(pnl).find("#addent").removeAttr("disabled");
+  $(pnl).find("[id|='add']").removeClass("disabled");
+  $(pnl).find("[id|='add']").removeAttr("disabled");
 
-  $(pnl).find("#tkr-menu").removeClass("disabled");
-  $(pnl).find("#tkr-menu").removeAttr("disabled");
+  $(pnl).find("[id|='tkr']").removeClass("disabled");
+  $(pnl).find("[id|='tkr']").removeAttr("disabled");
   //  $(pnl).find("#startrangeinp").removeClass("disabled");
   //  $(pnl).find("#startrangeinp").removeAttr("disabled");
   //  $(pnl).find("#endrangeinp").removeClass("disabled");
@@ -317,52 +355,187 @@ function applyMeds(ml) {
   $("#pnl-Account #useselecteddrugs").removeAttr("disabled");
 }
 
-function PanelAddBtn(db, evt) {
-  var ent = $(evt).val();
-  var pnl = $(evt).parent().parent().prop("id").replace(/\S+?-(.*)/g, "$1");
-  var name = /-/g [Symbol.replace](ent, " ");
+function selectType(evt) {
+  var name = $(evt).text();
+  $("#pnl-Trackers [id|='tkr']").text(name);
+}
+
+function panelAddBtn(db, evt) {
+  var pnlid = $(evt).prop("id").replace(/\S+?-(.*)/g, "$1");
+  var pnlname = /-/g [Symbol.replace](pnlid, " ");
+
+  var name = $(("#pnl-" + pnlid + " [id|='inp']")).val();
+  var id = / /g [Symbol.replace](name, "-");
 
   var store = db.transaction(["tracking"], "readwrite").objectStore("tracking");
-  var cursor = store.index("by_name").openCursor(IDBKeyRange.only(pnl));
-  cursor.onsuccess = function () {
-    var cursor = event.target.result;
 
-    if (cursor) {
-      if (!cursor.value.list.includes(ent))
-        cursor.value.list.push(ent);
+  if (pnlid === "Trackers") {
+    var pos = $("#cont-Trackers div:last-child").find("[id|='pos']").prop("id").replace(/\S+?-(.*)/g, "$1");
+    var entry = {
+      position: Number(pos) + 1,
+      name: name,
+      type: $("#pnl-" + id + " [id|+'tkr']").text(),
+    };
 
-      cursor.update(remedies);
+    store.add(entry);
 
-      generateTabsAndPanels(db);
+    generateTrackersPanel(db);
+    $("#pnl-" + pnlid).show();
+
+    if (entry.type === "list") {
+      addTab(entry);
+      addPanel(entry);
+    }
+  } else {
+    var panel = store.index("by_name").openCursor(IDBKeyRange.only(pnlname));
+
+    panel.onsuccess = function (event) {
+      var cursor = event.target.result;
+
+      if (cursor) {
+        var entry = cursor.value;
+        if (!entry.list.includes(name))
+          entry.list.push(name);
+
+        cursor.update(entry);
+
+        addPanel(entry);
+        $("#pnl-" + pnlid).show();
+      }
     }
   }
 }
 
 function panelEditBtn(db, evt) {
-  var ent = $(evt).parent().prop("id").replace(/\S+?-(.*)/g, "$1");
-  var pnl = $(evt).parent().parent().prop("id").replace(/\S+?-(.*)/g, "$1");
-  var name = /-/g [Symbol.replace](ent, " ");
+  var id = $(evt).prop("id").replace(/\S+?-(.*)/g, "$1");
+  var ent = $(evt).parent();
+  var pnlid = $(ent).parent().prop("id").replace(/\S+?-(.*)/g, "$1");
+  var name = /-/g [Symbol.replace](id, " ");
 
-  generateTabsAndPanels(db);
+  var input = /idname/g [Symbol.replace](editname, id);
+  input = /ttitle/g [Symbol.replace](input, name);
+
+  if (pnlid === "Trackers") {
+    var type = $(ent).find("[id|='typ']").text().replace(/(\S+?) .*/g, "$1");
+
+    if (type === "range") {
+      var txt = $(ent).find("[id|='rng']").text();
+      var startrange = txt.replace(/(\d+?)-.*/g, "$1");
+      var endrange = txt.replace(/.*?-(\d+?)/g, "$1");
+
+      var range = /vstartrange/g [Symbol.replace](editrange, startrange);
+      range = /vendrange/g [Symbol.replace](range, endrange);
+
+      $(ent).find("#shrnge").remove();
+      $(ent).find("[id|='typ']").after(range);
+    }
+  }
+
+  $(ent).find("[id|='pos']").remove();
+  $(ent).prepend(input);
+
+  $(ent).find("input").keydown(function (event) {
+    if (event.which === 0x0a || event.which === 0x0d)
+      doneEdit(this);
+  });
+
+  $(evt).text("Done");
+  $(evt).off();
+  $(evt).click(function () {
+    doneEdit(this);
+  });
+}
+
+function doneEdit(evt) {
+  var id = $(evt).prop("id").replace(/\S+?-(.*)/g, "$1");
+  var ent = $(evt).parent();
+  var pnlid = $(ent).parent().prop("id").replace(/\S+?-(.*)/g, "$1");
+  var pnlname = /-/g [Symbol.replace](pnlid, " ");
+
+  var newname = $(ent).find("[id|='edt']").val();
+  var oldname = /-/g [Symbol.replace](id, " ");
+
+  var store = db.transaction(["tracking"], "readwrite").objectStore("tracking");
+  var tracker = store.index("by_name").openCursor(IDBKeyRange.only(oldname));
+  var panel = store.index("by_name").openCursor(IDBKeyRange.only(pnlname));
+
+  tracker.onsuccess = function (event) {
+    var cursor = event.target.result;
+
+    if (cursor) {
+      var entry = cursor.value;
+      entry.name = newname;
+
+      var type = $(ent).find("[id|='typ']").text().replace(/(\S+?) .*/g, "$1");
+
+      if (type === "range") {
+        entry.start = $(ent).find("[id|='start']").val();
+        entry.end = $(ent).find("[id|='end']").val();
+      }
+
+      cursor.update(entry);
+
+      generateTrackersPanel(db);
+      $("#pnl-" + pnlid).show();
+
+      if (type === "list")
+        generateTabsAndPanels(db);
+    }
+  }
+
+  panel.onsuccess = function (event) {
+    var cursor = event.target.result;
+
+    if (cursor) {
+      var entry = cursor.value;
+      var list = entry.list;
+      var i = entry.list.findIndex(list => list === oldname);
+      entry.list[i] = newname;
+
+      cursor.update(entry);
+      addPanel(entry);
+      $("#pnl-" + pnlid).show();
+    }
+  }
 }
 
 function panelDeleteBtn(db, evt) {
-  var ent = $(evt).parent().prop("id").replace(/\S+?-(.*)/g, "$1");
-  var pnl = $(evt).parent().parent().prop("id").replace(/\S+?-(.*)/g, "$1");
-  var name = /-/g [Symbol.replace](ent, " ");
+  var id = $(evt).prop("id").replace(/\S+?-(.*)/g, "$1");
+  var ent = $(evt).parent();
+  var pnlid = $(ent).parent().prop("id").replace(/\S+?-(.*)/g, "$1");
+  var pnlname = /-/g [Symbol.replace](pnlid, " ");
+  var name = /-/g [Symbol.replace](id, " ");
 
-  var i = trackerslist.findIndex(trackerslist => trackerslist.name === name);
-  var list = trackerslist[i].list;
+  var store = db.transaction(["tracking"], "readwrite").objectStore("tracking");
+  var tracker = store.index("by_name").openCursor(IDBKeyRange.only(name));
+  var panel = store.index("by_name").openCursor(IDBKeyRange.only(pnlname));
 
-  if (pnl === "trackers") {
-    trackerslist[i].enabled = false;
-  } else {
-    var j = trackerslist[i].list.findIndex(list => list === ent);
-    list.splice(j, 1);
+  tracker.onsuccess = function (event) {
+    var cursor = event.target.result;
+
+    if (cursor) {
+      var entry = cursor.value;
+      cursor.delete();
+
+      $("#pnl" + pnlid + " #ent-" + id).remove();
+      $("#panels #pnl-" + id).remove();
+      $("#tablist #tab-" + pnlid).remove();
+    }
   }
 
-  $("#ent-" + ent).detach();
-  generateTabsAndPanels(db);
+  panel.onsuccess = function (event) {
+    var cursor = event.target.result;
+
+    if (cursor) {
+      var entry = cursor.value;
+      var list = entry.list;
+      var i = entry.list.findIndex(list => list === name);
+      entry.list.splice(i, 1);
+
+      cursor.update(entry);
+      $("#pnl" + pnlid + " #ent-" + id).remove();
+    }
+  }
 }
 
 function addSelectedDrugs(evt) {
@@ -377,7 +550,7 @@ function addSelectedDrugs(evt) {
 
   var store = db.transaction(["tracking"], "readwrite").objectStore("tracking");
   var cursor = store.index("by_name").openCursor(IDBKeyRange.only("Remedies"));
-  cursor.onsuccess = function () {
+  cursor.onsuccess = function (event) {
     var cursor = event.target.result;
 
     if (cursor) {
@@ -394,6 +567,7 @@ function addSelectedDrugs(evt) {
         name: "Remedies",
         type: "list",
         list: list,
+        editable: false,
       };
 
       store.add(remedies);
@@ -412,17 +586,17 @@ function enableLoadDrugs(evt) {
 }
 
 function loadFile(url, selector) {
-//  xhttp = new XMLHttpRequest();
-//  xhttp.onreadystatechange = function () {
-//    if (this.readyState == 4) {
-//      if (this.status == 200) {
-//        var html = this.responseText.replace(/(?:.*?\n)*?<body>((?:.*?\n)+?)<\/body>(.*?\n?)*/g, "$1");
-//        $(selector).append(html);
-//      }
-//    }
-//  }
-//  xhttp.open("GET", url, true);
-//  xhttp.send();
+  //  xhttp = new XMLHttpRequest();
+  //  xhttp.onreadystatechange = function () {
+  //    if (this.readyState == 4) {
+  //      if (this.status == 200) {
+  //        var html = this.responseText.replace(/(?:.*?\n)*?<body>((?:.*?\n)+?)<\/body>(.*?\n?)*/g, "$1");
+  //        $(selector).append(html);
+  //      }
+  //    }
+  //  }
+  //  xhttp.open("GET", url, true);
+  //  xhttp.send();
 
   $.getJSON('http://www.whateverorigin.org/get?url=' + encodeURIComponent(url) + '&callback=?', function (data, status) {
     if (status != "success")
