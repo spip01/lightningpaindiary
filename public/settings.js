@@ -1,5 +1,5 @@
-loadFile("http://raw.githubusercontent.com/spip01/lightningpaindiary/bootstrap/public/navbar.html", "#navbar");
-loadFile("http://raw.githubusercontent.com/spip01/lightningpaindiary/bootstrap/public/footer.html", "#footer");
+loadFile("https://lightningpaindiary.firebaseapp.com/navbar.html", "#navbar");
+loadFile("https://lightningpaindiary.firebaseapp.com/footer.html", "#footer");
 
 function generateTrackersPanel(db) {
   var pnlid = "Trackers";
@@ -183,9 +183,9 @@ function setPanelEvents(id) {
     "drop": $.proxy(drop),
     "dragover": $.proxy(dragover),
     "dragstart": $.proxy(dragstart),
-    "touchend": $.proxy(drop),
-    "touchenter": $.proxy(dragover),
-    "touchstart": $.proxy(dragstart),
+    //"touchend": $.proxy(drop),
+    //"touchenter": $.proxy(dragover),
+    //"touchstart": $.proxy(dragstart),
   });
 
   $(pnl).find("[id|='menu']").off();
@@ -425,7 +425,7 @@ function panelAddBtn(db, evt) {
     }
 
     generateTrackersPanel(db);
-    $("#pnl-"+pnlid).show();
+    $("#pnl-" + pnlid).show();
   } else {
     var panel = store.index("by_name").openCursor(IDBKeyRange.only(pnlname));
 
@@ -440,7 +440,7 @@ function panelAddBtn(db, evt) {
         cursor.update(entry);
 
         addPanel(entry);
-         $("#pnl-"+pnlid).show();
+        $("#pnl-" + pnlid).show();
       }
     }
   }
@@ -626,27 +626,33 @@ function enableLoadDrugs(evt) {
 }
 
 function loadFile(url, selector) {
-  //  xhttp = new XMLHttpRequest();
-  //  xhttp.onreadystatechange = function () {
-  //    if (this.readyState == 4) {
-  //      if (this.status == 200) {
-  //        var html = this.responseText.replace(/(?:.*?\n)*?<body>((?:.*?\n)+?)<\/body>(.*?\n?)*/g, "$1");
-  //        $(selector).append(html);
-  //      }
-  //    }
-  //  }
-  //  xhttp.open("GET", url, true);
-  //  xhttp.send();
+   xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+      if (this.readyState == 4) {
+        if (this.status == 200) {
+          var html = this.responseText.replace(/(?:.*?\n)*?<body>((?:.*?\n)+?)<\/body>(.*?\n?)*/g, "$1");
+          $(selector).append(html);
+        }
+      }
+    }
+    xhttp.open("GET", url, true);
+    xhttp.send();
 
-  $.getJSON('http://www.whateverorigin.org/get?url=' + encodeURIComponent(url) + '&callback=?', function (data, status) {
-    if (status != "success")
-      alert(status);
-
-    //(http|ftp|https)://([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?
-
-    var html = data.contents.replace(/(?:.*?\n)*?<body>((?:.*?\n)+?)<\/body>(.*?\n?)*/g, "$1");
-    $(selector).append(html);
-  });
+  //$.getJSON(url + "?jsoncallback=?", function (data, status) {
+  //    //(http|ftp|https)://([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?
+  //
+  //    var html = data.contents.replace(/(?:.*?\n)*?<body>((?:.*?\n)+?)<\/body>(.*?\n?)*/g, "$1");
+  //    $(selector).append(html);
+  //  })
+  //  .done(function () {
+  //    console.log("second success");
+  //  })
+  //  .fail(function () {
+  //    console.log("error");
+  //  })
+  //  .always(function () {
+  //    console.log("complete");
+  //  });
 }
 
 var db = NaN;
