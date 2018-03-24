@@ -2,11 +2,11 @@ loadFile("http://raw.githubusercontent.com/spip01/lightningpaindiary/bootstrap/p
 loadFile("http://raw.githubusercontent.com/spip01/lightningpaindiary/bootstrap/public/footer.html", "#footer");
 
 function generateTrackersPanel(db) {
-  var id = "Trackers";
+  var pnlid = "Trackers";
   var name = "Trackers";
   var reminders = "";
 
-  var ttitle = /idname/g [Symbol.replace](head, id);
+  var ttitle = /idname/g [Symbol.replace](head, pnlid);
   ttitle = /ttitle/g [Symbol.replace](ttitle, name);
   ttitle = /ifpanel/g [Symbol.replace](ttitle, "style='display: none'");
   ttitle = /iftrackers/g [Symbol.replace](ttitle, "");
@@ -20,9 +20,9 @@ function generateTrackersPanel(db) {
 
     if (cursor) {
       var item = cursor.value;
-      var iid = / /g [Symbol.replace](item.name, "-");
+      var id = / /g [Symbol.replace](item.name, "-");
 
-      var t = /idname/g [Symbol.replace](entry, iid);
+      var t = /idname/g [Symbol.replace](entry, id);
       t = /ttitle/g [Symbol.replace](t, item.name);
       t = /ttype/g [Symbol.replace](t, item.type);
       t = /iftrackers/g [Symbol.replace](t, "");
@@ -40,14 +40,14 @@ function generateTrackersPanel(db) {
       panels += t;
 
       if (item.remindable === undefined) {
-        var rmd = /idname/g [Symbol.replace](rmd_entries, iid);
+        var rmd = /idname/g [Symbol.replace](rmd_entries, id);
         rmd = /ttitle/g [Symbol.replace](rmd, item.name);
         reminders += rmd;
       }
 
       cursor.continue();
     } else {
-      var ttail = /idname/g [Symbol.replace](tail, id);
+      var ttail = /idname/g [Symbol.replace](tail, pnlid);
       ttail = /ttitle/g [Symbol.replace](ttail, name);
       ttail = /iftrackers/g [Symbol.replace](ttail, "");
 
@@ -62,23 +62,15 @@ function generateTrackersPanel(db) {
       }
 
       var tend = /iftrackers/g [Symbol.replace](tail_end, "");
+      tend = /idname/g [Symbol.replace](tend, pnlid);
 
       panels += tend;
 
-      $("#pnl-" + id).remove();
+      $("#pnl-" + pnlid).remove();
       $("#panels").append(panels);
       $("#reminders").html(reminders);
 
-      setPanelEvents(id);
-      $("#pnl-" + id + " [id|='menu']").off();
-      $("#pnl-" + id + " [id|='menu']").click(function () {
-        selectType(this);
-      });
-
-      $("#tablist #tab-" + id).off();
-      $("#tablist #tab-" + id).click(function () {
-        openTab(this);
-      });
+      setPanelEvents(pnlid);
     }
   };
 }
@@ -103,10 +95,10 @@ function generateTabsAndPanels(db) {
 }
 
 function addPanel(panel) {
-  var id = / /g [Symbol.replace](panel.name, "-");
+  var pnlid = / /g [Symbol.replace](panel.name, "-");
   var name = panel.name;
 
-  var ttitle = /idname/g [Symbol.replace](head, id);
+  var ttitle = /idname/g [Symbol.replace](head, pnlid);
   ttitle = /ttitle/g [Symbol.replace](ttitle, name);
   ttitle = /ifpanel/g [Symbol.replace](ttitle, "");
   ttitle = /iftrackers/g [Symbol.replace](ttitle, "style='display: none'");
@@ -115,9 +107,9 @@ function addPanel(panel) {
 
   for (var j = 0; j < panel.list.length; ++j) {
     var item = panel.list[j];
-    var iid = / /g [Symbol.replace](item, "-");
+    var id = / /g [Symbol.replace](item, "-");
 
-    var t = /idname/g [Symbol.replace](entry, iid);
+    var t = /idname/g [Symbol.replace](entry, id);
     t = /ttitle/g [Symbol.replace](t, item);
     t = /iftrackers/g [Symbol.replace](t, "style='display: none'");
     t = /ifrange/g [Symbol.replace](t, "style='display: none'");
@@ -126,66 +118,86 @@ function addPanel(panel) {
     panels += t;
   }
 
-  var ttail = /idname/g [Symbol.replace](tail, id);
+  var ttail = /idname/g [Symbol.replace](tail, pnlid);
   ttail = /ttitle/g [Symbol.replace](ttail, name);
   ttail = /iftrackers/g [Symbol.replace](ttail, 'style="display: none"');
 
-  var tend = /idname/g [Symbol.replace](tail_end, id);
+  var tend = /idname/g [Symbol.replace](tail_end, pnlid);
   tend = /iftrackers/g [Symbol.replace](tend, 'style="display: none"');
 
   panels += ttail + tend;
 
-  $("#pnl-" + id).remove();
+  $("#pnl-" + pnlid).remove();
   $("#panels").append(panels);
-  setPanelEvents(id);
+  setPanelEvents(pnlid);
+}
+
+function setPanelEvents(id) {
+  var pnl = $("#pnl-" + id);
+
+  $(pnl).find("[id|='en']").off();
+  $(pnl).find("[id|='en']").click(function () {
+    enableDeleteBtns(this);
+  });
+
+  $(pnl).find("[id|='edt']").off();
+  $(pnl).find("[id|='edt']").click(function () {
+    panelEditBtn(db, this);
+  });
+
+  $(pnl).find("[id|='del']").off();
+  $(pnl).find("[id|='del']").click(function () {
+    panelDeleteBtn(db, this);
+  });
+
+  $(pnl).find("[id|='inp']").off();
+  $(pnl).find("[id|='inp']").focus(function () {
+    enableAddBtns(this);
+  });
+  $(pnl).find("[id|='inp']").keydown(function (event) {
+    if (event.which === 0x0a || event.which === 0x0d)
+      panelAddBtn(db, this);
+  });
+
+  $(pnl).find("[id|='add']").off();
+  $(pnl).find("[id|='add']").click(function () {
+    panelAddBtn(db, this);
+  });
+
+  $(pnl).find("[id|='sr']").off();
+  $(pnl).find("[id|='sr']").keydown(function (event) {
+    if (event.which === 0x0a || event.which === 0x0d)
+      panelAddBtn(db, this);
+  });
+
+  $(pnl).find("[id|='er']").off();
+  $(pnl).find("[id|='er']").keydown(function (event) {
+    if (event.which === 0x0a || event.which === 0x0d)
+      panelAddBtn(db, this);
+  });
+
+  $(pnl).find("[draggable|='true']").off();
+  $(pnl).find("[draggable|='true']").on({
+    //"mouseleave": $.proxy(mouseLeave),
+    //"mouseenter": $.proxy(mouseEnter),
+    "drop": $.proxy(drop),
+    "dragover": $.proxy(dragover),
+    "dragstart": $.proxy(dragstart),
+    "touchend": $.proxy(drop),
+    "touchenter": $.proxy(dragover),
+    "touchstart": $.proxy(dragstart),
+  });
+
+  $(pnl).find("[id|='menu']").off();
+  $(pnl).find("[id|='menu']").click(function () {
+    selectType(this);
+  });
 
   $("#tablist #tab-" + id).off();
   $("#tablist #tab-" + id).click(function () {
     openTab(this);
   });
-}
 
-function setPanelEvents(id) {
-  $("#pnl-" + id + " [id|='en']").off();
-  $("#pnl-" + id + " [id|='edt']").off();
-  $("#pnl-" + id + " [id|='del']").off();
-  $("#pnl-" + id + " [id|='inp']").off();
-  $("#pnl-" + id + " [id|='add']").off();
-  $("#pnl-" + id + " [id|='inp']").off();
-  $("#pnl-" + id + " [draggable|='true']").off();
-
-  $("#pnl-" + id + " [id|='en']").click(function () {
-    enableDeleteBtns(this);
-  });
-
-  $("#pnl-" + id + " [id|='edt']").click(function () {
-    panelEditBtn(db, this);
-  });
-
-  $("#pnl-" + id + " [id|='del']").click(function () {
-    panelDeleteBtn(db, this);
-  });
-
-  $("#pnl-" + id + " [id|='inp']").focus(function () {
-    enableAddBtns(this);
-  });
-
-  $("#pnl-" + id + " [id|='add']").click(function () {
-    panelAddBtn(db, this);
-  });
-
-  $("#pnl-" + id + " [id|='inp']").keydown(function (event) {
-    if (event.which === 0x0a || event.which === 0x0d)
-      doneEdit(this);
-  });
-
-  $("#pnl-" + id + " [draggable|='true']").on({
-    //"mouseleave": $.proxy(mouseLeave),
-    //"mouseenter": $.proxy(mouseEnter),
-    "drop": $.proxy(drop),
-    "dragover": $.proxy(dragover),
-    "dragstart": $.proxy(dragstart)
-  });
 }
 
 function newTabBar() {
@@ -201,10 +213,12 @@ function newTabBar() {
     borderbottom: true,
   });
 
-  $("#tablist").append(tab_tail);
+  var tabs = $("#tablist");
 
-  $("#tablist [id|=tab]").off();
-  $("#tablist [id|=tab]").click(function () {
+  $(tabs).append(tab_tail);
+
+  $(tabs).find("[id|=tab]").off();
+  $(tabs).find("[id|=tab]").click(function () {
     openTab(this);
   });
 }
@@ -217,11 +231,13 @@ function addTab(item) {
   tab = /trborder/g [Symbol.replace](tab, item.borderright === true ? "border-right" : "");
   tab = /tbborder/g [Symbol.replace](tab, item.borderbottom === true ? "border-bottom" : "");
 
-  $("#tablist #tab-" + id).remove();
-  $("#tablist").append(tab);
+  var tabs = $("#tablist");
 
-  $("#tablist #tab-" + id).off();
-  $("#tablist #tab-" + id).click(function () {
+  $(tabs).find("#tab-" + id).remove();
+  $(tabs).append(tab);
+
+  $(tabs).find("#tab-" + id).off();
+  $(tabs).find("#tab-" + id).click(function () {
     openTab(this);
   });
 }
@@ -239,6 +255,7 @@ function dragover(evt) {
 }
 
 function dragstart(evt) {
+  evt.preventDefault();
   evt.originalEvent.dataTransfer.setData("text/html", $(this).parent().prop("id"));
 }
 
@@ -299,10 +316,10 @@ function enableAddBtns(evt) {
 
   $(pnl).find("[id|='tkr']").removeClass("disabled");
   $(pnl).find("[id|='tkr']").removeAttr("disabled");
-  //  $(pnl).find("#startrangeinp").removeClass("disabled");
-  //  $(pnl).find("#startrangeinp").removeAttr("disabled");
-  //  $(pnl).find("#endrangeinp").removeClass("disabled");
-  //  $(pnl).find("#endrangeinp").removeAttr("disabled");
+  //  $(pnl).find("[id|='sr']").removeClass("disabled");
+  //  $(pnl).find("[id|='sr']").removeAttr("disabled");
+  //  $(pnl).find("[id|='er']").removeClass("disabled");
+  //  $(pnl).find("[id|='er']").removeAttr("disabled");
 }
 
 function loadDrugsCom(evt) {
@@ -350,20 +367,35 @@ function applyMeds(ml) {
   }
   list += '<dev>';
 
-  $("#pnl-Account #druglist").html(list);
-  $("#pnl-Account #useselecteddrugs").removeClass("disabled");
-  $("#pnl-Account #useselecteddrugs").removeAttr("disabled");
+  var pnl = $("#pnl-Account");
+  $(pnl).find("#druglist").html(list);
+  $(pnl).find("#useselecteddrugs").removeClass("disabled");
+  $(pnl).find("#useselecteddrugs").removeAttr("disabled");
 }
 
 function selectType(evt) {
   var name = $(evt).text();
-  $("#pnl-Trackers [id|='tkr']").text(name);
+  var pnl = $("#pnl-Trackers");
+
+  $(pnl).find("[id|='tkr']").text(name);
+
+  if (name.replace(/(\S+?) .*/g, "$1") === "range") {
+    $(pnl).find("[id|='sr']").removeClass("disabled");
+    $(pnl).find("[id|='sr']").removeAttr("disabled");
+    $(pnl).find("[id|='er']").removeClass("disabled");
+    $(pnl).find("[id|='er']").removeAttr("disabled");
+  } else {
+    $(pnl).find("[id|='sr']").addClass("disabled");
+    $(pnl).find("[id|='sr']").prop("disabled", "true");
+    $(pnl).find("[id|='er']").addClass("disabled");
+    $(pnl).find("[id|='er']").prop("disabled", "true");
+  }
 }
 
 function panelAddBtn(db, evt) {
   var pnlid = $(evt).prop("id").replace(/\S+?-(.*)/g, "$1");
   var pnlname = /-/g [Symbol.replace](pnlid, " ");
-
+  var pnl = $("#pnl-" + pnlid);
   var name = $(("#pnl-" + pnlid + " [id|='inp']")).val();
   var id = / /g [Symbol.replace](name, "-");
 
@@ -374,18 +406,26 @@ function panelAddBtn(db, evt) {
     var entry = {
       position: Number(pos) + 1,
       name: name,
-      type: $("#pnl-" + id + " [id|+'tkr']").text(),
+      type: $(pnl).find("[id|='tkr']").text(),
     };
 
-    store.add(entry);
+    if (entry.type.replace(/(\S+?) .*/g, "$1") === "range") {
+      entry.start = $(pnl).find("[id|='sr']").val();
+      entry.end = $(pnl).find("[id|='er']").val();
+    }
 
-    generateTrackersPanel(db);
-    $("#pnl-" + pnlid).show();
+    if (entry.type === "list")
+      entry.list = [];
+
+    store.add(entry);
 
     if (entry.type === "list") {
       addTab(entry);
       addPanel(entry);
     }
+
+    generateTrackersPanel(db);
+    $("#pnl-"+pnlid).show();
   } else {
     var panel = store.index("by_name").openCursor(IDBKeyRange.only(pnlname));
 
@@ -400,7 +440,7 @@ function panelAddBtn(db, evt) {
         cursor.update(entry);
 
         addPanel(entry);
-        $("#pnl-" + pnlid).show();
+         $("#pnl-"+pnlid).show();
       }
     }
   }
@@ -475,11 +515,11 @@ function doneEdit(evt) {
 
       cursor.update(entry);
 
-      generateTrackersPanel(db);
-      $("#pnl-" + pnlid).show();
-
       if (type === "list")
         generateTabsAndPanels(db);
+
+      generateTrackersPanel(db);
+      $("#pnl-" + pnlid).show();
     }
   }
 
@@ -517,7 +557,7 @@ function panelDeleteBtn(db, evt) {
       var entry = cursor.value;
       cursor.delete();
 
-      $("#pnl" + pnlid + " #ent-" + id).remove();
+      $("#pnl-" + pnlid + " #ent-" + id).remove();
       $("#panels #pnl-" + id).remove();
       $("#tablist #tab-" + pnlid).remove();
     }
@@ -533,7 +573,7 @@ function panelDeleteBtn(db, evt) {
       entry.list.splice(i, 1);
 
       cursor.update(entry);
-      $("#pnl" + pnlid + " #ent-" + id).remove();
+      $("#pnl-" + pnlid + " #ent-" + id).remove();
     }
   }
 }
@@ -636,19 +676,20 @@ $(document).ready(function () {
     generateTabsAndPanels(db);
   };
 
-  $("#pnl-Account #urldrugscom").focus(function () {
+  var pnl = $("#pnl-Account");
+  $(pnl).find("#urldrugscom").focus(function () {
     enableLoadDrugs(this);
   });
 
-  $("#pnl-Account #loaddrugscom").click(function () {
+  $(pnl).find("#loaddrugscom").click(function () {
     loadDrugsCom(this);
   });
 
-  $("#pnl-Account #demoloaddrugs").click(function () {
+  $(pnl).find("#demoloaddrugs").click(function () {
     loadDrugs("https://www.drugs.com/mn/wx7s49r");
   });
 
-  $("#pnl-Account #useselecteddrugs").click(function () {
+  $(pnl).find("#useselecteddrugs").click(function () {
     addSelectedDrugs(this);
   });
 });
