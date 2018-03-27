@@ -1,5 +1,5 @@
-loadFile("https://lightningpaindiary.firebaseapp.com/navbar.html", "#navbar");
-loadFile("https://lightningpaindiary.firebaseapp.com/footer.html", "#footer");
+loadFile("https://raw.githubusercontent.com/spip01/lightningpaindiary/bootstrap/public/navbar.html", "#navbar");
+loadFile("https://raw.githubusercontent.com/spip01/lightningpaindiary/bootstrap/public/footer.html", "#footer");
 
 function generateTrackersPanel(db) {
   var pnlid = "Trackers";
