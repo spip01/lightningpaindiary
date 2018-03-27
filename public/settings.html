@@ -115,12 +115,14 @@
     </div>
 
     <div id="jssite" style="display: none">
-        <div id="tabs"></div>
+        <div id="tabs" class="card container-flex bkg-light-green pad-bottom">
+            <div id="tablist" class="row"></div>
+        </div>
         <br>
-        
+
         <div id="panels" class="card card-body bkg-light-green pad-bottom">
 
-            <div id="pnl-Account" class="card card-body" style="display: block">
+            <div id="pnl-Account" class="card card-body">
                 <div class="card card-body">
                     <div class="row">
                         <h4 class="card-title col-lg-4 col-md-4">Account</h4>
@@ -142,6 +144,12 @@
 
                     <div class="container border-bottom">
                         <h6 class="border-bottom clr-dark-green">No entries are required unless you want reminder notifications.</h6>
+
+                        <div class="row">
+                            <label>
+                                <input id="ifdef" type="checkbox"> Always default values to previous entry
+                            </label>
+                        </div>
 
                         <div class="row">
                             <label>
@@ -206,7 +214,7 @@
                     </div>
                     <br>
 
-                    <div id="druglist" class="row container"> </div>
+                    <div id="druglist" class="row container"></div>
                 </div>
             </div>
         </div>
@@ -215,25 +223,27 @@
     <script>
         //w3.includeHTML();
 
-        var trackerstypes = ["blood pressure", "date", "list", "number",
-            "range", "range buttons", "range gradient buttons", "range slider",
-            "text", "time", "true false", "weather"
+        var trackerstypes = ["blood pressure", "date", "list", "number", "range buttons", "range slider", "text",
+            "time", "true false", "weather"
         ];
 
         var trackerslist = [ // sql, can't reuse names with stored data unless confirmed by user for deletion
             // new user start pain level, start time, remedies, relief
             {
                 name: "Pain Level",
-                type: "range gradient buttons",
+                type: "range buttons",
                 start: "1",
                 end: "10",
                 editable: false,
                 remindable: false,
             }, {
-                name: "Start Time",
+                name: "Date",
                 type: "date",
                 editable: false,
                 remindable: false,
+            }, {
+                name: "Start Time",
+                type: "time",
             }, {
                 name: "End Time",
                 type: "time",
@@ -253,12 +263,10 @@
                 type: "list",
                 list: ["light", "sound"],
             }, {
-                //                name: "Remedies",
-                //                type: "list",
-                //                // pull drug list from drugs.com sharing link (link not saved)
-                //                list: ["Kepra", "Relafin", "Haldol", "Cogentin", "Benadryl", "Compazine", "sleep"],
-                //                removeable: true,
-                //            }, {
+                name: "Remedies",
+                type: "list",
+                list: ["Kepra", "Relafin", "Haldol", "Cogentin", "Benadryl", "Compazine", "sleep"],
+            }, {
                 name: "Triggered By",
                 type: "list",
                 list: ["weather", "smells", "sleep", "bright light", "flashing light", "loud noises"],
@@ -270,12 +278,12 @@
                 ],
             }, {
                 name: "Pain Relief",
-                type: "range gradient buttons",
+                type: "range buttons",
                 start: "5",
                 end: "1",
             }, {
                 name: "Mood Level",
-                type: "range gradient buttons",
+                type: "range buttons",
                 start: "1",
                 end: "10",
             }, {
@@ -296,111 +304,88 @@
             }
         ];
 
-        /******* parent of inputs always has idname *******/
-        var head =
+        // replace: idname, ttitle, type, Type, iftrackers
+        // cont-idname: gets appended with entry contents
+        // items: gets appended with list of valid types
+        var panels =
             `            
-                <div id="pnl-idname" class="card card-body container-fluid" style="display: none">
-                    <div id="ctrl-idname" class="row clr-dark-green">
-                        <div class="col-lg-4 col-md-4 col-sm-4 col-4 h4">ttitle</div>
-                        <label class="col-lg-4 col-md-4 col-sm-6 col-8">
-                            <input id="en-idname" type="checkbox">
-                            Enable Delete Buttons
-                        </label>
-                    </div>
-
-                    <div class = "row border-bottom" style="font-size: 12px">
-                        Controls data displayed and saved on the entry page. Drag to rearrange which changes the order on the entry page.
-                        Deleting items doesn't delete any saved data just the controls. Enter the name and hit add to restore it to the display.
-                    </div>
-                    <br>
-
-                    <div id="cont-idname" class="container-fluid pad-bottom">
-            `;
-
-        var entry =
-            `
-                        <div id="ent-idname" class="row border-bottom">
-                            <div id="pos-000" class="col-lg-3 col-md-3 col-sm-3 col-5" draggable="true">ttitle</div>
-                            <div id="typ-tid" class="col-lg-3 col-md-4 col-sm-5 col-8" iftrackers>ttype</div>
-                            <div id="shrnge" class="col-lg-1 col-md-2 col-sm-2 col-3" iftrackers>
-                                <div id="rng-idname" ifrange>startrange-endrange</div><!--colored-->
-                            </div>
-
-                            <!-- edit disables all other buttons -->
-                            <button id="edt-idname" type="button" class="edit-button btn border btn-sm btn-green" ifedit>Edit</button>&nbsp;
-                            <button id="del-idname" type="button" class="del-button btn border btn-sm btn-green disabled" disabled ifedit>Delete</button>
-                        </div>
-            `;
-
-        var editname =
-            `
-                            <input id="edt-idname" class="rounded col-lg-3 col-md-3 col-sm-3 col-5" value="ttitle">
-            `;
-
-        var editrange =
-            `
-                            <input id="start-idname" class="rounded col-lg-1 col-md-1 col-sm-1 col-1" value="vstartrange">
-                            <input id="end-idname" class="rounded col-lg-1 col-md-1 col-sm-1 col-1" value="vendrange">
-            `;
-
-        var tail =
-            `
-                    </div>
-                    <br>
-                    <div class="row">
-                        <input id="inp-idname" class="rounded col-lg-3 col-md-3 col-sm-4 col-4" type="text" placeholder="ttitle">
-                        <div class="col-lg-3 col-md-3 col-sm-4 col-8 dropdown" iftrackers>
-                            <button id="tkr-idname" class="btn border btn-sm btn-green dropdown-toggle disabled" disabled type="button" data-toggle="dropdown">
-                                Type
-                                <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu">
-            `;
-        var tail_trackers_menu =
-            `
-                                <li id="menu-idname">ttype</li>
-            `
-        var tail_end =
-            `
-                             </ul>
-                        </div>
-                        <input id="sr-idname" class="rounded col-lg-1 col-md-1 col-sm-1 col-2 disabled" disabled type="text" placeholder="1" iftrackers>&nbsp;
-                        <input id="er-idname" class="rounded col-lg-1 col-md-1 col-sm-1 col-2 disabled" disabled type="text" placeholder="10" iftrackers>&nbsp;
-                        <button id="add-idname" type="button" class="btn border btn-sm btn-green disabled" disabled>Add</button>
-                    </div>
+            <div id="pnl-idname" class="card card-body container-fluid" style="display: none">
+                <div id="ctrl-idname" class="row clr-dark-green">
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-4 h4">ttitle</div>
+                    <label class="col-lg-4 col-md-4 col-sm-6 col-8">
+                        <input id="en-idname" type="checkbox">
+                        Enable Delete Buttons
+                    </label>
                 </div>
-            `;
 
-        var tab_head =
-            ` 
-                <div class="card bkg-light-green">
-                    <div id="tablist" class="btn-group row">
-             `;
-        var tab_entries =
-            `
-                        <button id="tab-idname" class="col-lg-2 col-md-3 col-sm-4 col-6 btn-green no-border trborder tbborder">ttitle</button>
-            `;
-        var tab_tail =
-            `
-                    </div>
+                <div class = "row border-bottom" style="font-size: 12px">
+                    Controls data displayed and saved on the entry page. Drag to rearrange which changes the order on the entry page.
+                    Deleting items doesn't delete any saved data just the controls. Enter the name and hit add to restore it to the display.
                 </div>
                 <br>
+                    
+                <div id="cont-idname" class="container-fluid pad-bottom"></div>
+                <br>
+
+                <div class="row">
+                    <input id="new-idname" class="rounded col-lg-3 col-md-3 col-sm-3 col-6" type="text" placeholder="ttitle">
+                    <div id="menu-type" class="col-lg-2 col-md-2 col-sm-3 col-6 dropdown" iftrackers>
+                        <button id="sel-idname" class="btn border btn-sm btn-green dropdown-toggle disabled" disabled type="button" data-toggle="dropdown">
+                            Type
+                            <span class="caret"></span>
+                        </button>
+                        <ul id="items" class="dropdown-menu" style="cursor: pointer"></ul>
+                    </div>
+                    <input id="newstart-idname" class="rounded col-lg-1 col-md-1 col-sm-1 col-3 disabled" disabled type="text" placeholder="1" iftrackers>&nbsp;
+                    <input id="newend-idname" class="rounded col-lg-1 col-md-1 col-sm-1 col-3 disabled" disabled type="text" placeholder="10" iftrackers>&nbsp;
+                    <button id="add-idname" type="button" class="btn border btn-sm btn-green disabled" disabled>Add</button>
+                </div>
+            </div>
             `;
 
-        var rmd_entries =
+        // replace: idname, 000, ttitle, iftrackers, ttype, startrange, endrange
+        // items: gets appended with list of valid types
+        var panels_entry =
             `
-                <label class="col-lg-2 col-md-3 col-sm-4 col-8">
-                    <input id="rmd-idname" type="checkbox">
-                    ttitle
-                </label>
+            <div id="ent-idname" class="row border-bottom">
+                <div id="pos-000" class="col-lg-3 col-md-3 col-sm-3 col-6" draggable="true">ttitle</div>
+                <input id="edtname-idname" class="rounded col-lg-3 col-md-3 col-sm-3 col-6" value="ttitle" style="display: none">
+                <div id="type" class="col-lg-2 col-md-2 col-sm-3 col-6" iftrackers>ttype</div>
+                <div id="menu-range" class="col-lg-2 col-md-2 col-sm-3 col-6 dropdown"  style="display: none">
+                    <button id="sel-idname" class="btn border btn-sm btn-green dropdown-toggle" type="button" data-toggle="dropdown">
+                        ttype
+                        <span class="caret"></span>
+                    </button>
+                    <ul id="items" class="dropdown-menu" style="cursor: pointer"></ul>
+                </div>
+                <div id="show-idname" class="col-lg-2 col-md-2 col-sm-2 col-6" iftrackers>
+                    <div id="rng-startrange-endrange" ifrange>startrange-endrange</div>
+                </div>
+                <input id="edtstart-idname" class="rounded col-lg-1 col-md-1 col-sm-1 col-3" value="startrange" style="display: none">&nbsp;
+                <input id="edtend-idname" class="rounded col-lg-1 col-md-1 col-sm-1 col-3" val="endrange" style="display: none">&nbsp;
+                <button id="edit-idname" type="button" class="edit-button btn border btn-sm btn-green" ifedit>Edit</button>&nbsp;
+                <button id="del-idname" type="button" class="del-button btn border btn-sm btn-green disabled" disabled ifedit>Delete</button>
+            </div>
             `;
 
-        var med_import =
+        // gets appended to "items"
+        var menu_entries =
             `
-                <label class=" col-lg-2 col-md-3 col-sm-4 col-8">
-                    <input id="med-idname" type="checkbox">
-                    ttitle
-                </label>
+            <li id="item">ttype</li>
+            `
+        // gets appended to "tablist"
+        var tab_entries =
+            `
+            <button id="tab-idname" class="col-lg-2 col-md-3 col-sm-4 col-6 h4 btn-green no-border trborder tbborder">ttitle</button>
+            `;
+
+        // gets appended to "druglist" & "reminders", one case where prefifx ("med-" & "rem-") is added to idname in code
+        var acct_entries =
+            `
+            <label class="col-lg-2 col-md-3 col-sm-4 col-8">
+                <input id="idname" type="checkbox">
+                ttitle
+            </label>
             `;
     </script>
 

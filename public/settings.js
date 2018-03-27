@@ -4,14 +4,16 @@ loadFile("https://lightningpaindiary.firebaseapp.com/footer.html", "#footer");
 function generateTrackersPanel(db) {
   var pnlid = "Trackers";
   var name = "Trackers";
-  var reminders = "";
 
-  var ttitle = /idname/g [Symbol.replace](head, pnlid);
-  ttitle = /ttitle/g [Symbol.replace](ttitle, name);
-  ttitle = /ifpanel/g [Symbol.replace](ttitle, "style='display: none'");
-  ttitle = /iftrackers/g [Symbol.replace](ttitle, "");
+  var panel = /idname/g [Symbol.replace](panels, pnlid);
+  panel = /ttitle/g [Symbol.replace](panel, name);
+  panel = /iftrackers/g [Symbol.replace](panel, "");
 
-  var panels = ttitle;
+  $("#pnl-" + pnlid).remove();
+  $("#panels").append(panel);
+  var pnl = $("#pnl-" + pnlid);
+
+  $("#pnl-Account #reminders").html("");
 
   var store = db.transaction(["tracking"], "readwrite").objectStore("tracking");
   var cursor = store.index('by_position').openCursor();
@@ -22,57 +24,71 @@ function generateTrackersPanel(db) {
       var item = cursor.value;
       var id = / /g [Symbol.replace](item.name, "-");
 
-      var t = /idname/g [Symbol.replace](entry, id);
-      t = /ttitle/g [Symbol.replace](t, item.name);
-      t = /ttype/g [Symbol.replace](t, item.type);
-      t = /iftrackers/g [Symbol.replace](t, "");
-      t = /000/g [Symbol.replace](t, item.position);
+      var entry = /idname/g [Symbol.replace](panels_entry, id);
+      entry = /ttitle/g [Symbol.replace](entry, item.name);
+      entry = /ttype/g [Symbol.replace](entry, item.type);
+      entry = /iftrackers/g [Symbol.replace](entry, "");
+      entry = /000/g [Symbol.replace](entry, item.position);
 
       if (item.type.indexOf("range") != -1) {
-        t = /ifrange/g [Symbol.replace](t, "");
-        t = /startrange/g [Symbol.replace](t, item.start);
-        t = /endrange/g [Symbol.replace](t, item.end);
+        entry = /ifrange/g [Symbol.replace](entry, "");
+        entry = /startrange/g [Symbol.replace](entry, item.start);
+        entry = /endrange/g [Symbol.replace](entry, item.end);
+
       } else
-        t = /ifrange/g [Symbol.replace](t, 'style="display: none"');
+        entry = /ifrange/g [Symbol.replace](entry, 'style="display: none"');
 
-      t = /ifedit/g [Symbol.replace](t, item.editable === false ? 'style="display: none"' : '');
+      entry = /ifedit/g [Symbol.replace](entry, item.editable === false ? 'style="display: none"' : '');
 
-      panels += t;
+      $(pnl).find("[id|='cont']").append(entry);
 
       if (item.remindable === undefined) {
-        var rmd = /idname/g [Symbol.replace](rmd_entries, id);
-        rmd = /ttitle/g [Symbol.replace](rmd, item.name);
-        reminders += rmd;
+        var reminders = /idname/g [Symbol.replace](acct_entries, "rem-" + id);
+        reminders = /ttitle/g [Symbol.replace](reminders, item.name);
+        $("#pnl-Account #reminders").append(reminders);
       }
 
       cursor.continue();
     } else {
-      var ttail = /idname/g [Symbol.replace](tail, pnlid);
-      ttail = /ttitle/g [Symbol.replace](ttail, name);
-      ttail = /iftrackers/g [Symbol.replace](ttail, "");
 
-      panels += ttail;
-
-      for (var i = 0; i < trackerstypes.length; ++i) {
-        var mid = / /g [Symbol.replace](trackerstypes[i], "-");
-        var mitem = /idname/g [Symbol.replace](tail_trackers_menu, mid);
-        mitem = /ttype/g [Symbol.replace](mitem, trackerstypes[i]);
-
-        panels += mitem;
-      }
-
-      var tend = /iftrackers/g [Symbol.replace](tail_end, "");
-      tend = /idname/g [Symbol.replace](tend, pnlid);
-
-      panels += tend;
-
-      $("#pnl-" + pnlid).remove();
-      $("#panels").append(panels);
-      $("#reminders").html(reminders);
+      generateTypeMenu();
+      generateRangeMenu();
 
       setPanelEvents(pnlid);
     }
   };
+}
+
+function generateRangeMenu() {
+  var store = db.transaction(["tracking"], "readwrite").objectStore("tracking");
+  var cursor = store.index('by_position').openCursor();
+  cursor.onsuccess = function (event) {
+    var cursor = event.target.result;
+
+    if (cursor) {
+      var item = cursor.value;
+
+      if (item.type.indexOf("range") != -1) {
+        var id = / /g [Symbol.replace](item.name, "-");
+
+        for (var i = 0; i < trackerstypes.length; ++i) {
+          if (trackerstypes[i].indexOf("range") != -1) {
+          var menu = /ttype/g [Symbol.replace](menu_entries, trackerstypes[i]);
+          $("#ent-" + id + " [id|='items']").append(menu);
+          }
+        }
+      }
+
+      cursor.continue();
+    }
+  }
+}
+
+function generateTypeMenu() {
+  for (var i = 0; i < trackerstypes.length; ++i) {
+    var menu = /ttype/g [Symbol.replace](menu_entries, trackerstypes[i]);
+    $("#pnl-Trackers #menu-type").find("[id|='items']").append(menu);
+  }
 }
 
 function generateTabsAndPanels(db) {
@@ -94,89 +110,92 @@ function generateTabsAndPanels(db) {
   };
 }
 
-function addPanel(panel) {
-  var pnlid = / /g [Symbol.replace](panel.name, "-");
-  var name = panel.name;
+function addPanel(items) {
+  var pnlid = / /g [Symbol.replace](items.name, "-");
+  var name = items.name;
 
-  var ttitle = /idname/g [Symbol.replace](head, pnlid);
-  ttitle = /ttitle/g [Symbol.replace](ttitle, name);
-  ttitle = /ifpanel/g [Symbol.replace](ttitle, "");
-  ttitle = /iftrackers/g [Symbol.replace](ttitle, "style='display: none'");
-
-  var panels = ttitle;
-
-  for (var j = 0; j < panel.list.length; ++j) {
-    var item = panel.list[j];
-    var id = / /g [Symbol.replace](item, "-");
-
-    var t = /idname/g [Symbol.replace](entry, id);
-    t = /ttitle/g [Symbol.replace](t, item);
-    t = /iftrackers/g [Symbol.replace](t, "style='display: none'");
-    t = /ifrange/g [Symbol.replace](t, "style='display: none'");
-    t = /ifedit/g [Symbol.replace](t, '');
-
-    panels += t;
-  }
-
-  var ttail = /idname/g [Symbol.replace](tail, pnlid);
-  ttail = /ttitle/g [Symbol.replace](ttail, name);
-  ttail = /iftrackers/g [Symbol.replace](ttail, 'style="display: none"');
-
-  var tend = /idname/g [Symbol.replace](tail_end, pnlid);
-  tend = /iftrackers/g [Symbol.replace](tend, 'style="display: none"');
-
-  panels += ttail + tend;
+  var panel = /idname/g [Symbol.replace](panels, pnlid);
+  panel = /ttitle/g [Symbol.replace](panel, name);
+  panel = /iftrackers/g [Symbol.replace](panel, "style='display: none'");
 
   $("#pnl-" + pnlid).remove();
-  $("#panels").append(panels);
+  $("#panels").append(panel);
+
+  for (var j = 0; j < items.list.length; ++j) {
+    var item = items.list[j];
+    var id = / /g [Symbol.replace](item, "-");
+
+    var entry = /idname/g [Symbol.replace](panels_entry, id);
+    entry = /ttitle/g [Symbol.replace](entry, item);
+    entry = /iftrackers/g [Symbol.replace](entry, "style='display: none'");
+    entry = /ifrange/g [Symbol.replace](entry, "style='display: none'");
+    entry = /ifedit/g [Symbol.replace](entry, '');
+
+    $("#pnl-" + pnlid + " [id|='cont']").append(entry);
+  }
+
   setPanelEvents(pnlid);
 }
 
 function setPanelEvents(id) {
   var pnl = $("#pnl-" + id);
 
-  $(pnl).find("[id|='en']").off();
   $(pnl).find("[id|='en']").click(function () {
     enableDeleteBtns(this);
   });
 
-  $(pnl).find("[id|='edt']").off();
-  $(pnl).find("[id|='edt']").click(function () {
+  $(pnl).find("[id|='edtname']").keydown(function (event) {
+    if (event.which === 0x0a || event.which === 0x0d)
+      doneEdit(db, this);
+  });
+
+  $(pnl).find("[id|='edit']").click(function () {
     panelEditBtn(db, this);
   });
 
-  $(pnl).find("[id|='del']").off();
   $(pnl).find("[id|='del']").click(function () {
     panelDeleteBtn(db, this);
   });
 
-  $(pnl).find("[id|='inp']").off();
-  $(pnl).find("[id|='inp']").focus(function () {
+  $(pnl).find("[id|='new']").focus(function () {
     enableAddBtns(this);
   });
-  $(pnl).find("[id|='inp']").keydown(function (event) {
+
+  $(pnl).find("[id|='new']").keydown(function (event) {
     if (event.which === 0x0a || event.which === 0x0d)
       panelAddBtn(db, this);
   });
 
-  $(pnl).find("[id|='add']").off();
   $(pnl).find("[id|='add']").click(function () {
     panelAddBtn(db, this);
   });
 
-  $(pnl).find("[id|='sr']").off();
-  $(pnl).find("[id|='sr']").keydown(function (event) {
-    if (event.which === 0x0a || event.which === 0x0d)
-      panelAddBtn(db, this);
-  });
+  if (id === "Trackers") {
+    $(pnl).find("[id|='edtstart']").keydown(function (event) {
+      if (event.which === 0x0a || event.which === 0x0d)
+        doneEdit(db, this);
+    });
 
-  $(pnl).find("[id|='er']").off();
-  $(pnl).find("[id|='er']").keydown(function (event) {
-    if (event.which === 0x0a || event.which === 0x0d)
-      panelAddBtn(db, this);
-  });
+    $(pnl).find("[id|='edtend']").keydown(function (event) {
+      if (event.which === 0x0a || event.which === 0x0d)
+        doneEdit(db, this);
+    });
 
-  $(pnl).find("[draggable|='true']").off();
+    $(pnl).find("[id|='newstart']").keydown(function (event) {
+      if (event.which === 0x0a || event.which === 0x0d)
+        panelAddBtn(db, this);
+    });
+
+    $(pnl).find("[id|='newend']").keydown(function (event) {
+      if (event.which === 0x0a || event.which === 0x0d)
+        panelAddBtn(db, this);
+    });
+
+    $(pnl).find("[id|='item']").click(function () {
+      selectType(this);
+    });
+  }
+
   $(pnl).find("[draggable|='true']").on({
     //"mouseleave": $.proxy(mouseLeave),
     //"mouseenter": $.proxy(mouseEnter),
@@ -188,38 +207,22 @@ function setPanelEvents(id) {
     //"touchstart": $.proxy(dragstart),
   });
 
-  $(pnl).find("[id|='menu']").off();
-  $(pnl).find("[id|='menu']").click(function () {
-    selectType(this);
-  });
-
-  $("#tablist #tab-" + id).off();
-  $("#tablist #tab-" + id).click(function () {
+  $("#tabs #tab-" + id).off();
+  $("#tabs #tab-" + id).click(function () {
     openTab(this);
   });
-
 }
 
 function newTabBar() {
-  $("#tabs").html(tab_head);
-
   addTab({
     name: "Account",
     borderbottom: true,
   });
+
   addTab({
     name: "Trackers",
     borderright: true,
     borderbottom: true,
-  });
-
-  var tabs = $("#tablist");
-
-  $(tabs).append(tab_tail);
-
-  $(tabs).find("[id|=tab]").off();
-  $(tabs).find("[id|=tab]").click(function () {
-    openTab(this);
   });
 }
 
@@ -297,7 +300,8 @@ function drop(evt) {
 }
 
 function enableDeleteBtns(evt) {
-  var pnl = $("#pnl-" + $(evt).prop("id").replace(/^\S+?-(.*)/g, "$1"));
+  var pnlid = $(evt).prop("id").replace(/^\S+?-(.*)/g, "$1");
+  var pnl = $("#pnl-" + pnlid);
 
   if ($(evt).prop("checked")) {
     $(pnl).find("[id|='del']").removeClass("disabled");
@@ -309,23 +313,23 @@ function enableDeleteBtns(evt) {
 }
 
 function enableAddBtns(evt) {
-  var pnl = $("#pnl-" + $(evt).prop("id").replace(/^\S+?-(.*)/g, "$1"));
+  var pnlid = $(evt).prop("id").replace(/^\S+?-(.*)/g, "$1");
+  var pnl = $("#pnl-" + pnlid);
 
-  $(pnl).find("[id|='add']").removeClass("disabled");
-  $(pnl).find("[id|='add']").removeAttr("disabled");
+  $(pnl).find("#menu-type [id|='sel']").removeClass("disabled");
+  $(pnl).find("#menu-type [id|='sel']").removeAttr("disabled");
 
-  $(pnl).find("[id|='tkr']").removeClass("disabled");
-  $(pnl).find("[id|='tkr']").removeAttr("disabled");
-  //  $(pnl).find("[id|='sr']").removeClass("disabled");
-  //  $(pnl).find("[id|='sr']").removeAttr("disabled");
-  //  $(pnl).find("[id|='er']").removeClass("disabled");
-  //  $(pnl).find("[id|='er']").removeAttr("disabled");
+  if (pnlid != "Trackers") {
+    $(pnl).find("[id|='add']").removeClass("disabled");
+    $(pnl).find("[id|='add']").removeAttr("disabled");
+  }
 }
 
 function loadDrugsCom(evt) {
   var url = $("#urldrugscom").val();
   if (!url.startsWith("http"))
     url = "https://www.drugs.com/mn/" + url;
+
   loadDrugs(url);
 }
 
@@ -361,34 +365,40 @@ function loadDrugs(url) {
 }
 
 function applyMeds(ml) {
-  var list = '<dev class="row">';
-  for (var i = 0; i < ml.length; ++i) {
-    list += /ttitle/g [Symbol.replace](med_import, ml[i]);
-  }
-  list += '<dev>';
-
   var pnl = $("#pnl-Account");
-  $(pnl).find("#druglist").html(list);
+
+  for (var i = 0; i < ml.length; ++i) {
+    var id = / /g [Symbol.replace](ml[i], "-");
+    var entry = /idname/g [Symbol.replace](acct_entries, "med-" + id);
+    entry = /ttitle/g [Symbol.replace](entry, ml[i]);
+    $(pnl).find("#druglist").append(entry);
+  }
+
   $(pnl).find("#useselecteddrugs").removeClass("disabled");
   $(pnl).find("#useselecteddrugs").removeAttr("disabled");
 }
 
 function selectType(evt) {
   var name = $(evt).text();
-  var pnl = $("#pnl-Trackers");
+  var menu = $(evt).parent().parent();
 
-  $(pnl).find("[id|='tkr']").text(name);
+  $(menu).find("[id|='sel']").text(name);
 
-  if (name.replace(/(\S+?) .*/g, "$1") === "range") {
-    $(pnl).find("[id|='sr']").removeClass("disabled");
-    $(pnl).find("[id|='sr']").removeAttr("disabled");
-    $(pnl).find("[id|='er']").removeClass("disabled");
-    $(pnl).find("[id|='er']").removeAttr("disabled");
-  } else {
-    $(pnl).find("[id|='sr']").addClass("disabled");
-    $(pnl).find("[id|='sr']").prop("disabled", "true");
-    $(pnl).find("[id|='er']").addClass("disabled");
-    $(pnl).find("[id|='er']").prop("disabled", "true");
+  $("#pnl-Trackers [id|='add']").removeClass("disabled");
+  $("#pnl-Trackers [id|='add']").removeAttr("disabled");
+
+  if ($(menu).prop("id") === "menu-type") {
+    if (name.indexOf("range") != -1) {
+      $(menu).find("[id|='newstart']").removeClass("disabled");
+      $(menu).find("[id|='newstart']").removeAttr("disabled");
+      $(menu).find("[id|='newend']").removeClass("disabled");
+      $(menu).find("[id|='newend']").removeAttr("disabled");
+    } else {
+      $(menu).find("[id|='newstart']").addClass("disabled");
+      $(menu).find("[id|='newstart']").prop("disabled", "true");
+      $(menu).find("[id|='newend']").addClass("disabled");
+      $(menu).find("[id|='newend']").prop("disabled", "true");
+    }
   }
 }
 
@@ -396,7 +406,7 @@ function panelAddBtn(db, evt) {
   var pnlid = $(evt).prop("id").replace(/\S+?-(.*)/g, "$1");
   var pnlname = /-/g [Symbol.replace](pnlid, " ");
   var pnl = $("#pnl-" + pnlid);
-  var name = $(("#pnl-" + pnlid + " [id|='inp']")).val();
+  var name = $(("#pnl-" + pnlid + " [id|='new']")).val();
   var id = / /g [Symbol.replace](name, "-");
 
   var store = db.transaction(["tracking"], "readwrite").objectStore("tracking");
@@ -406,12 +416,12 @@ function panelAddBtn(db, evt) {
     var entry = {
       position: Number(pos) + 1,
       name: name,
-      type: $(pnl).find("[id|='tkr']").text(),
+      type: $(pnl).find("#menu-type [id|='sel']").text(),
     };
 
     if (entry.type.replace(/(\S+?) .*/g, "$1") === "range") {
-      entry.start = $(pnl).find("[id|='sr']").val();
-      entry.end = $(pnl).find("[id|='er']").val();
+      entry.start = $(pnl).find("[id|='newstart']").val();
+      entry.end = $(pnl).find("[id|='newend']").val();
     }
 
     if (entry.type === "list")
@@ -447,52 +457,39 @@ function panelAddBtn(db, evt) {
 }
 
 function panelEditBtn(db, evt) {
-  var id = $(evt).prop("id").replace(/\S+?-(.*)/g, "$1");
   var ent = $(evt).parent();
   var pnlid = $(ent).parent().prop("id").replace(/\S+?-(.*)/g, "$1");
-  var name = /-/g [Symbol.replace](id, " ");
 
-  var input = /idname/g [Symbol.replace](editname, id);
-  input = /ttitle/g [Symbol.replace](input, name);
+  $(ent).find("[id|='pos']").hide();
+  $(ent).find("[id|='edtname']").show();
 
   if (pnlid === "Trackers") {
-    var type = $(ent).find("[id|='typ']").text().replace(/(\S+?) .*/g, "$1");
+    var type = $(ent).find("[id|='type']").text().replace(/(\S+?) .*/g, "$1");
 
     if (type === "range") {
-      var txt = $(ent).find("[id|='rng']").text();
-      var startrange = txt.replace(/(\d+?)-.*/g, "$1");
-      var endrange = txt.replace(/.*?-(\d+?)/g, "$1");
+      $(ent).find("[id|='type']").hide();
+      $(ent).find("[id|='show']").hide();
 
-      var range = /vstartrange/g [Symbol.replace](editrange, startrange);
-      range = /vendrange/g [Symbol.replace](range, endrange);
-
-      $(ent).find("#shrnge").remove();
-      $(ent).find("[id|='typ']").after(range);
+      $(ent).find("[id|='edtstart']").show();
+      $(ent).find("[id|='edtend']").show();
+      $(ent).find("[id|='menu']").show();
     }
   }
-
-  $(ent).find("[id|='pos']").remove();
-  $(ent).prepend(input);
-
-  $(ent).find("input").keydown(function (event) {
-    if (event.which === 0x0a || event.which === 0x0d)
-      doneEdit(this);
-  });
 
   $(evt).text("Done");
   $(evt).off();
   $(evt).click(function () {
-    doneEdit(this);
+    doneEdit(db, this);
   });
 }
 
-function doneEdit(evt) {
+function doneEdit(db, evt) {
   var id = $(evt).prop("id").replace(/\S+?-(.*)/g, "$1");
   var ent = $(evt).parent();
   var pnlid = $(ent).parent().prop("id").replace(/\S+?-(.*)/g, "$1");
   var pnlname = /-/g [Symbol.replace](pnlid, " ");
 
-  var newname = $(ent).find("[id|='edt']").val();
+  var newname = $(ent).find("[id|='edtname']").val();
   var oldname = /-/g [Symbol.replace](id, " ");
 
   var store = db.transaction(["tracking"], "readwrite").objectStore("tracking");
@@ -506,11 +503,12 @@ function doneEdit(evt) {
       var entry = cursor.value;
       entry.name = newname;
 
-      var type = $(ent).find("[id|='typ']").text().replace(/(\S+?) .*/g, "$1");
+      var type = $(ent).find("[id|='type']").text();
 
-      if (type === "range") {
-        entry.start = $(ent).find("[id|='start']").val();
-        entry.end = $(ent).find("[id|='end']").val();
+      if (type.indexOf("range") != -1) {
+        entry.type = type;
+        entry.start = $(ent).find("[id|='edtstart']").val();
+        entry.end = $(ent).find("[id|='edtend']").val();
       }
 
       cursor.update(entry);
@@ -559,7 +557,7 @@ function panelDeleteBtn(db, evt) {
 
       $("#pnl-" + pnlid + " #ent-" + id).remove();
       $("#panels #pnl-" + id).remove();
-      $("#tablist #tab-" + pnlid).remove();
+      $("#tablist #tab-" + id).remove();
     }
   }
 
@@ -626,17 +624,17 @@ function enableLoadDrugs(evt) {
 }
 
 function loadFile(url, selector) {
-   xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function () {
-      if (this.readyState == 4) {
-        if (this.status == 200) {
-          var html = this.responseText.replace(/(?:.*?\n)*?<body>((?:.*?\n)+?)<\/body>(.*?\n?)*/g, "$1");
-          $(selector).append(html);
-        }
+  xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function () {
+    if (this.readyState == 4) {
+      if (this.status == 200) {
+        var html = this.responseText.replace(/(?:.*?\n)*?<body>((?:.*?\n)+?)<\/body>(.*?\n?)*/g, "$1");
+        $(selector).append(html);
       }
     }
-    xhttp.open("GET", url, true);
-    xhttp.send();
+  }
+  xhttp.open("GET", url, true);
+  xhttp.send();
 
   //$.getJSON(url + "?jsoncallback=?", function (data, status) {
   //    //(http|ftp|https)://([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?
@@ -655,7 +653,7 @@ function loadFile(url, selector) {
   //  });
 }
 
-var db = NaN;
+var db;
 
 $(document).ready(function () {
   $("#javascript").hide();
