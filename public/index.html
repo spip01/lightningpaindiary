@@ -4,137 +4,81 @@
 <head>
     <title>Lightning Pain Diary</title>
     <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
-    <meta charset="utf-8">
-    <meta id="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-    <script src="https://www.w3schools.com/lib/w3.js"></script>
+    <meta charset="utfoot-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/xregexp/xregexp-all.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.0.0/bootstrap-slider.min.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/plain" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.0.0/css/bootstrap-slider.min.css">
 
-    <link rel="stylesheet" type="text/plain" href="local.css">
+    <link rel="stylesheet" type="text/plain" href="https://raw.githubusercontent.com/spip01/lightningpaindiary/bootstrap/public/local.css">
+    <script src="local.js"></script>
 </head>
 
 <body>
-    <div w3-include-html="navbar.html"></div>
- 
-    <div id="javascript" class="w3-container w3-light-gray w3-card">
-        <div class="w3-bar">
-            <a href="index.html" class="w3-btn w3-bar-item w3-mobile w3-hover-dark-gray" style="color: rgb(0, 78, 0);">
-                <i class="fa fa-home" style="font-size:18px"></i>
-                Lightning Pain Diary
-            </a>
-            <a href="about.html" class="w3-btn w3-bar-item w3-mobile w3-hover-dark-gray"> About </a>
-        </div>
-        </br>
+    <!--div w3-include-html="https://raw.githubusercontent.com/spip01/lightningpaindiary/bootstrap/public/navbar.html"></div-->
+    <div id="navbar"></div>
 
-        <div id="javascript" class="w3-containerw3-card w3-light-gray" style="color: rgb(0, 78, 0);">
-            Unfortunately, this page cannot function without javasript.
-            <br>Please add this site to your "allowed" sites located at
-            <br>chrome://settings/content/javascript
+    <div id="javascript" class="">
+        <div class="card container nav-menu">
+            <div class="row">
+                <div class="col-lg-6 col-md-6">
+                    <a href="index.html" class="nav-text">
+                        <i class="fa fa-home"></i>
+                        Lightning Pain Diary
+                    </a>
+                </div>
+                <div class="col-lg-2 col-md-2">
+                    <a href="about.html" class="nav-text">
+                        About
+                    </a>
+                </div>
+            </div>
+            </br>
+        </div>
+
+        <div id="javascript" class="" style="color: rgb(0, 78, 0);">
+            Unfortunately, this page cannot function without javasript. Please add this site to your "allowed" sites. For chrome it's
+            located at chrome://settings/content/javascript
         </div>
         </br>
     </div>
 
-    <div id="jssite" data-generated class="w3-card" style="display: none">
-        To enter only pain level and current date & time just enter pain level and hit the button below.
-        <div id="painbuttons" class="w3-container w3-bar w3-round"></div>
-            <button type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Add Pain Level and Date</button>
+    <div id="jssite" style="display: none">
+        <div class="card card-body bkg-light-green pad-bottom">
+            <div class="card card-body pad-bottom">
+                <div class="h6 border-bottom">
+                    Nothing is required except painlevel and date. After setting those just skip down the page to the "update" button. To populate
+                    remaining values with last entry values hit "last". You can get notifications about incomplete entries
+                    by enabling it on the settings/account page.
+                    <br>
+                </div>
 
-        <div data-generated id="detail" class="w3-container w3-small" style="display: none">
+                <div id="panels"></div>
+                <br>
 
-            <header class="w3-container w3-light-gray" style="color: rgb(0, 78, 0);">
-                Date & Time
-            </header>
-            <input id="entryDate" class="w3-border w3-round" type="datetime-local">
-            <label for="entryDate" class="w3 - small">Diary Entry Date</label>
-            <br>
-
-            <div id="medications"></div>
-            <div id="painlocation"></div>
-            <div id="paintype"></div>
-            <div id="triggerlist"></div>
-            <div id="warninglist"></div>
-
-            <div id="reliefbuttons" class="w3-container w3-bar w3-round"></div>
-            <div id="moodbuttons" class="w3-container w3-bar w3-round"></div>
-
-            <div id="entrybuttons">
-                <button type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Update</button>
-                <button type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">New</button>
-                <button type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Cancel</button>
-                <button type="button" class="w3-btn w3-tiny w3-border w3-round w3-ripple">Make Default</button>
+                <div id="entrybuttons" class="row">
+                    <button id="last" type="button" class="btn border btn-sm btn-green">Last</button>&nbsp;
+                    <button id="updt" type="button" class="btn border btn-sm btn-green">Update</button>&nbsp;
+                    <button id="new" type="button" class="btn border btn-sm btn-green">New</button>&nbsp;
+                    <button id="cancel" type="button" class="btn border btn-sm btn-green">Cancel</button>
+                </div>
             </div>
         </div>
-        <br>
-
     </div>
-    <br>
 
-    <p id="diag"></p>
-    <p id="diag2"></p>
+    <!--div w3-include-html="https://raw.githubusercontent.com/spip01/lightningpaindiary/bootstrap/public/footer.html"></div-->
+    <div id="footer"></div>
 
-    <script>
-        w3.includeHTML();
+    <div id="diag"></div>
 
-        var neednew = true;
-
-        // entry values
-        var createdDate = new Date();
-        var changedDate = new Date();
-        var entryDate = new Date();
-        var painlevel = "";
-        var relieflevel = "";
-        var moodlevel = "";
-
-        var medicines = [];
-        var triggers = [];
-        var painlocation = [];
-        var paintype = [];
-        var warnings = [];
-
-        // get these from db
-        var medlist = ["kepra", "relafin", "haldol", "cogentin", "benadryl", "compazine"];
-        var triggerlist = ["weather", "smells", "sleep"];
-        var locationlist = ["forehead", "temple", "eyes", "left", "right", "all"];
-        var typelist = ["throbbing", "burning", "pressure", "sharp"];
-        var warninglist = ["aura"];
-
-        // previous entry values
-        var createdDateOld = createdDate;
-        var changedDateOld = changedDate;
-        var entryDateOld = entryDate;
-        var painlevelOld = painlevel;
-        var relieflevelOld = relieflevel;
-        var moodlevelOld = moodlevel;
-
-        var medicinesOld = medicines;
-        var triggersOld = triggers;
-        var painlocationOld = painlocation;
-        var paintypeOld = paintype;
-        var warningsOld = warnings;
-
-        $(document).ready(function () {
-            $("#painbuttons button").click(function () {
-                painlevel = painButtons(this, "painbuttons");
-            });
-            $("#reliefbuttons button").click(function () {
-                relieflevel = procButtons(this, "reliefbuttons");
-            });
-            $("#moodbuttons button").click(function () {
-                moodlevel = procButtons(this, "moodbuttons");
-            });
-            $("#entrybuttons button").click(function () {
-                entryButtons(this, "entrybuttons");
-            });
-
-            $("#javascript").empty();
-            $("#jssite").show();
-
-            setup();
-        });
-    </script>
-
-    <div w3-include-html="footer.html"></div>
 </body>
 
 </html>

@@ -165,15 +165,15 @@
         var trackerslist = [ // sql, can't reuse names with stored data unless confirmed by user for deletion
             // new user start pain level, start time, remedies, relief
             {
+                name: "Date",
+                type: "date",
+                editable: false,
+                remindable: false,
+            }, {
                 name: "Pain Level",
                 type: "range buttons",
                 start: "1",
                 end: "10",
-                editable: false,
-                remindable: false,
-            }, {
-                name: "Date",
-                type: "date",
                 editable: false,
                 remindable: false,
             }, {
@@ -272,7 +272,7 @@
                         <ul id="items" class="dropdown-menu" style="cursor: pointer"></ul>
                     </div>
                     <input id="newstart-idname" class="rounded col-lg-1 col-md-1 col-sm-1 col-3 disabled" disabled type="text" placeholder="1" iftrackers>&nbsp;
-                    <input id="newend-idname" class="rounded col-lg-1 col-md-1 col-sm-1 col-3 disabled" disabled type="text" placeholder="10" iftrackers>&nbsp;
+                    <input id="newend-idname" class="rounded col-lg-1 col-md-1 col-sm-1 col-3 disabled" disabled type="text" placeholder="10" iftrackers>&nbsp;&nbsp;
                     <button id="add-idname" type="button" class="btn border btn-sm btn-green disabled" disabled>Add</button>
                 </div>
             </div>
@@ -317,7 +317,7 @@
         // gets appended to "druglist" & "reminders", one case where prefifx ("med-" & "rem-") is added to idname in code
         var acct_entries =
             `
-            <label class="col-lg-2 col-md-3 col-sm-4 col-8">
+            <label class="col-lg-2 col-md-3 col-sm-6 col-12">
                 <input id="idname" type="checkbox">
                 ttitle
             </label>
