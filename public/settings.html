@@ -58,7 +58,6 @@
         <div id="panels" class="card card-body bkg-light-green pad-bottom">
 
             <div id="pnl-Account" class="card card-body">
-                <div class="card card-body">
                     <div class="row">
                         <h4 class="card-title col-lg-4 col-md-4">Account</h4>
                         <!-- https://developers.google.com/drive/v3/web/savetodrive -->
@@ -78,12 +77,20 @@
                     </div>
 
                     <div class="container border-bottom">
-                        <h6 class="border-bottom clr-dark-green">No entries are required unless you want reminder notifications.</h6>
-
                         <div class="row">
                             <label>
                                 <input id="ifdef" type="checkbox"> Always default values to previous entry
                             </label>
+                        </div>
+
+                        <h6 class="row clr-dark-green">Address is used for current weather conditions download.</h6>
+                        <div class="row container">
+                            <input id="city" class="rounded col-lg-4 col-md-5 col-sm-6 col-7" type="text">
+                            <div  class="col-lg-2 col-md-2 col-sm-2 col-5" type="text">city</div>
+                            <input id="state" class="rounded col-lg-2 col-md-2 col-sm-2 col-2" type="text">
+                            <div  class="col-lg-2 col-md-2 col-sm-2 col-4" type="text">state</div>
+                            <input id="city" class="rounded col-lg-4 col-md-5 col-sm-6 col-7" type="text">
+                            <div  class="col-lg-2 col-md-2 col-sm-2 col-5" type="text">country</div>
                         </div>
 
                         <div class="row">
@@ -104,23 +111,24 @@
 
                         <div class="container">
                             <div class="row">
-                                <label class=" col-lg-2 col-md-2 col-sm-3 col-5">
+                                <label class="col-lg-2 col-md-2 col-sm-3 col-6">
                                     <input id="ifemail" type="checkbox"> email
                                 </label>
-
-                                <input id="email" type="text" class="rounded col-lg-3 col-md-3 col-sm-6 col-8" placeholder="email address">&nbsp;
+                            </div>
+                            <div class="row container">
+                                    <input id="email" type="text" class="rounded col-lg-3 col-md-3 col-sm-6 col-10" placeholder="email address">&nbsp;
 
                                 <i id="everified" class="fa fa-check-circle clr-dark-green" style="display: none"></i>
                                 <i id="enotverified" class="fa fa-circle"></i>
                             </div>
 
                             <div class="row">
-                                <label>
+                                <label class="col-lg-12 col-md-12 col-sm-12 col-12">
                                     <input id="ifsms" type="checkbox"> text (If you are still charged for text messages you should change carriers &#x1f609;)
                                 </label>
                             </div>
 
-                            <div class="container">
+                            <div class="row container">
                                 <input id="phone" type="text" class="rounded col-lg-4 col-md-5 col-sm-6 col-10" placeholder="phone number">
                             </div>
                         </div>
@@ -152,7 +160,6 @@
                     <div id="druglist" class="row container"></div>
                 </div>
             </div>
-        </div>
     </div>
 
     <script>
@@ -246,7 +253,7 @@
             `            
             <div id="pnl-idname" class="card card-body container-fluid" style="display: none">
                 <div id="ctrl-idname" class="row clr-dark-green">
-                    <div class="col-lg-4 col-md-4 col-sm-4 col-4 h4">ttitle</div>
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-8 h4">ttitle</div>
                     <label class="col-lg-4 col-md-4 col-sm-6 col-8">
                         <input id="en-idname" type="checkbox">
                         Enable Delete Buttons
