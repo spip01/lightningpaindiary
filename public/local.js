@@ -1,54 +1,5 @@
-var neednew = true;
-
-// entry values
-var createdDate = new Date();
-var changedDate = new Date();
-var entryDate = new Date();
-var painlevel = "";
-var relieflevel = "";
-var moodlevel = "";
-
-var medicines = [];
-var triggers = [];
-var painlocation = [];
-var paintype = [];
-var warnings = [];
-
-// get these from db
-var medlist = ["kepra", "relafin", "haldol", "cogentin", "benadryl", "compazine"];
-var triggerlist = ["weather", "smells", "sleep"];
-var locationlist = ["forehead", "temple", "eyes", "left", "right", "all"];
-var typelist = ["throbbing", "burning", "pressure", "sharp"];
-var warninglist = ["aura"];
-
-// previous entry values
-var createdDateOld = createdDate;
-var changedDateOld = changedDate;
-var entryDateOld = entryDate;
-var painlevelOld = painlevel;
-var relieflevelOld = relieflevel;
-var moodlevelOld = moodlevel;
-
-var medicinesOld = medicines;
-var triggersOld = triggers;
-var painlocationOld = painlocation;
-var paintypeOld = paintype;
-var warningsOld = warnings;
 
 $(document).ready(function () {
-    /*    $("#painbuttons button").click(function () {
-            painlevel = painButtons(this, "painbuttons");
-        });
-        $("#reliefbuttons button").click(function () {
-            relieflevel = procButtons(this, "reliefbuttons");
-        });
-        $("#moodbuttons button").click(function () {
-            moodlevel = procButtons(this, "moodbuttons");
-        });
-        $("#entrybuttons button").click(function () {
-            entryButtons(this, "entrybuttons");
-        });
-    */
     $("#javascript").empty();
     $("#jssite").show();
 
@@ -81,10 +32,6 @@ function setup(db) {
 
         if (cursor) {
             var entry = cursor.value;
-
-            //var trackerstypes = ["blood pressure", "date", "list", "number",
-            //"range", "range buttons", "range slider",
-            //"text", "time", "true false", "weather"];
 
             switch (entry.type) {
                 case "blood pressure":
@@ -285,13 +232,14 @@ function buildBPInput(entry) {
     var panel =
         `
             <div id="pnl-idname" class="row border-bottom">
-                <div class="col-lg-4 col-md-4 col-sm-4 col-12 h4 clr-dark-green">ttitle</div>
+                <div class="col-lg-3 col-md-3 col-sm-4 col-12 h4 clr-dark-green">ttitle</div>
+                <div class="col-lg-1 col-md-1 col-sm-1 col-4 text-right"> </div>
                 <input id="idname" class="rounded col-lg-1 col-md-1 col-sm-1 col-1" type="text">
                 <div class="col-lg-1 col-md-1 col-sm-1 col-1 text-center">/</div>
                 <input id="idname" class="rounded col-lg-1 col-md-1 col-sm-1 col-1" type="text">
                 <div class="col-lg-1 col-md-1 col-sm-2 col-3 text-right">pulse</div>
                 <input id="idname" class="rounded col-lg-1 col-md-1 col-sm-1 col-1" type="text">
-                </div>
+            </div>
         `;
 
     var id = / /g [Symbol.replace](entry.name, "-");
@@ -368,21 +316,6 @@ function buildCheckboxList(entry) {
     }
 }
 
-function procCheckboxLists() {
-    medicines = procCheckboxList("medications");
-    painlocation = procCheckboxList("painlocation");
-    paintype = procCheckboxList("paintype");
-    triggers = procCheckboxList("triggerlist");
-    warnings = procCheckboxList("warninglist");
-}
-
-function resetCheckboxLists() {
-    resetCheckboxList("medications", medlist, medicines);
-    resetCheckboxList("painlocation", locationlist, painlocation);
-    resetCheckboxList("paintype", typelist, paintype);
-    resetCheckboxList("triggerlist", triggerlist, triggers);
-    resetCheckboxList("warninglist", warninglist, warnings);
-}
 
 function procCheckboxList(listname) {
     var i = 0;
@@ -393,28 +326,6 @@ function procCheckboxList(listname) {
     });
 
     return (set);
-}
-
-function resetCheckboxList(listname, list, set) {
-    $("#" + listname + " :checked").each(function () {
-        $(this).trigger("click");
-    });
-
-    for (var i = 0; i < set.length; ++i) {
-        $("#" + set[i]).prop("checked", "checked");
-
-    }
-}
-
-function painButtons(evt, id) {
-    $("#detail").show();
-
-    if (neednew) {
-        $("#entryDate").val(createdDate.toDateTimeLocalString());
-        newEntry();
-    }
-
-    return (procButtons(evt, id));
 }
 
 function procButtons(evt, id) {
@@ -440,63 +351,6 @@ function entryButtons(evt, id) {
     }
 
     diag();
-}
-
-function newEntry(evt) {
-    neednew = false;
-    createdDate = new Date();
-    changedDate = new Date(createdDate);
-
-    // start from last editDate not createdDate
-    //editDate = new Date(createdDate);
-}
-
-function updateEntry(evt) {
-    changedDate = new Date();
-    entryDate = new Date($("#entryDate").val());
-
-    procCheckboxLists();
-
-    createdDateOld = createdDate;
-    changedDateOld = changedDate;
-    entryDateOld = entryDate;
-    painlevelOld = painlevel;
-    relieflevelOld = relieflevel;
-    moodlevelOld = moodlevel;
-
-    medicinesOld = medicines;
-    triggersOld = triggers;
-    painlocationOld = painlocation;
-    paintypeOld = paintype;
-    warningsOld = warnings;
-}
-
-function cancelEntry(evt) {
-    createdDate = createdDateOld;
-    changedDate = changedDateOld;
-    entryDate = entryDateOld;
-    painlevel = painlevelOld;
-    relieflevel = relieflevelOld;
-    moodlevel = moodlevelOld;
-
-    medicines = medicinesOld;
-    triggers = triggersOld;
-    painlocation = painlocationOld;
-    paintype = paintypeOld;
-    warnings = warningsOld;
-
-    $("#entryDate").val(entryDate.toDateTimeLocalString());
-
-    $("#painbuttons button").removeClass("w3-light-gray");
-    $("#painbuttons [value|='" + painlevel + "']").addClass("w3-light-gray");
-
-    $("#reliefbuttons button").removeClass("w3-light-gray");
-    $("#reliefbuttons [value|='" + relieflevel + "']").addClass("w3-light-gray");
-
-    $("#moodbuttons button").removeClass("w3-light-gray");
-    $("#moodbuttons [value|='" + moodlevel + "']").addClass("w3-light-gray");
-
-    resetCheckboxLists();
 }
 
 Date.prototype.toDateTimeLocalString =

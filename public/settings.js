@@ -1,5 +1,5 @@
-loadFile("https://raw.githubusercontent.com/spip01/lightningpaindiary/bootstrap/public/navbar.html", "#navbar");
-loadFile("https://raw.githubusercontent.com/spip01/lightningpaindiary/bootstrap/public/footer.html", "#footer");
+loadHtml("https://raw.githubusercontent.com/spip01/lightningpaindiary/bootstrap/public/navbar.html", "#navbar");
+loadHtml("https://raw.githubusercontent.com/spip01/lightningpaindiary/bootstrap/public/footer.html", "#footer");
 
 function generateTrackersPanel(db) {
   var pnlid = "Trackers";
@@ -73,8 +73,8 @@ function generateRangeMenu() {
 
         for (var i = 0; i < trackerstypes.length; ++i) {
           if (trackerstypes[i].indexOf("range") != -1) {
-          var menu = /ttype/g [Symbol.replace](menu_entries, trackerstypes[i]);
-          $("#ent-" + id + " [id|='items']").append(menu);
+            var menu = /ttype/g [Symbol.replace](menu_entries, trackerstypes[i]);
+            $("#ent-" + id + " [id|='items']").append(menu);
           }
         }
       }
@@ -157,7 +157,7 @@ function setPanelEvents(id) {
     panelDeleteBtn(db, this);
   });
 
-  $(pnl).find("[id|='new']").focus(function () {
+  $(pnl).find("[id|='new']").keydown(function () {
     enableAddBtns(this);
   });
 
@@ -323,45 +323,6 @@ function enableAddBtns(evt) {
     $(pnl).find("[id|='add']").removeClass("disabled");
     $(pnl).find("[id|='add']").removeAttr("disabled");
   }
-}
-
-function loadDrugsCom(evt) {
-  var url = $("#urldrugscom").val();
-  if (!url.startsWith("http"))
-    url = "https://www.drugs.com/mn/" + url;
-
-  loadDrugs(url);
-}
-
-function loadDrugs(url) {
-  var h = [];
-  $.getJSON('http://www.whateverorigin.org/get?url=' + encodeURIComponent(url) + '&callback=?', function (data, status) {})
-    .done(function (data, status) {
-      var t = data.contents.split("<");
-      var h = [];
-
-      for (var i = 0; i < t.length; ++i) {
-        var start;
-        var l = t[i];
-
-        if (l === "h2>Medication List") {
-          start = true;
-        }
-        if (l === "/ul>") {
-          start = false;
-        }
-
-        if (start && l.search(/^h4>/) != -1) {
-          var m = l.replace(/^h4>(.*)/, "$1");
-          h.push(m);
-        }
-      }
-
-      applyMeds(h);
-    })
-    .fail(function (data, status) {
-      console.log(status);
-    });
 }
 
 function applyMeds(ml) {
@@ -618,39 +579,84 @@ function addSelectedDrugs(evt) {
   }
 }
 
-function enableLoadDrugs(evt) {
-  $("#pnl-Account #loaddrugscom").removeClass("disabled");
-  $("#pnl-Account #loaddrugscom").removeAttr("disabled");
-}
+function loadDrugsCom(evt, page) {
+  var url = "'http://www.whateverorigin.org/get?url=";
+  url += encodeURIComponent("https://www.drugs.com/mn/"+page);
 
-function loadFile(url, selector) {
-  xhttp = new XMLHttpRequest();
-  xhttp.onreadystatechange = function () {
-    if (this.readyState == 4) {
-      if (this.status == 200) {
-        var html = this.responseText.replace(/(?:.*?\n)*?<body>((?:.*?\n)+?)<\/body>(.*?\n?)*/g, "$1");
-        $(selector).append(html);
+  if (page === undefined) {
+    page = $("#urldrugscom").val();
+    page = page.replace(/.*?\/?(\S.*)$/g, "$1");
+  }
+
+  $.getJSON(url + '&callback=?', function (data, status) {})
+
+
+  loadFile(url, function (data) {
+    var t = data.contents.split("<");
+    var h = [];
+
+    for (var i = 0; i < t.length; ++i) {
+      var start;
+      var l = t[i];
+
+      if (l === "h2>Medication List") {
+        start = true;
+      }
+      if (l === "/ul>") {
+        start = false;
+      }
+
+      if (start && l.search(/^h4>/) != -1) {
+        var m = l.replace(/^h4>(.*)/, "$1");
+        h.push(m);
       }
     }
-  }
-  xhttp.open("GET", url, true);
-  xhttp.send();
 
-  //$.getJSON(url + "?jsoncallback=?", function (data, status) {
-  //    //(http|ftp|https)://([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?
-  //
-  //    var html = data.contents.replace(/(?:.*?\n)*?<body>((?:.*?\n)+?)<\/body>(.*?\n?)*/g, "$1");
-  //    $(selector).append(html);
-  //  })
-  //  .done(function () {
-  //    console.log("second success");
-  //  })
-  //  .fail(function () {
-  //    console.log("error");
-  //  })
-  //  .always(function () {
-  //    console.log("complete");
-  //  });
+    applyMeds(h);
+  });
+}
+
+function lookupWeather(evt) {
+  var city = $("#city").val();
+  var state = $("#state").val();
+  var country = $("#country").val();
+  var tmpFormat = $("[name='temp'] :checked").text();
+  var apikey = "36241d90d27162ebecabf6c334851f16";
+
+  var url = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "," + state + "," + country + "&units=" + tmpFormat + "&appid=" + apikey;
+
+  loadFile(url, function (data) {
+    var h = "<div class='row container'>Lon: " + data.coord.lon + " Lat: " + data.coord.lat + "</div>";
+    $("#addressinp").after(h);
+  });
+}
+
+function loadHtml(url, selector) {
+  loadFile(url, function (data) {
+    var html = data.replace(/(?:.*?\n)*?<body>((?:.*?\n)+?)<\/body>(.*?\n?)*/g, "$1");
+    $(selector).append(html);
+  });
+}
+
+function loadFile(url, fctn) {
+  $.ajax({
+    url: url,
+    method: 'GET',
+    success: function (data) {
+      fctn(data);
+    }
+  });
+
+  //var xhttp = new XMLHttpRequest();
+  //xhttp.onreadystatechange = function () {
+  //  if (this.readyState == 4) {
+  //    if (this.status == 200) {
+  //      fctn(this.responseText);
+  //    }
+  //  }
+  //}
+  //xhttp.open("GET", url, true);
+  //xhttp.send();
 }
 
 var db;
@@ -681,8 +687,27 @@ $(document).ready(function () {
   };
 
   var pnl = $("#pnl-Account");
-  $(pnl).find("#urldrugscom").focus(function () {
-    enableLoadDrugs(this);
+  $(pnl).find("#city").keydown(function (event) {
+    if (event.which === 0x0a || event.which === 0x0d)
+      lookupWeather(this);
+  });
+
+  $(pnl).find("#state").keydown(function (event) {
+    if (event.which === 0x0a || event.which === 0x0d)
+      lookupWeather(this);
+  });
+
+  $(pnl).find("#country").keydown(function (event) {
+    if (event.which === 0x0a || event.which === 0x0d)
+      lookupWeather(this);
+  });
+
+  $("#urldrugscom").keydown(function () {
+    $("#loaddrugscom").removeClass("disabled");
+    $(pnl).find("#loaddrugscom").removeAttr("disabled");
+
+    if (event.which === 0x0a || event.which === 0x0d)
+      loadDrugsCom(this);
   });
 
   $(pnl).find("#loaddrugscom").click(function () {
@@ -690,7 +715,7 @@ $(document).ready(function () {
   });
 
   $(pnl).find("#demoloaddrugs").click(function () {
-    loadDrugs("https://www.drugs.com/mn/wx7s49r");
+    loadDrugsCom(this, "wx7s49r");
   });
 
   $(pnl).find("#useselecteddrugs").click(function () {
