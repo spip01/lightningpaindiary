@@ -253,8 +253,8 @@ function addTab(item) {
 
 function openTab(evt) {
   $("#panels").children().hide();
-  let pnl = $(evt).prop("id").replace(stripid, "pnl-$1");
-  $("#panels #" + pnl).show();
+  let pnl = $(evt).prop("id").replace(stripid, "$1");
+  $("#panels #pnl-" + pnl).show();
 }
 
 function dragover(evt) {
