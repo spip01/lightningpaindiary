@@ -58,7 +58,7 @@
 
         <div id="panels" class="card card-body bkg-light-green pad-bottom">
 
-            <div id="pnl-Account" class="card card-body container-fluid">
+            <div id="pnl-Account" class="card card-body container-fluid" style="display: none">
                 <div class="row">
                     <h4 class="card-title col-lg-4 col-md-4">Account</h4>
                     <!-- https://developers.google.com/drive/v3/web/savetodrive -->
@@ -80,7 +80,7 @@
 
                 <div class="row">
                     <label>
-                        <input id="ifdef" type="checkbox"> Always default values to previous entry
+                        <input id="ifdefault" type="checkbox"> Always default values to previous entry
                     </label>
                 </div>
 
@@ -97,15 +97,14 @@
 
                 <div class="row container border-bottom">
                     <label class="radio-inline">
-                        <input type="radio" name="temp" checked>imperial</label>&nbsp;
+                        <input id="ifimperial" type="radio" name="metric"> imperial</label>&nbsp;
                     <label class="radio-inline">
-                        <input type="radio" name="temp">metric</label>
+                        <input id="ifmetric" type="radio" name="metric"> metric</label>
                 </div>
-                <br>
 
                 <div class="row">
                     <label>
-                        <input id="notificationbtn" type="checkbox"> Complete entry reminder notification via:
+                        <input id="ifnotify" type="checkbox"> Send a reminder if today's entry isn't completed by the end of day
                     </label>
                 </div>
 
@@ -131,13 +130,7 @@
                     <input id="phone" type="text" class="rounded col-lg-4 col-md-5 col-sm-6 col-10" placeholder="phone number">
                 </div>
 
-                <div class="row">
-                    <label>
-                        <input id="reminderbtn" type="checkbox"> Remind me if these aren't completed by the end of today.
-                    </label>
-                </div>
-
-                <div class="container" style="font-size: 12px">Pressing "Update" button on entry page marks all items completed.</div>
+                <div class="row container">Require an entry for these items</div>
 
                 <div id="reminders" class="row container"></div>
 
@@ -146,8 +139,8 @@
 
                     <div class="row border-top" style="font-size: 12px">
                         To load medicines from Drugs.com enter the url found under "Med List", "Share" and hit "Load". Select which medicines you
-                        want to copy to the "Remedies" section. Then hit the "Add" button . The "Remedies" section will be
-                        created if necessary.
+                    want to copy to the "Remedies" section. Then hit the "Add" button . The "Remedies" section will be created
+                    if necessary.
                     </div>
                     <br>
 
@@ -167,11 +160,11 @@
     <script>
         //w3.includeHTML();
 
-        var trackerstypes = ["blood pressure", "date", "list", "number", "range buttons", "range slider", "text",
+        const trackerstypes = ["blood pressure", "date", "list", "number", "range", "text",
             "time", "true false", "weather"
         ];
 
-        var trackerslist = [ // sql, can't reuse names with stored data unless confirmed by user for deletion
+        const trackerslist = [ // sql, can't reuse names with stored data unless confirmed by user for deletion
             // new user start pain level, start time, remedies, relief
             {
                 name: "Date",
@@ -180,7 +173,7 @@
                 remindable: false,
             }, {
                 name: "Pain Level",
-                type: "range buttons",
+                type: "range",
                 start: "1",
                 end: "10",
                 editable: false,
@@ -222,12 +215,12 @@
                 ],
             }, {
                 name: "Pain Relief",
-                type: "range buttons",
+                type: "range",
                 start: "5",
                 end: "1",
             }, {
                 name: "Mood Level",
-                type: "range slider",
+                type: "range",
                 start: "5",
                 end: "1",
             }, {
@@ -251,7 +244,7 @@
         // replace: idname, ttitle, type, Type, iftrackers
         // cont-idname: gets appended with entry contents
         // items: gets appended with list of valid types
-        var panels =
+        const panels =
             `            
             <div id="pnl-idname" class="card card-body container-fluid" style="display: none">
                 <div id="ctrl-idname" class="row clr-dark-green">
@@ -289,19 +282,12 @@
 
         // replace: idname, 000, ttitle, iftrackers, ttype, startrange, endrange
         // items: gets appended with list of valid types
-        var panels_entry =
+        const panels_entry =
             `
             <div id="ent-idname" class="row border-bottom">
                 <div id="pos-000" class="col-lg-3 col-md-3 col-sm-3 col-6" draggable="true">ttitle</div>
                 <input id="edtname-idname" class="rounded col-lg-3 col-md-3 col-sm-3 col-6" value="ttitle" style="display: none">
                 <div id="type" class="col-lg-2 col-md-2 col-sm-3 col-6" iftrackers>ttype</div>
-                <div id="menu-range" class="col-lg-2 col-md-2 col-sm-3 col-6 dropdown"  style="display: none">
-                    <button id="sel-idname" class="btn border btn-sm btn-green dropdown-toggle" type="button" data-toggle="dropdown">
-                        ttype
-                        <span class="caret"></span>
-                    </button>
-                    <ul id="items" class="dropdown-menu" style="cursor: pointer"></ul>
-                </div>
                 <div id="show-idname" class="col-lg-2 col-md-2 col-sm-2 col-6" iftrackers>
                     <div id="rng-startrange-endrange" ifrange>startrange-endrange</div>
                 </div>
@@ -313,21 +299,21 @@
             `;
 
         // gets appended to "items"
-        var menu_entries =
+        const menu_entries =
             `
             <li id="item">ttype</li>
             `
         // gets appended to "tablist"
-        var tab_entries =
+        const tab_entries =
             `
             <button id="tab-idname" class="col-lg-2 col-md-3 col-sm-4 col-6 h4 btn-green no-border trborder tbborder">ttitle</button>
             `;
 
         // gets appended to "druglist" & "reminders", one case where prefifx ("med-" & "rem-") is added to idname in code
-        var acct_entries =
+        const acct_entries =
             `
             <label class="col-lg-2 col-md-3 col-sm-6 col-12">
-                <input id="idname" type="checkbox">
+                <input id="itm-idname" type="checkbox">
                 ttitle
             </label>
             `;
@@ -336,9 +322,7 @@
     <!--div w3-include-html="https://raw.githubusercontent.com/spip01/lightningpaindiary/bootstrap/public/footer.html"></div-->
     <div id="footer"></div>
 
-
     <div id="diag"></div>
-
 </body>
 
 </html>

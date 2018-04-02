@@ -2,35 +2,35 @@ loadHtml("https://raw.githubusercontent.com/spip01/lightningpaindiary/bootstrap/
 loadHtml("https://raw.githubusercontent.com/spip01/lightningpaindiary/bootstrap/public/footer.html", "#footer");
 
 function generateTrackersPanel(db) {
-  var pnlid = "Trackers";
-  var name = "Trackers";
+  const pnlid = "Trackers";
+  const name = "Trackers";
 
-  var panel = /idname/g [Symbol.replace](panels, pnlid);
+  let panel = /idname/g [Symbol.replace](panels, pnlid);
   panel = /ttitle/g [Symbol.replace](panel, name);
   panel = /iftrackers/g [Symbol.replace](panel, "");
 
   $("#pnl-" + pnlid).remove();
   $("#panels").append(panel);
-  var pnl = $("#pnl-" + pnlid);
+  let pnl = $("#pnl-" + pnlid);
 
   $("#pnl-Account #reminders").html("");
 
-  var store = db.transaction(["tracking"], "readwrite").objectStore("tracking");
-  var cursor = store.index('by_position').openCursor();
+  let store = db.transaction(["tracking"], "readwrite").objectStore("tracking");
+  let cursor = store.index('by_position').openCursor();
   cursor.onsuccess = function (event) {
-    var cursor = event.target.result;
+    let cursor = event.target.result;
 
     if (cursor) {
-      var item = cursor.value;
-      var id = / /g [Symbol.replace](item.name, "-");
+      let item = cursor.value;
+      let id = / /g [Symbol.replace](item.name, "-");
 
-      var entry = /idname/g [Symbol.replace](panels_entry, id);
+      let entry = /idname/g [Symbol.replace](panels_entry, id);
       entry = /ttitle/g [Symbol.replace](entry, item.name);
       entry = /ttype/g [Symbol.replace](entry, item.type);
       entry = /iftrackers/g [Symbol.replace](entry, "");
       entry = /000/g [Symbol.replace](entry, item.position);
 
-      if (item.type.indexOf("range") != -1) {
+      if (item.type === "range") {
         entry = /ifrange/g [Symbol.replace](entry, "");
         entry = /startrange/g [Symbol.replace](entry, item.start);
         entry = /endrange/g [Symbol.replace](entry, item.end);
@@ -40,10 +40,10 @@ function generateTrackersPanel(db) {
 
       entry = /ifedit/g [Symbol.replace](entry, item.editable === false ? 'style="display: none"' : '');
 
-      $(pnl).find("[id|='cont']").append(entry);
+      pnl.find("[id|='cont']").append(entry);
 
       if (item.remindable === undefined) {
-        var reminders = /idname/g [Symbol.replace](acct_entries, "rem-" + id);
+        let reminders = /idname/g [Symbol.replace](acct_entries, id);
         reminders = /ttitle/g [Symbol.replace](reminders, item.name);
         $("#pnl-Account #reminders").append(reminders);
       }
@@ -52,28 +52,28 @@ function generateTrackersPanel(db) {
     } else {
 
       generateTypeMenu();
-      generateRangeMenu();
+      generateRangeMenu(db);
 
       setPanelEvents(pnlid);
     }
   };
 }
 
-function generateRangeMenu() {
-  var store = db.transaction(["tracking"], "readwrite").objectStore("tracking");
-  var cursor = store.index('by_position').openCursor();
+function generateRangeMenu(db) {
+  let store = db.transaction(["tracking"], "readwrite").objectStore("tracking");
+  let cursor = store.index('by_position').openCursor();
   cursor.onsuccess = function (event) {
-    var cursor = event.target.result;
+    let cursor = event.target.result;
 
     if (cursor) {
-      var item = cursor.value;
+      let item = cursor.value;
 
-      if (item.type.indexOf("range") != -1) {
-        var id = / /g [Symbol.replace](item.name, "-");
+      if (item.type === "range") {
+        let id = / /g [Symbol.replace](item.name, "-");
 
-        for (var i = 0; i < trackerstypes.length; ++i) {
-          if (trackerstypes[i].indexOf("range") != -1) {
-            var menu = /ttype/g [Symbol.replace](menu_entries, trackerstypes[i]);
+        for (let i = 0; i < trackerstypes.length; ++i) {
+          if (trackerstypes[i] === "range") {
+            let menu = /ttype/g [Symbol.replace](menu_entries, trackerstypes[i]);
             $("#ent-" + id + " [id|='items']").append(menu);
           }
         }
@@ -85,8 +85,8 @@ function generateRangeMenu() {
 }
 
 function generateTypeMenu() {
-  for (var i = 0; i < trackerstypes.length; ++i) {
-    var menu = /ttype/g [Symbol.replace](menu_entries, trackerstypes[i]);
+  for (let i = 0; i < trackerstypes.length; ++i) {
+    let menu = /ttype/g [Symbol.replace](menu_entries, trackerstypes[i]);
     $("#pnl-Trackers #menu-type").find("[id|='items']").append(menu);
   }
 }
@@ -94,10 +94,10 @@ function generateTypeMenu() {
 function generateTabsAndPanels(db) {
   newTabBar();
 
-  var store = db.transaction(["tracking"], "readwrite").objectStore("tracking");
-  var cursor = store.index('by_type').openCursor(IDBKeyRange.only("list"));
+  let store = db.transaction(["tracking"], "readwrite").objectStore("tracking");
+  let cursor = store.index('by_type').openCursor(IDBKeyRange.only("list"));
   cursor.onsuccess = function (event) {
-    var cursor = event.target.result;
+    let cursor = event.target.result;
 
     if (cursor) {
       item = cursor.value;
@@ -111,21 +111,21 @@ function generateTabsAndPanels(db) {
 }
 
 function addPanel(items) {
-  var pnlid = / /g [Symbol.replace](items.name, "-");
-  var name = items.name;
+  let pnlid = / /g [Symbol.replace](items.name, "-");
+  let name = items.name;
 
-  var panel = /idname/g [Symbol.replace](panels, pnlid);
+  let panel = /idname/g [Symbol.replace](panels, pnlid);
   panel = /ttitle/g [Symbol.replace](panel, name);
   panel = /iftrackers/g [Symbol.replace](panel, "style='display: none'");
 
   $("#pnl-" + pnlid).remove();
   $("#panels").append(panel);
 
-  for (var j = 0; j < items.list.length; ++j) {
-    var item = items.list[j];
-    var id = / /g [Symbol.replace](item, "-");
+  for (let j = 0; j < items.list.length; ++j) {
+    let item = items.list[j];
+    let id = / /g [Symbol.replace](item, "-");
 
-    var entry = /idname/g [Symbol.replace](panels_entry, id);
+    let entry = /idname/g [Symbol.replace](panels_entry, id);
     entry = /ttitle/g [Symbol.replace](entry, item);
     entry = /iftrackers/g [Symbol.replace](entry, "style='display: none'");
     entry = /ifrange/g [Symbol.replace](entry, "style='display: none'");
@@ -138,65 +138,67 @@ function addPanel(items) {
 }
 
 function setPanelEvents(id) {
-  var pnl = $("#pnl-" + id);
+  let pnl = $("#pnl-" + id);
 
-  $(pnl).find("[id|='en']").click(function () {
+  pnl.find("[id|='en']").click(function () {
     enableDeleteBtns(this);
   });
 
-  $(pnl).find("[id|='edtname']").keydown(function (event) {
+  pnl.find("[id|='edtname']").keydown(function (event) {
     if (event.which === 0x0a || event.which === 0x0d)
-      doneEdit(db, this);
+      doneEdit(setupdb, this);
   });
 
-  $(pnl).find("[id|='edit']").click(function () {
-    panelEditBtn(db, this);
+  pnl.find("[id|='edit']").click(function () {
+    panelEditBtn(setupdb, this);
   });
 
-  $(pnl).find("[id|='del']").click(function () {
-    panelDeleteBtn(db, this);
+  pnl.find("[id|='del']").click(function () {
+    panelDeleteBtn(setupdb, this);
   });
 
-  $(pnl).find("[id|='new']").keydown(function () {
+  pnl.find("[id|='new']").keydown(function () {
     enableAddBtns(this);
   });
 
-  $(pnl).find("[id|='new']").keydown(function (event) {
+  pnl.find("[id|='new']").keydown(function (event) {
     if (event.which === 0x0a || event.which === 0x0d)
-      panelAddBtn(db, this);
+      panelAddBtn(setupdb, this);
   });
 
-  $(pnl).find("[id|='add']").click(function () {
-    panelAddBtn(db, this);
+  pnl.find("[id|='add']").click(function () {
+    panelAddBtn(setupdb, this);
   });
 
   if (id === "Trackers") {
-    $(pnl).find("[id|='edtstart']").keydown(function (event) {
+    pnl.find("[id|='edtstart']").keydown(function (event) {
       if (event.which === 0x0a || event.which === 0x0d)
-        doneEdit(db, this);
+        doneEdit(setupdb, this);
     });
 
-    $(pnl).find("[id|='edtend']").keydown(function (event) {
+    pnl.find("[id|='edtend']").keydown(function (event) {
       if (event.which === 0x0a || event.which === 0x0d)
-        doneEdit(db, this);
+        doneEdit(setupdb, this);
     });
 
-    $(pnl).find("[id|='newstart']").keydown(function (event) {
+    pnl.find("[id|='newstart']").keydown(function (event) {
       if (event.which === 0x0a || event.which === 0x0d)
-        panelAddBtn(db, this);
+        panelAddBtn(setupdb, this);
     });
 
-    $(pnl).find("[id|='newend']").keydown(function (event) {
+    pnl.find("[id|='newend']").keydown(function (event) {
       if (event.which === 0x0a || event.which === 0x0d)
-        panelAddBtn(db, this);
+        panelAddBtn(setupdb, this);
     });
 
-    $(pnl).find("[id|='item']").click(function () {
+    pnl.find("[id|='item']").click(function () {
       selectType(this);
     });
+
+    loadAccount();
   }
 
-  $(pnl).find("[draggable|='true']").on({
+  pnl.find("[draggable|='true']").on({
     //"mouseleave": $.proxy(mouseLeave),
     //"mouseenter": $.proxy(mouseEnter),
     "drop": $.proxy(drop),
@@ -214,6 +216,8 @@ function setPanelEvents(id) {
 }
 
 function newTabBar() {
+  $("#tablist").empty();
+
   addTab({
     name: "Account",
     borderbottom: true,
@@ -227,20 +231,20 @@ function newTabBar() {
 }
 
 function addTab(item) {
-  var id = / /g [Symbol.replace](item.name, "-");
+  let id = / /g [Symbol.replace](item.name, "-");
 
-  var tab = /idname/g [Symbol.replace](tab_entries, id);
+  let tab = /idname/g [Symbol.replace](tab_entries, id);
   tab = /ttitle/g [Symbol.replace](tab, item.name);
   tab = /trborder/g [Symbol.replace](tab, item.borderright === true ? "border-right" : "");
   tab = /tbborder/g [Symbol.replace](tab, item.borderbottom === true ? "border-bottom" : "");
 
-  var tabs = $("#tablist");
+  let tabs = $("#tablist");
 
-  $(tabs).find("#tab-" + id).remove();
-  $(tabs).append(tab);
+  tabs.find("#tab-" + id).remove();
+  tabs.append(tab);
 
-  $(tabs).find("#tab-" + id).off();
-  $(tabs).find("#tab-" + id).click(function () {
+  tabs.find("#tab-" + id).off();
+  tabs.find("#tab-" + id).click(function () {
     openTab(this);
   });
 }
@@ -249,7 +253,7 @@ function addTab(item) {
 
 function openTab(evt) {
   $("#panels").children().hide();
-  var pnl = $(evt).prop("id").replace(/^\S+?-(.*)/g, "pnl-$1");
+  let pnl = $(evt).prop("id").replace(stripid, "pnl-$1");
   $("#panels #" + pnl).show();
 }
 
@@ -264,14 +268,14 @@ function dragstart(evt) {
 
 function drop(evt) {
   evt.preventDefault();
-  var src = evt.originalEvent.dataTransfer.getData("text/html");
-  var dst = $(evt).prop("id");
-  var pnlid = $(evt).parent().parent().prop("id").replace(/^\S+?-(.*)/g, "$1");
+  let src = evt.originalEvent.dataTransfer.getData("text/html");
+  let dst = $(evt).prop("id");
+  let pnlid = $(evt).parent().parent().prop("id").replace(stripid, "$1");
 
-  var list = [];
-  var found = 0;
+  let list = [];
+  let found = 0;
   $("#pnl-" + pnlid).children().each(function () {
-    var id = $(this).prop("id");
+    let id = $(this).prop("id");
 
     switch (id) {
       case dst: // move up
@@ -294,95 +298,95 @@ function drop(evt) {
     }
   });
 
-  for (var i = 0; i < list.length; ++i) {
+  for (let i = 0; i < list.length; ++i) {
     $("#" + pt).append(list[i]);
   }
 }
 
 function enableDeleteBtns(evt) {
-  var pnlid = $(evt).prop("id").replace(/^\S+?-(.*)/g, "$1");
-  var pnl = $("#pnl-" + pnlid);
+  let pnlid = $(evt).prop("id").replace(stripid, "$1");
+  let pnl = $("#pnl-" + pnlid);
 
   if ($(evt).prop("checked")) {
-    $(pnl).find("[id|='del']").removeClass("disabled");
-    $(pnl).find("[id|='del']").removeAttr("disabled");
+    pnl.find("[id|='del']").removeClass("disabled");
+    pnl.find("[id|='del']").removeAttr("disabled");
   } else {
-    $(pnl).find("[id|='del']").addClass("disabled");
-    $(pnl).find("[id|='del']").prop("disabled", "true");
+    pnl.find("[id|='del']").addClass("disabled");
+    pnl.find("[id|='del']").prop("disabled", "true");
   }
 }
 
 function enableAddBtns(evt) {
-  var pnlid = $(evt).prop("id").replace(/^\S+?-(.*)/g, "$1");
-  var pnl = $("#pnl-" + pnlid);
+  let pnlid = $(evt).prop("id").replace(stripid, "$1");
+  let pnl = $("#pnl-" + pnlid);
 
-  $(pnl).find("#menu-type [id|='sel']").removeClass("disabled");
-  $(pnl).find("#menu-type [id|='sel']").removeAttr("disabled");
+  pnl.find("#menu-type [id|='sel']").removeClass("disabled");
+  pnl.find("#menu-type [id|='sel']").removeAttr("disabled");
 
   if (pnlid != "Trackers") {
-    $(pnl).find("[id|='add']").removeClass("disabled");
-    $(pnl).find("[id|='add']").removeAttr("disabled");
+    pnl.find("[id|='add']").removeClass("disabled");
+    pnl.find("[id|='add']").removeAttr("disabled");
   }
 }
 
 function applyMeds(ml) {
-  var pnl = $("#pnl-Account");
+  let pnl = $("#pnl-Account");
 
-  for (var i = 0; i < ml.length; ++i) {
-    var id = / /g [Symbol.replace](ml[i], "-");
-    var entry = /idname/g [Symbol.replace](acct_entries, "med-" + id);
+  for (let i = 0; i < ml.length; ++i) {
+    let id = / /g [Symbol.replace](ml[i], "-");
+    let entry = /idname/g [Symbol.replace](acct_entries, "med-" + id);
     entry = /ttitle/g [Symbol.replace](entry, ml[i]);
-    $(pnl).find("#druglist").append(entry);
+    pnl.find("#druglist").append(entry);
   }
 
-  $(pnl).find("#useselecteddrugs").removeClass("disabled");
-  $(pnl).find("#useselecteddrugs").removeAttr("disabled");
+  pnl.find("#useselecteddrugs").removeClass("disabled");
+  pnl.find("#useselecteddrugs").removeAttr("disabled");
 }
 
 function selectType(evt) {
-  var name = $(evt).text();
-  var menu = $(evt).parent().parent();
+  let name = $(evt).text();
+  let menu = $(evt).parent().parent();
 
-  $(menu).find("[id|='sel']").text(name);
+  menu.find("[id|='sel']").text(name);
 
   $("#pnl-Trackers [id|='add']").removeClass("disabled");
   $("#pnl-Trackers [id|='add']").removeAttr("disabled");
 
-  if ($(menu).prop("id") === "menu-type") {
-    if (name.indexOf("range") != -1) {
-      $(menu).find("[id|='newstart']").removeClass("disabled");
-      $(menu).find("[id|='newstart']").removeAttr("disabled");
-      $(menu).find("[id|='newend']").removeClass("disabled");
-      $(menu).find("[id|='newend']").removeAttr("disabled");
+  if (menu.prop("id") === "menu-type") {
+    if (name === "range") {
+      menu.find("[id|='newstart']").removeClass("disabled");
+      menu.find("[id|='newstart']").removeAttr("disabled");
+      menu.find("[id|='newend']").removeClass("disabled");
+      menu.find("[id|='newend']").removeAttr("disabled");
     } else {
-      $(menu).find("[id|='newstart']").addClass("disabled");
-      $(menu).find("[id|='newstart']").prop("disabled", "true");
-      $(menu).find("[id|='newend']").addClass("disabled");
-      $(menu).find("[id|='newend']").prop("disabled", "true");
+      menu.find("[id|='newstart']").addClass("disabled");
+      menu.find("[id|='newstart']").prop("disabled", "true");
+      menu.find("[id|='newend']").addClass("disabled");
+      menu.find("[id|='newend']").prop("disabled", "true");
     }
   }
 }
 
 function panelAddBtn(db, evt) {
-  var pnlid = $(evt).prop("id").replace(/\S+?-(.*)/g, "$1");
-  var pnlname = /-/g [Symbol.replace](pnlid, " ");
-  var pnl = $("#pnl-" + pnlid);
-  var name = $(("#pnl-" + pnlid + " [id|='new']")).val();
-  var id = / /g [Symbol.replace](name, "-");
+  let pnlid = $(evt).prop("id").replace(stripid, "$1");
+  let pnlname = /-/g [Symbol.replace](pnlid, " ");
+  let pnl = $("#pnl-" + pnlid);
+  let name = pnl.find("[id|='new']").val();
+  let id = / /g [Symbol.replace](name, "-");
 
-  var store = db.transaction(["tracking"], "readwrite").objectStore("tracking");
+  let store = db.transaction(["tracking"], "readwrite").objectStore("tracking");
 
   if (pnlid === "Trackers") {
-    var pos = $("#cont-Trackers div:last-child").find("[id|='pos']").prop("id").replace(/\S+?-(.*)/g, "$1");
-    var entry = {
+    let pos = $("#cont-Trackers div:last-child").find("[id|='pos']").prop("id").replace(stripid, "$1");
+    let entry = {
       position: Number(pos) + 1,
       name: name,
-      type: $(pnl).find("#menu-type [id|='sel']").text(),
+      type: pnl.find("#menu-type [id|='sel']").text(),
     };
 
-    if (entry.type.replace(/(\S+?) .*/g, "$1") === "range") {
-      entry.start = $(pnl).find("[id|='newstart']").val();
-      entry.end = $(pnl).find("[id|='newend']").val();
+    if (entry.type === "range") {
+      entry.start = pnl.find("[id|='newstart']").val();
+      entry.end = pnl.find("[id|='newend']").val();
     }
 
     if (entry.type === "list")
@@ -396,44 +400,40 @@ function panelAddBtn(db, evt) {
     }
 
     generateTrackersPanel(db);
-    $("#pnl-" + pnlid).show();
+    pnl.show();
   } else {
-    var panel = store.index("by_name").openCursor(IDBKeyRange.only(pnlname));
+    let panel = store.index("by_name").openCursor(IDBKeyRange.only(pnlname));
 
     panel.onsuccess = function (event) {
-      var cursor = event.target.result;
+      let cursor = event.target.result;
 
       if (cursor) {
-        var entry = cursor.value;
+        let entry = cursor.value;
         if (!entry.list.includes(name))
           entry.list.push(name);
 
         cursor.update(entry);
 
         addPanel(entry);
-        $("#pnl-" + pnlid).show();
+        pnl.show();
       }
     }
   }
 }
 
 function panelEditBtn(db, evt) {
-  var ent = $(evt).parent();
-  var pnlid = $(ent).parent().prop("id").replace(/\S+?-(.*)/g, "$1");
+  let ent = $(evt).parent();
+  let pnlid = ent.prop("id").replace(stripid, "$1");
 
-  $(ent).find("[id|='pos']").hide();
-  $(ent).find("[id|='edtname']").show();
+  ent.find("[id|='pos']").hide();
+  ent.find("[id|='edtname']").show();
 
   if (pnlid === "Trackers") {
-    var type = $(ent).find("[id|='type']").text().replace(/(\S+?) .*/g, "$1");
+    if (ent.find("[id|='type']").text() === "range") {
+      ent.find("[id|='show']").hide();
 
-    if (type === "range") {
-      $(ent).find("[id|='type']").hide();
-      $(ent).find("[id|='show']").hide();
-
-      $(ent).find("[id|='edtstart']").show();
-      $(ent).find("[id|='edtend']").show();
-      $(ent).find("[id|='menu']").show();
+      ent.find("[id|='edtstart']").show();
+      ent.find("[id|='edtend']").show();
     }
   }
 
@@ -445,123 +445,129 @@ function panelEditBtn(db, evt) {
 }
 
 function doneEdit(db, evt) {
-  var id = $(evt).prop("id").replace(/\S+?-(.*)/g, "$1");
-  var ent = $(evt).parent();
-  var pnlid = $(ent).parent().prop("id").replace(/\S+?-(.*)/g, "$1");
-  var pnlname = /-/g [Symbol.replace](pnlid, " ");
+  let id = $(evt).prop("id").replace(stripid, "$1");
+  let ent = $(evt).parent();
+  let pnl = ent.parent();
+  let pnlid = pnl.prop("id").replace(stripid, "$1");
+  let pnlname = /-/g [Symbol.replace](pnlid, " ");
 
-  var newname = $(ent).find("[id|='edtname']").val();
-  var oldname = /-/g [Symbol.replace](id, " ");
+  let newname = ent.find("[id|='edtname']").val();
+  let oldname = /-/g [Symbol.replace](id, " ");
 
-  var store = db.transaction(["tracking"], "readwrite").objectStore("tracking");
-  var tracker = store.index("by_name").openCursor(IDBKeyRange.only(oldname));
-  var panel = store.index("by_name").openCursor(IDBKeyRange.only(pnlname));
+  let store = db.transaction(["tracking"], "readwrite").objectStore("tracking");
 
-  tracker.onsuccess = function (event) {
-    var cursor = event.target.result;
+  if (pnlid === "Trackers") {
+    let tracker = store.index("by_name").openCursor(IDBKeyRange.only(oldname));
 
-    if (cursor) {
-      var entry = cursor.value;
-      entry.name = newname;
+    tracker.onsuccess = function (event) {
+      let cursor = event.target.result;
 
-      var type = $(ent).find("[id|='type']").text();
+      if (cursor) {
+        let entry = cursor.value;
+        entry.name = newname;
 
-      if (type.indexOf("range") != -1) {
-        entry.type = type;
-        entry.start = $(ent).find("[id|='edtstart']").val();
-        entry.end = $(ent).find("[id|='edtend']").val();
+        if (entry.type === "range") {
+          entry.start = ent.find("[id|='edtstart']").val();
+          entry.end = ent.find("[id|='edtend']").val();
+        }
+
+        cursor.update(entry);
+
+        if (entry.type === "list")
+          generateTabsAndPanels(db);
+
+        generateTrackersPanel(db);
+        pnl.show();
       }
-
-      cursor.update(entry);
-
-      if (type === "list")
-        generateTabsAndPanels(db);
-
-      generateTrackersPanel(db);
-      $("#pnl-" + pnlid).show();
     }
-  }
+  } else {
+    let panel = store.index("by_name").openCursor(IDBKeyRange.only(pnlname));
 
-  panel.onsuccess = function (event) {
-    var cursor = event.target.result;
+    panel.onsuccess = function (event) {
+      let cursor = event.target.result;
 
-    if (cursor) {
-      var entry = cursor.value;
-      var list = entry.list;
-      var i = entry.list.findIndex(list => list === oldname);
-      entry.list[i] = newname;
+      if (cursor) {
+        let entry = cursor.value;
+        entry.name = name;
+        let i = entry.list.indexOf(oldname);
+        entry.list[i] = newname;
 
-      cursor.update(entry);
-      addPanel(entry);
-      $("#pnl-" + pnlid).show();
+        cursor.update(entry);
+        addPanel(entry);
+        $("#pnl-" + pnlid).show();
+      }
     }
   }
 }
 
 function panelDeleteBtn(db, evt) {
-  var id = $(evt).prop("id").replace(/\S+?-(.*)/g, "$1");
-  var ent = $(evt).parent();
-  var pnlid = $(ent).parent().prop("id").replace(/\S+?-(.*)/g, "$1");
-  var pnlname = /-/g [Symbol.replace](pnlid, " ");
-  var name = /-/g [Symbol.replace](id, " ");
+  let id = $(evt).prop("id").replace(stripid, "$1");
+  let pnlid = $(evt).parent().parent().prop("id").replace(stripid, "$1");
+  let pnlname = /-/g [Symbol.replace](pnlid, " ");
+  let name = /-/g [Symbol.replace](id, " ");
 
-  var store = db.transaction(["tracking"], "readwrite").objectStore("tracking");
-  var tracker = store.index("by_name").openCursor(IDBKeyRange.only(name));
-  var panel = store.index("by_name").openCursor(IDBKeyRange.only(pnlname));
+  let store = db.transaction(["tracking"], "readwrite").objectStore("tracking");
 
-  tracker.onsuccess = function (event) {
-    var cursor = event.target.result;
+  if (pnlid === "Trackers") {
+    let tracker = store.index("by_name").openCursor(IDBKeyRange.only(name));
 
-    if (cursor) {
-      var entry = cursor.value;
-      cursor.delete();
+    tracker.onsuccess = function (event) {
+      let cursor = event.target.result;
 
-      $("#pnl-" + pnlid + " #ent-" + id).remove();
-      $("#panels #pnl-" + id).remove();
-      $("#tablist #tab-" + id).remove();
+      if (cursor) {
+        let entry = cursor.value;
+        let i = entry.list.indexOf(name);
+        entry.list.splice(i, 1);
+
+        cursor.update(entry);
+
+        $("#pnl-" + pnlid + " #ent-" + id).remove();
+        $("#panels #pnl-" + id).remove();
+        $("#tablist #tab-" + id).remove();
+      }
     }
-  }
+  } else {
+    let panel = store.index("by_name").openCursor(IDBKeyRange.only(pnlname));
 
-  panel.onsuccess = function (event) {
-    var cursor = event.target.result;
+    panel.onsuccess = function (event) {
+      let cursor = event.target.result;
 
-    if (cursor) {
-      var entry = cursor.value;
-      var list = entry.list;
-      var i = entry.list.findIndex(list => list === name);
-      entry.list.splice(i, 1);
+      if (cursor) {
+        let entry = cursor.value;
+        let i = entry.list.indexOf(name);
+        entry.list.splice(i, 1);
 
-      cursor.update(entry);
-      $("#pnl-" + pnlid + " #ent-" + id).remove();
+        cursor.update(entry);
+
+        $("#pnl-" + pnlid + " #ent-" + id).remove();
+      }
     }
   }
 }
 
 function addSelectedDrugs(evt) {
-  var list = [];
+  let list = [];
 
-  $("#druglist input").each(function () {
-    if ($(this).prop("checked")) {
-      var name = $(this).parent().text().replace(/^\s+(.*?)\s+$/m, "$1");
-      list.push(name);
-    }
+  $("#druglist input").find(":checked").each(function () {
+    let name = $(this).prop("id").replace(stripid, "$1");
+    list.push(name);
   });
 
-  var store = db.transaction(["tracking"], "readwrite").objectStore("tracking");
-  var cursor = store.index("by_name").openCursor(IDBKeyRange.only("Remedies"));
+  let store = setupdb.transaction(["tracking"], "readwrite").objectStore("tracking");
+  let cursor = store.index("by_name").openCursor(IDBKeyRange.only("Remedies"));
   cursor.onsuccess = function (event) {
-    var cursor = event.target.result;
+    let cursor = event.target.result;
 
     if (cursor) {
-      var remedies = cursor.value;
-      for (var i = 0; i < list.length; ++i)
+      let remedies = cursor.value;
+      for (let i = 0; i < list.length; ++i)
         if (!remedies.list.includes(list[i]))
           remedies.list.push(list[i]);
 
       cursor.update(remedies);
     } else {
-      var pos = $("#cont-Trackers div:last-child").find("div:first").prop("id").replace(/\S+?-(.*)/g, "$1");
-      var remedies = {
+      let pos = $("#cont-Trackers div:last-child").find("div:first").prop("id").replace(stripid, "$1");
+      let remedies = {
         position: Number(pos) + 1,
         name: "Remedies",
         type: "list",
@@ -571,17 +577,16 @@ function addSelectedDrugs(evt) {
 
       store.add(remedies);
 
-      generateTrackersPanel(db);
-      generateTabsAndPanels(db);
+      generateTrackersPanel(setupdb);
+      generateTabsAndPanels(setupdb);
+      addPanel(remedies);
     }
-
-    addPanel(remedies);
   }
 }
 
 function loadDrugsCom(evt, page) {
-  var url = "'http://www.whateverorigin.org/get?url=";
-  url += encodeURIComponent("https://www.drugs.com/mn/"+page);
+  let url = "'http://www.whateverorigin.org/get?url=";
+  url += encodeURIComponent("https://www.drugs.com/mn/" + page);
 
   if (page === undefined) {
     page = $("#urldrugscom").val();
@@ -592,12 +597,12 @@ function loadDrugsCom(evt, page) {
 
 
   loadFile(url, function (data) {
-    var t = data.contents.split("<");
-    var h = [];
+    let t = data.contents.split("<");
+    let h = [];
 
-    for (var i = 0; i < t.length; ++i) {
-      var start;
-      var l = t[i];
+    for (let i = 0; i < t.length; ++i) {
+      let start;
+      let l = t[i];
 
       if (l === "h2>Medication List") {
         start = true;
@@ -607,7 +612,7 @@ function loadDrugsCom(evt, page) {
       }
 
       if (start && l.search(/^h4>/) != -1) {
-        var m = l.replace(/^h4>(.*)/, "$1");
+        let m = l.replace(/^h4>(.*)/, "$1");
         h.push(m);
       }
     }
@@ -617,23 +622,23 @@ function loadDrugsCom(evt, page) {
 }
 
 function lookupWeather(evt) {
-  var city = $("#city").val();
-  var state = $("#state").val();
-  var country = $("#country").val();
-  var tmpFormat = $("[name='temp'] :checked").text();
-  var apikey = "36241d90d27162ebecabf6c334851f16";
+  let city = $("#city").val();
+  let state = $("#state").val();
+  let country = $("#country").val();
+  let tmpFormat = $("[name='temp'] :checked").text();
+  let apikey = "36241d90d27162ebecabf6c334851f16";
 
-  var url = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "," + state + "," + country + "&units=" + tmpFormat + "&appid=" + apikey;
+  let url = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "," + state + "," + country + "&units=" + tmpFormat + "&appid=" + apikey;
 
   loadFile(url, function (data) {
-    var h = "<div class='row container'>Lon: " + data.coord.lon + " Lat: " + data.coord.lat + "</div>";
+    let h = "<div class='row container'>Lon: " + data.coord.lon + " Lat: " + data.coord.lat + "</div>";
     $("#addressinp").after(h);
   });
 }
 
 function loadHtml(url, selector) {
   loadFile(url, function (data) {
-    var html = data.replace(/(?:.*?\n)*?<body>((?:.*?\n)+?)<\/body>(.*?\n?)*/g, "$1");
+    let html = data.replace(/(?:.*?\n)*?<body>((?:.*?\n)+?)<\/body>(.*?\n?)*/g, "$1");
     $(selector).append(html);
   });
 }
@@ -647,7 +652,7 @@ function loadFile(url, fctn) {
     }
   });
 
-  //var xhttp = new XMLHttpRequest();
+  //let xhttp = new XMLHttpRequest();
   //xhttp.onreadystatechange = function () {
   //  if (this.readyState == 4) {
   //    if (this.status == 200) {
@@ -659,75 +664,83 @@ function loadFile(url, fctn) {
   //xhttp.send();
 }
 
-var db;
+function updateAccount(db) {
+  let pnl = $("#pnl-Account");
+  let account = {};
 
-$(document).ready(function () {
-  $("#javascript").hide();
-  $("#jssite").show();
+  account.index = 1;
+  account.ifdefault = pnl.find("#ifdefault").prop("checked");
+  account.city = pnl.find("#city").val();
+  account.state = pnl.find("#state").val();
+  account.country = pnl.find("#country").val();
+  account.metric = pnl.find("[name = 'metric'] :checked").prop("id") == "ifmetric";
+  account.ifnotify = pnl.find("#ifnotify").prop("checked");
+  account.ifemail = pnl.find("#ifemail").prop("checked");
+  account.email = pnl.find("#email").val();
+  account.ifsms = pnl.find("#ifsms").prop("checked");
+  account.phone = pnl.find("#phone").val();
+  account.notifylist = [];
 
-  if (!('indexedDB' in window)) {
-    console.log('This browser doesn\'t support IndexedDB');
-  }
+  pnl.find("#reminders :checked").each(function () {
+    let name = $(this).prop("id").replace(stripid, "$1");
+    name = /-/g [Symbol.replace](name, " ");
+    account.notifylist.push(name);
+  });
 
-  var request = indexedDB.open("diary", 1);
+  let store = db.transaction(["account"], "readwrite").objectStore("account");
+  let cursor = store.index('by_index').openCursor();
+  cursor.onsuccess = function (event) {
+    let cursor = event.target.result;
+    let req = cursor.update(account);
+  };
+}
 
-  request.onupgradeneeded = function () {
-    doUpgrade(request);
+function loadAccount() {
+  let accountreq = indexedDB.open("account", 1);
+
+  accountreq.onupgradeneeded = function () {
+    doAccountUpgrade(accountreq);
   };
 
-  request.onerror = function (event) {
-    console.log("error loading db: " + request.error);
+  accountreq.onsuccess = function () {
+    accountdb = accountreq.result;
+
+    let pnl = $("#pnl-Account");
+    let store = accountdb.transaction(["account"], "readwrite").objectStore("account");
+    let req = store.get(1);
+
+    req.onsuccess = function () {
+      let account = req.result;
+
+      pnl.find("#ifdefault").prop("checked", account.ifdefault);
+      pnl.find("#city").val(account.city);
+      pnl.find("#state").val(account.state);
+      pnl.find("#country").val(account.country);
+      pnl.find("#ifimperial").prop("checked", !account.metric);
+      pnl.find("#ifmetric").prop("checked", account.metric);
+      pnl.find("#ifnotify").prop("checked", account.ifnotify);
+      pnl.find("#ifemail").prop("checked", account.ifemail);
+      pnl.find("#email").val(account.email);
+      pnl.find("#ifsms").prop("checked", account.ifsms);
+      pnl.find("#phone").val(account.phone);
+
+      pnl.find("[id|=itm]").prop("checked", false);
+
+      for (let i = 0; i < account.notifylist.length; ++i) {
+        let id = / /g [Symbol.replace](account.notifylist[i], "-");
+        pnl.find("#itm-" + id).prop("checked", true);
+      }
+
+      pnl.show();
+    }
   };
-
-  request.onsuccess = function () {
-    db = request.result;
-
-    generateTrackersPanel(db);
-    generateTabsAndPanels(db);
-  };
-
-  var pnl = $("#pnl-Account");
-  $(pnl).find("#city").keydown(function (event) {
-    if (event.which === 0x0a || event.which === 0x0d)
-      lookupWeather(this);
-  });
-
-  $(pnl).find("#state").keydown(function (event) {
-    if (event.which === 0x0a || event.which === 0x0d)
-      lookupWeather(this);
-  });
-
-  $(pnl).find("#country").keydown(function (event) {
-    if (event.which === 0x0a || event.which === 0x0d)
-      lookupWeather(this);
-  });
-
-  $("#urldrugscom").keydown(function () {
-    $("#loaddrugscom").removeClass("disabled");
-    $(pnl).find("#loaddrugscom").removeAttr("disabled");
-
-    if (event.which === 0x0a || event.which === 0x0d)
-      loadDrugsCom(this);
-  });
-
-  $(pnl).find("#loaddrugscom").click(function () {
-    loadDrugsCom(this);
-  });
-
-  $(pnl).find("#demoloaddrugs").click(function () {
-    loadDrugsCom(this, "wx7s49r");
-  });
-
-  $(pnl).find("#useselecteddrugs").click(function () {
-    addSelectedDrugs(this);
-  });
-});
+}
 
 /************************************************** */
 
-function doUpgrade(request) {
-  db = request.result;
-  var store = db.createObjectStore("tracking", {
+function doSetupUpgrade(request) {
+  setupdb = request.result;
+  let store = setupdb.createObjectStore("tracking", {
     autoIncrement: true
   });
 
@@ -743,10 +756,108 @@ function doUpgrade(request) {
     unique: false
   });
 
-  for (var i = 0; i < trackerslist.length; ++i) {
-    var tracker = trackerslist[i];
+  for (let i = 0; i < trackerslist.length; ++i) {
+    let tracker = trackerslist[i];
     tracker.position = i;
 
     store.put(tracker);
   }
 }
+
+function doAccountUpgrade(request) {
+  accountdb = request.result;
+
+  let store = accountdb.createObjectStore("account", {
+    autoIncrement: true
+  });
+
+  store.createIndex("by_index", "index", {
+    unique: true
+  });
+
+  let account = {};
+  account.index = 1;
+  account.ifdefault = true;
+  account.city = "";
+  account.state = "";
+  account.country = "";
+  account.metric = false;
+  account.ifnotify = false;
+  account.ifemail = false;
+  account.email = "";
+  account.ifsms = false;
+  account.phone = "";
+  account.notifylist = [];
+
+  store.put(account);
+}
+
+var setupdb;
+var accountdb;
+const stripid = /^.*?-(.*)/g;
+
+$(document).ready(function () {
+  $("#javascript").hide();
+  $("#jssite").show();
+
+  if (!('indexedDB' in window)) {
+    console.log('This browser doesn\'t support IndexedDB');
+  }
+
+  let setupreq = indexedDB.open("setup", 1);
+
+  setupreq.onupgradeneeded = function () {
+    doSetupUpgrade(setupreq);
+  };
+
+  setupreq.onerror = function (event) {
+    console.log("error loading setup: " + setupreq.error);
+  };
+
+  setupreq.onsuccess = function () {
+    setupdb = setupreq.result;
+
+    generateTrackersPanel(setupdb);
+    generateTabsAndPanels(setupdb);
+  };
+
+  let pnl = $("#pnl-Account");
+  pnl.find("#city").keydown(function (event) {
+    if (event.which === 0x0a || event.which === 0x0d)
+      lookupWeather(this);
+  });
+
+  pnl.find("#state").keydown(function (event) {
+    if (event.which === 0x0a || event.which === 0x0d)
+      lookupWeather(this);
+  });
+
+  pnl.find("#country").keydown(function (event) {
+    if (event.which === 0x0a || event.which === 0x0d)
+      lookupWeather(this);
+  });
+
+  $("#urldrugscom").keydown(function () {
+    $("#loaddrugscom").removeClass("disabled");
+    pnl.find("#loaddrugscom").removeAttr("disabled");
+
+    if (event.which === 0x0a || event.which === 0x0d)
+      loadDrugsCom(this);
+  });
+
+  pnl.find("#loaddrugscom").click(function () {
+    loadDrugsCom(this);
+  });
+
+  pnl.find("#demoloaddrugs").click(function () {
+    loadDrugsCom(this, "wx7s49r");
+  });
+
+  pnl.find("#useselecteddrugs").click(function () {
+    addSelectedDrugs(this);
+  });
+
+  pnl.find("#submit-acct").click(function () {
+    updateAccount(accountdb);
+  });
+});
