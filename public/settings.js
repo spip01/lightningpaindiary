@@ -34,15 +34,14 @@ function generateTrackersPanel(db) {
         entry = /ifrange/g [Symbol.replace](entry, "");
         entry = /startrange/g [Symbol.replace](entry, item.start);
         entry = /endrange/g [Symbol.replace](entry, item.end);
-
       } else
         entry = /ifrange/g [Symbol.replace](entry, 'style="display: none"');
 
-      entry = /ifedit/g [Symbol.replace](entry, item.editable === false ? 'style="display: none"' : '');
+      entry = /ifedit/g [Symbol.replace](entry, item.fixed === true ? 'style="display: none"' : '');
 
       pnl.find("[id|='cont']").append(entry);
 
-      if (item.remindable === undefined) {
+      if (item.fixed === undefined) {
         let reminders = /idname/g [Symbol.replace](acct_entries, id);
         reminders = /ttitle/g [Symbol.replace](reminders, item.name);
         $("#pnl-Account #reminders").append(reminders);
@@ -50,45 +49,14 @@ function generateTrackersPanel(db) {
 
       cursor.continue();
     } else {
-
-      generateTypeMenu();
-      generateRangeMenu(db);
+      for (let i = 0; i < trackerstypes.length; ++i) {
+        let menu = /ttype/g [Symbol.replace](menu_entries, trackerstypes[i]);
+        pnl.find("[id|='list']").append(menu);
+      }
 
       setPanelEvents(pnlid);
     }
   };
-}
-
-function generateRangeMenu(db) {
-  let store = db.transaction(["tracking"], "readwrite").objectStore("tracking");
-  let cursor = store.index('by_position').openCursor();
-  cursor.onsuccess = function (event) {
-    let cursor = event.target.result;
-
-    if (cursor) {
-      let item = cursor.value;
-
-      if (item.type === "range") {
-        let id = / /g [Symbol.replace](item.name, "-");
-
-        for (let i = 0; i < trackerstypes.length; ++i) {
-          if (trackerstypes[i] === "range") {
-            let menu = /ttype/g [Symbol.replace](menu_entries, trackerstypes[i]);
-            $("#ent-" + id + " [id|='items']").append(menu);
-          }
-        }
-      }
-
-      cursor.continue();
-    }
-  }
-}
-
-function generateTypeMenu() {
-  for (let i = 0; i < trackerstypes.length; ++i) {
-    let menu = /ttype/g [Symbol.replace](menu_entries, trackerstypes[i]);
-    $("#pnl-Trackers #menu-type").find("[id|='items']").append(menu);
-  }
 }
 
 function generateTabsAndPanels(db) {
@@ -144,7 +112,7 @@ function setPanelEvents(id) {
     enableDeleteBtns(this);
   });
 
-  pnl.find("[id|='edtname']").keydown(function (event) {
+  pnl.find("[id|='editname']").keydown(function (event) {
     if (event.which === 0x0a || event.which === 0x0d)
       doneEdit(setupdb, this);
   });
@@ -157,13 +125,11 @@ function setPanelEvents(id) {
     panelDeleteBtn(setupdb, this);
   });
 
-  pnl.find("[id|='new']").keydown(function () {
-    enableAddBtns(this);
-  });
-
   pnl.find("[id|='new']").keydown(function (event) {
     if (event.which === 0x0a || event.which === 0x0d)
       panelAddBtn(setupdb, this);
+    else
+      enableAddBtns(this);
   });
 
   pnl.find("[id|='add']").click(function () {
@@ -208,11 +174,6 @@ function setPanelEvents(id) {
     //"touchenter": $.proxy(dragover),
     //"touchstart": $.proxy(dragstart),
   });
-
-  $("#tabs #tab-" + id).off();
-  $("#tabs #tab-" + id).click(function () {
-    openTab(this);
-  });
 }
 
 function newTabBar() {
@@ -243,7 +204,6 @@ function addTab(item) {
   tabs.find("#tab-" + id).remove();
   tabs.append(tab);
 
-  tabs.find("#tab-" + id).off();
   tabs.find("#tab-" + id).click(function () {
     openTab(this);
   });
@@ -320,10 +280,10 @@ function enableAddBtns(evt) {
   let pnlid = $(evt).prop("id").replace(stripid, "$1");
   let pnl = $("#pnl-" + pnlid);
 
-  pnl.find("#menu-type [id|='sel']").removeClass("disabled");
-  pnl.find("#menu-type [id|='sel']").removeAttr("disabled");
-
-  if (pnlid != "Trackers") {
+  if (pnlid === "Trackers") {
+    pnl.find("[id|='sel']").removeClass("disabled");
+    pnl.find("[id|='sel']").removeAttr("disabled");
+  } else {
     pnl.find("[id|='add']").removeClass("disabled");
     pnl.find("[id|='add']").removeAttr("disabled");
   }
@@ -346,24 +306,23 @@ function applyMeds(ml) {
 function selectType(evt) {
   let name = $(evt).text();
   let menu = $(evt).parent().parent();
+  let pnl = $("#pnl-Trackers");
 
   menu.find("[id|='sel']").text(name);
 
-  $("#pnl-Trackers [id|='add']").removeClass("disabled");
-  $("#pnl-Trackers [id|='add']").removeAttr("disabled");
+  pnl.find("[id|='add']").removeClass("disabled");
+  pnl.find("[id|='add']").removeAttr("disabled");
 
-  if (menu.prop("id") === "menu-type") {
-    if (name === "range") {
-      menu.find("[id|='newstart']").removeClass("disabled");
-      menu.find("[id|='newstart']").removeAttr("disabled");
-      menu.find("[id|='newend']").removeClass("disabled");
-      menu.find("[id|='newend']").removeAttr("disabled");
-    } else {
-      menu.find("[id|='newstart']").addClass("disabled");
-      menu.find("[id|='newstart']").prop("disabled", "true");
-      menu.find("[id|='newend']").addClass("disabled");
-      menu.find("[id|='newend']").prop("disabled", "true");
-    }
+  if (name === "range") {
+    pnl.find("[id|='newstart']").removeClass("disabled");
+    pnl.find("[id|='newstart']").removeAttr("disabled")
+    pnl.find("[id|='newend']").removeClass("disabled");
+    pnl.find("[id|='newend']").removeAttr("disabled")
+  } else {
+    pnl.find("[id|='newstart']").addClass("disabled");
+    pnl.find("[id|='newstart']").prop("disabled", "true");
+    pnl.find("[id|='newend']").addClass("disabled");
+    pnl.find("[id|='newend']").prop("disabled", "true");
   }
 }
 
@@ -381,12 +340,18 @@ function panelAddBtn(db, evt) {
     let entry = {
       position: Number(pos) + 1,
       name: name,
-      type: pnl.find("#menu-type [id|='sel']").text(),
+      type: pnl.find("[id|='sel']").text(),
     };
 
+    if (entry.type.indexOf("Type") != -1)
+      return;
+
     if (entry.type === "range") {
-      entry.start = pnl.find("[id|='newstart']").val();
-      entry.end = pnl.find("[id|='newend']").val();
+      entry.start = Number(pnl.find("[id|='newstart']").val());
+      entry.end = Number(pnl.find("[id|='newend']").val());
+
+      if (entry.start === 0 && entry.end === 0)
+        return;
     }
 
     if (entry.type === "list")
@@ -400,7 +365,7 @@ function panelAddBtn(db, evt) {
     }
 
     generateTrackersPanel(db);
-    pnl.show();
+    $("#pnl-" + pnlid).show();
   } else {
     let panel = store.index("by_name").openCursor(IDBKeyRange.only(pnlname));
 
@@ -415,7 +380,7 @@ function panelAddBtn(db, evt) {
         cursor.update(entry);
 
         addPanel(entry);
-        pnl.show();
+        $("#pnl-" + pnlid).show();
       }
     }
   }
@@ -426,7 +391,7 @@ function panelEditBtn(db, evt) {
   let pnlid = ent.prop("id").replace(stripid, "$1");
 
   ent.find("[id|='pos']").hide();
-  ent.find("[id|='edtname']").show();
+  ent.find("[id|='editname']").show();
 
   if (pnlid === "Trackers") {
     if (ent.find("[id|='type']").text() === "range") {
@@ -447,11 +412,11 @@ function panelEditBtn(db, evt) {
 function doneEdit(db, evt) {
   let id = $(evt).prop("id").replace(stripid, "$1");
   let ent = $(evt).parent();
-  let pnl = ent.parent();
-  let pnlid = pnl.prop("id").replace(stripid, "$1");
+  let pnlid = ent.parent().prop("id").replace(stripid, "$1");
+  let pnl = $("#pnl-" + pnlid);
   let pnlname = /-/g [Symbol.replace](pnlid, " ");
 
-  let newname = ent.find("[id|='edtname']").val();
+  let newname = ent.find("[id|='editname']").val();
   let oldname = /-/g [Symbol.replace](id, " ");
 
   let store = db.transaction(["tracking"], "readwrite").objectStore("tracking");
@@ -477,7 +442,7 @@ function doneEdit(db, evt) {
           generateTabsAndPanels(db);
 
         generateTrackersPanel(db);
-        pnl.show();
+        $("#pnl-" + pnlid).show();
       }
     }
   } else {
@@ -488,7 +453,6 @@ function doneEdit(db, evt) {
 
       if (cursor) {
         let entry = cursor.value;
-        entry.name = name;
         let i = entry.list.indexOf(oldname);
         entry.list[i] = newname;
 
@@ -515,11 +479,7 @@ function panelDeleteBtn(db, evt) {
       let cursor = event.target.result;
 
       if (cursor) {
-        let entry = cursor.value;
-        let i = entry.list.indexOf(name);
-        entry.list.splice(i, 1);
-
-        cursor.update(entry);
+        cursor.delete();
 
         $("#pnl-" + pnlid + " #ent-" + id).remove();
         $("#panels #pnl-" + id).remove();
@@ -586,15 +546,15 @@ function addSelectedDrugs(evt) {
 
 function loadDrugsCom(evt, page) {
   let url = "'http://www.whateverorigin.org/get?url=";
-  url += encodeURIComponent("https://www.drugs.com/mn/" + page);
 
   if (page === undefined) {
     page = $("#urldrugscom").val();
-    page = page.replace(/.*?\/?(\S.*)$/g, "$1");
+    page = page.replace(/.*\/(\S.*)/g, "$1");
   }
 
-  $.getJSON(url + '&callback=?', function (data, status) {})
+  url += encodeURIComponent("https://www.drugs.com/mn/" + page);
 
+  $.getJSON(url + '&callback=?', function (data, status) {})
 
   loadFile(url, function (data) {
     let t = data.contents.split("<");
@@ -730,8 +690,6 @@ function loadAccount() {
         let id = / /g [Symbol.replace](account.notifylist[i], "-");
         pnl.find("#itm-" + id).prop("checked", true);
       }
-
-      pnl.show();
     }
   };
 }
@@ -814,14 +772,17 @@ $(document).ready(function () {
     console.log("error loading setup: " + setupreq.error);
   };
 
+  let pnl = $("#pnl-Account");
+
   setupreq.onsuccess = function () {
     setupdb = setupreq.result;
 
     generateTrackersPanel(setupdb);
     generateTabsAndPanels(setupdb);
+
+    pnl.show();
   };
 
-  let pnl = $("#pnl-Account");
   pnl.find("#city").keydown(function (event) {
     if (event.which === 0x0a || event.which === 0x0d)
       lookupWeather(this);

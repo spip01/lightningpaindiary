@@ -169,15 +169,13 @@
             {
                 name: "Date",
                 type: "date",
-                editable: false,
-                remindable: false,
+                fixed: true,
             }, {
                 name: "Pain Level",
                 type: "range",
                 start: "1",
                 end: "10",
-                editable: false,
-                remindable: false,
+                fixed: true,
             }, {
                 name: "Start Time",
                 type: "time",
@@ -241,7 +239,7 @@
             }
         ];
 
-        // replace: idname, ttitle, type, Type, iftrackers
+        // replace: idname, ttitle, ttype, Type, iftrackers
         // cont-idname: gets appended with entry contents
         // items: gets appended with list of valid types
         const panels =
@@ -266,12 +264,12 @@
 
                 <div class="row">
                     <input id="new-idname" class="rounded col-lg-3 col-md-3 col-sm-3 col-6" type="text" placeholder="ttitle">
-                    <div id="menu-type" class="col-lg-2 col-md-2 col-sm-3 col-6 dropdown" iftrackers>
+                    <div id="menu-idname" class="col-lg-2 col-md-2 col-sm-3 col-6 dropdown" iftrackers>
                         <button id="sel-idname" class="btn border btn-sm btn-green dropdown-toggle disabled" disabled type="button" data-toggle="dropdown">
                             Type
                             <span class="caret"></span>
                         </button>
-                        <ul id="items" class="dropdown-menu" style="cursor: pointer"></ul>
+                        <ul id="list-idname" class="dropdown-menu" style="cursor: pointer"></ul>
                     </div>
                     <input id="newstart-idname" class="rounded col-lg-1 col-md-1 col-sm-1 col-3 disabled" disabled type="text" placeholder="1" iftrackers>&nbsp;
                     <input id="newend-idname" class="rounded col-lg-1 col-md-1 col-sm-1 col-3 disabled" disabled type="text" placeholder="10" iftrackers>&nbsp;&nbsp;
@@ -286,7 +284,7 @@
             `
             <div id="ent-idname" class="row border-bottom">
                 <div id="pos-000" class="col-lg-3 col-md-3 col-sm-3 col-6" draggable="true">ttitle</div>
-                <input id="edtname-idname" class="rounded col-lg-3 col-md-3 col-sm-3 col-6" value="ttitle" style="display: none">
+                <input id="editname-idname" class="rounded col-lg-3 col-md-3 col-sm-3 col-6" value="ttitle" style="display: none">
                 <div id="type" class="col-lg-2 col-md-2 col-sm-3 col-6" iftrackers>ttype</div>
                 <div id="show-idname" class="col-lg-2 col-md-2 col-sm-2 col-6" iftrackers>
                     <div id="rng-startrange-endrange" ifrange>startrange-endrange</div>
