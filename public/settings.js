@@ -42,6 +42,14 @@ function generateTrackersPanel(db) {
       pnl.find("[id|='cont']").append(entry);
 
       if (item.fixed === undefined) {
+        const acct_entries =
+          `
+          <label class="col-lg-2 col-md-3 col-sm-6 col-12">
+            <input id="itm-idname" type="checkbox">
+            ttitle
+          </label>
+          `;
+
         let reminders = /idname/g [Symbol.replace](acct_entries, id);
         reminders = /ttitle/g [Symbol.replace](reminders, item.name);
         $("#pnl-Account #reminders").append(reminders);
@@ -49,6 +57,8 @@ function generateTrackersPanel(db) {
 
       cursor.continue();
     } else {
+      const menu_entries = `<li id="item">ttype</li>`;
+
       for (let i = 0; i < trackerstypes.length; ++i) {
         let menu = /ttype/g [Symbol.replace](menu_entries, trackerstypes[i]);
         pnl.find("[id|='list']").append(menu);
@@ -192,6 +202,8 @@ function newTabBar() {
 }
 
 function addTab(item) {
+  const tab_entries = `<button id="tab-idname" class="col-lg-2 col-md-3 col-sm-4 col-6 h4 btn-green no-border trborder tbborder">ttitle</button>`;
+
   let id = / /g [Symbol.replace](item.name, "-");
 
   let tab = /idname/g [Symbol.replace](tab_entries, id);
@@ -290,6 +302,14 @@ function enableAddBtns(evt) {
 }
 
 function applyMeds(ml) {
+  const acct_entries =
+    `
+    <label class="col-lg-2 col-md-3 col-sm-6 col-12">
+      <input id="itm-idname" type="checkbox">
+      ttitle
+    </label>
+    `;
+
   let pnl = $("#pnl-Account");
 
   for (let i = 0; i < ml.length; ++i) {
