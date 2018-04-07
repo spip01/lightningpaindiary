@@ -59,8 +59,8 @@
         <div id="panels" class="card card-body bkg-light-green pad-bottom">
 
             <div id="pnl-Account" class="card card-body container-fluid" style="display: none">
-                <div class="row">
-                    <h4 class="card-title col-lg-4 col-md-4">Account</h4>
+                <div class="row border-bottom">
+                    <h4 class="card-title col-lg-4 col-md-4 col-sm-5 col-7 ">Account</h4>
                     <!-- https://developers.google.com/drive/v3/web/savetodrive -->
                     <!--div id="___savetodrive_0" class="col-lg-2 col-md-2">
                         <iframe ng-non-bindable="" frameborder="0" hspace="0" marginheight="0" marginwidth="0" scrolling="no" style="position: static; top: 0px; width: 58px; margin: 0px; border-style: none; left: 0px; visibility: visible; height: 29px;"
@@ -72,13 +72,22 @@
                             tabindex="0" vspace="0" width="100%" id="I0_1520998225533" name="I0_1520998225533" src="https://drive.google.com/savetodrivebutton?usegapi=1&amp;src=%2F%2Fcors-files.appspot.com%2FStray_Kitten.jpg&amp;filename=Save%20to%20Drive%20Stray_Kitten%20demo.jpg&amp;sitename=Google%20Developers&amp;origin=https%3A%2F%2Fgoogle-developers.appspot.com&amp;gsrc=3p&amp;ic=1&amp;jsh=m%3B%2F_%2Fscs%2Fapps-static%2F_%2Fjs%2Fk%3Doz.gapi.en.R_YwodJb5EM.O%2Fm%3D__features__%2Fam%3DAQI%2Frt%3Dj%2Fd%3D1%2Frs%3DAGLTcCNZfyttL0MPLeEvWVmInXtToxOp6Q#_methods=onPlusOne%2C_ready%2C_close%2C_open%2C_resizeMe%2C_renderstart%2Concircled%2Cdrefresh%2Cerefresh%2Csave%2Conload&amp;id=I0_1520998225533&amp;_gfid=I0_1520998225533&amp;parent=https%3A%2F%2Fgoogle-developers.appspot.com&amp;pfname=&amp;rpctoken=18697450"
                             data-gapiattached="true"></iframe>
                     </div-->
+                <!--/div>
+
+                <div class="row"-->
+                    <h6 class="clr-dark-green">All information is kept with the local browser.</h6>
                 </div>
 
                 <div class="row">
-                    <h6 class="clr-dark-green border-bottom">All information is kept with the local browser.</h6>
-                </div>
+                    <input id="email" type="text" class="rounded col-lg-4 col-md-4 col-sm-5 col-7" placeholder="email address">&nbsp;
+                    <div class="col-lg-2 col-md-2 col-sm-3 col-3">email</div>
 
-                <div class="row">
+                    <!--i id="everified" class="fa fa-check-circle clr-dark-green" style="display: none"></i>
+                    <i id="enotverified" class="fa fa-circle"></i-->
+                </div>
+                <br>
+                
+                <div class="row border-top">
                     <label>
                         <input id="ifdefault" type="checkbox"> Always default values to previous entry
                     </label>
@@ -87,12 +96,12 @@
                 <h6 class="row clr-dark-green border-top">Address is used for current weather conditions download.</h6>
                 <!-- api.openweathermap.org/data/2.5/weather?q=London,uk -->
                 <div id="addressinp" class="row container">
-                    <input id="city" class="rounded col-lg-4 col-md-5 col-sm-6 col-7" type="text">
-                    <div class="col-lg-2 col-md-2 col-sm-6 col-5" type="text">city</div>
-                    <input id="state" class="rounded col-lg-2 col-md-2 col-sm-5 col-2" type="text">
-                    <div class="col-lg-2 col-md-2 col-sm-7 col-4" type="text">state</div>
-                    <input id="country" class="rounded col-lg-4 col-md-5 col-sm-9 col-7" type="text">
-                    <div class="col-lg-2 col-md-2 col-sm-3 col-5" type="text">country</div>
+                    <input id="city" class="rounded col-lg-4 col-md-5 col-sm-7 col-8" type="text">
+                    <div class="col-lg-2 col-md-2 col-sm-5 col-4">city</div>
+                    <input id="state" class="rounded col-lg-1 col-md-1 col-sm-2 col-3" type="text">
+                    <div class="col-lg-2 col-md-2 col-sm-7 col-4">state</div>
+                    <input id="country" class="rounded col-lg-4 col-md-5 col-sm-7 col-8" type="text">
+                    <div class="col-lg-2 col-md-2 col-sm-3 col-4">country</div>
                 </div>
 
                 <div class="row container border-bottom">
@@ -113,12 +122,6 @@
                         <input id="ifemail" type="checkbox"> email
                     </label>
                 </div>
-                <div class="row container">
-                    <input id="email" type="text" class="rounded col-lg-3 col-md-3 col-sm-6 col-10" placeholder="email address">&nbsp;
-
-                    <i id="everified" class="fa fa-check-circle clr-dark-green" style="display: none"></i>
-                    <i id="enotverified" class="fa fa-circle"></i>
-                </div>
 
                 <div class="row">
                     <label class="col-lg-12 col-md-12 col-sm-12 col-12">
@@ -127,10 +130,11 @@
                 </div>
 
                 <div class="row container">
-                    <input id="phone" type="text" class="rounded col-lg-4 col-md-5 col-sm-6 col-10" placeholder="phone number">
+                    <input id="phone" type="text" class="rounded col-lg-4 col-md-5 col-sm-7 col-8" placeholder="phone number">
+                    <div class="col-lg-2 col-md-2 col-sm-3 col-4">phone</div>
                 </div>
 
-                <div class="row container">Require an entry for these items</div>
+                <div class="row container">Require a daily entry for these items</div>
 
                 <div id="reminders" class="row container"></div>
 

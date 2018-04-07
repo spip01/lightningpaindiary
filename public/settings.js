@@ -15,44 +15,47 @@ function generateTrackersPanel(db) {
 
   $("#pnl-Account #reminders").html("");
 
-  let store = db.transaction(["tracking"], "readwrite").objectStore("tracking");
+  let store = db.transaction(["account"], "readwrite").objectStore("account");
   let cursor = store.index('by_position').openCursor();
   cursor.onsuccess = function (event) {
     let cursor = event.target.result;
 
     if (cursor) {
       let item = cursor.value;
-      let id = / /g [Symbol.replace](item.name, "-");
+      if (item.name !== "Account") {
 
-      let entry = /idname/g [Symbol.replace](panels_entry, id);
-      entry = /ttitle/g [Symbol.replace](entry, item.name);
-      entry = /ttype/g [Symbol.replace](entry, item.type);
-      entry = /iftrackers/g [Symbol.replace](entry, "");
-      entry = /000/g [Symbol.replace](entry, item.position);
+        let id = / /g [Symbol.replace](item.name, "-");
 
-      if (item.type === "range") {
-        entry = /ifrange/g [Symbol.replace](entry, "");
-        entry = /startrange/g [Symbol.replace](entry, item.start);
-        entry = /endrange/g [Symbol.replace](entry, item.end);
-      } else
-        entry = /ifrange/g [Symbol.replace](entry, 'style="display: none"');
+        let entry = /idname/g [Symbol.replace](panels_entry, id);
+        entry = /ttitle/g [Symbol.replace](entry, item.name);
+        entry = /ttype/g [Symbol.replace](entry, item.type);
+        entry = /iftrackers/g [Symbol.replace](entry, "");
+        entry = /000/g [Symbol.replace](entry, item.position);
 
-      entry = /ifedit/g [Symbol.replace](entry, item.fixed === true ? 'style="display: none"' : '');
+        if (item.type === "range") {
+          entry = /ifrange/g [Symbol.replace](entry, "");
+          entry = /startrange/g [Symbol.replace](entry, item.start);
+          entry = /endrange/g [Symbol.replace](entry, item.end);
+        } else
+          entry = /ifrange/g [Symbol.replace](entry, 'style="display: none"');
 
-      pnl.find("[id|='cont']").append(entry);
+        entry = /ifedit/g [Symbol.replace](entry, item.fixed === true ? 'style="display: none"' : '');
 
-      if (item.fixed === undefined) {
-        const acct_entries =
-          `
+        pnl.find("[id|='cont']").append(entry);
+
+        if (item.fixed === undefined) {
+          const acct_entries =
+            `
           <label class="col-lg-2 col-md-3 col-sm-6 col-12">
             <input id="itm-idname" type="checkbox">
             ttitle
           </label>
           `;
 
-        let reminders = /idname/g [Symbol.replace](acct_entries, id);
-        reminders = /ttitle/g [Symbol.replace](reminders, item.name);
-        $("#pnl-Account #reminders").append(reminders);
+          let reminders = /idname/g [Symbol.replace](acct_entries, id);
+          reminders = /ttitle/g [Symbol.replace](reminders, item.name);
+          $("#pnl-Account #reminders").append(reminders);
+        }
       }
 
       cursor.continue();
@@ -72,16 +75,18 @@ function generateTrackersPanel(db) {
 function generateTabsAndPanels(db) {
   newTabBar();
 
-  let store = db.transaction(["tracking"], "readwrite").objectStore("tracking");
-  let cursor = store.index('by_type').openCursor(IDBKeyRange.only("list"));
+  let store = db.transaction(["account"], "readwrite").objectStore("account");
+  let cursor = store.index('by_position').openCursor();
   cursor.onsuccess = function (event) {
     let cursor = event.target.result;
 
     if (cursor) {
       item = cursor.value;
 
-      addTab(item);
-      addPanel(item);
+      if (item.type === "list") {
+        addTab(item);
+        addPanel(item);
+      }
 
       cursor.continue();
     }
@@ -124,54 +129,54 @@ function setPanelEvents(id) {
 
   pnl.find("[id|='editname']").keydown(function (event) {
     if (event.which === 0x0a || event.which === 0x0d)
-      doneEdit(setupdb, this);
+      doneEdit(accountdb, this);
   });
 
   pnl.find("[id|='edit']").click(function () {
-    panelEditBtn(setupdb, this);
+    panelEditBtn(accountdb, this);
   });
 
   pnl.find("[id|='del']").click(function () {
-    panelDeleteBtn(setupdb, this);
+    panelDeleteBtn(accountdb, this);
   });
 
   pnl.find("[id|='new']").keydown(function (event) {
     if (event.which === 0x0a || event.which === 0x0d)
-      panelAddBtn(setupdb, this);
+      panelAddBtn(accountdb, this);
     else
       enableAddBtns(this);
   });
 
   pnl.find("[id|='add']").click(function () {
-    panelAddBtn(setupdb, this);
+    panelAddBtn(accountdb, this);
   });
 
   if (id === "Trackers") {
     pnl.find("[id|='edtstart']").keydown(function (event) {
       if (event.which === 0x0a || event.which === 0x0d)
-        doneEdit(setupdb, this);
+        doneEdit(accountdb, this);
     });
 
     pnl.find("[id|='edtend']").keydown(function (event) {
       if (event.which === 0x0a || event.which === 0x0d)
-        doneEdit(setupdb, this);
+        doneEdit(accountdb, this);
     });
 
     pnl.find("[id|='newstart']").keydown(function (event) {
       if (event.which === 0x0a || event.which === 0x0d)
-        panelAddBtn(setupdb, this);
+        panelAddBtn(accountdb, this);
     });
 
     pnl.find("[id|='newend']").keydown(function (event) {
       if (event.which === 0x0a || event.which === 0x0d)
-        panelAddBtn(setupdb, this);
+        panelAddBtn(accountdb, this);
     });
 
     pnl.find("[id|='item']").click(function () {
       selectType(this);
     });
 
-    loadAccount();
+    loadAccount(accountdb);
   }
 
   pnl.find("[draggable|='true']").on({
@@ -353,7 +358,7 @@ function panelAddBtn(db, evt) {
   let name = pnl.find("[id|='new']").val();
   let id = / /g [Symbol.replace](name, "-");
 
-  let store = db.transaction(["tracking"], "readwrite").objectStore("tracking");
+  let store = db.transaction(["account"], "readwrite").objectStore("account");
 
   if (pnlid === "Trackers") {
     let pos = $("#cont-Trackers div:last-child").find("[id|='pos']").prop("id").replace(stripid, "$1");
@@ -439,7 +444,7 @@ function doneEdit(db, evt) {
   let newname = ent.find("[id|='editname']").val();
   let oldname = /-/g [Symbol.replace](id, " ");
 
-  let store = db.transaction(["tracking"], "readwrite").objectStore("tracking");
+  let store = db.transaction(["account"], "readwrite").objectStore("account");
 
   if (pnlid === "Trackers") {
     let tracker = store.index("by_name").openCursor(IDBKeyRange.only(oldname));
@@ -490,7 +495,7 @@ function panelDeleteBtn(db, evt) {
   let pnlname = /-/g [Symbol.replace](pnlid, " ");
   let name = /-/g [Symbol.replace](id, " ");
 
-  let store = db.transaction(["tracking"], "readwrite").objectStore("tracking");
+  let store = db.transaction(["account"], "readwrite").objectStore("account");
 
   if (pnlid === "Trackers") {
     let tracker = store.index("by_name").openCursor(IDBKeyRange.only(name));
@@ -533,9 +538,9 @@ function addSelectedDrugs(evt) {
     list.push(name);
   });
 
-  let store = setupdb.transaction(["tracking"], "readwrite").objectStore("tracking");
-  let cursor = store.index("by_name").openCursor(IDBKeyRange.only("Remedies"));
-  cursor.onsuccess = function (event) {
+  let store = accountdb.transaction(["account"], "readwrite").objectStore("account");
+  let remediesreq = store.index("by_name").openCursor(IDBKeyRange.only("Remedies"));
+  remediesreq.onsuccess = function (event) {
     let cursor = event.target.result;
 
     if (cursor) {
@@ -557,8 +562,8 @@ function addSelectedDrugs(evt) {
 
       store.add(remedies);
 
-      generateTrackersPanel(setupdb);
-      generateTabsAndPanels(setupdb);
+      generateTrackersPanel(accountdb);
+      generateTabsAndPanels(accountdb);
       addPanel(remedies);
     }
   }
@@ -645,80 +650,69 @@ function loadFile(url, fctn) {
 }
 
 function updateAccount(db) {
-  let pnl = $("#pnl-Account");
-  let account = {};
-
-  account.index = 1;
-  account.ifdefault = pnl.find("#ifdefault").prop("checked");
-  account.city = pnl.find("#city").val();
-  account.state = pnl.find("#state").val();
-  account.country = pnl.find("#country").val();
-  account.metric = pnl.find("[name = 'metric'] :checked").prop("id") == "ifmetric";
-  account.ifnotify = pnl.find("#ifnotify").prop("checked");
-  account.ifemail = pnl.find("#ifemail").prop("checked");
-  account.email = pnl.find("#email").val();
-  account.ifsms = pnl.find("#ifsms").prop("checked");
-  account.phone = pnl.find("#phone").val();
-  account.notifylist = [];
-
-  pnl.find("#reminders :checked").each(function () {
-    let name = $(this).prop("id").replace(stripid, "$1");
-    name = /-/g [Symbol.replace](name, " ");
-    account.notifylist.push(name);
-  });
-
   let store = db.transaction(["account"], "readwrite").objectStore("account");
-  let cursor = store.index('by_index').openCursor();
-  cursor.onsuccess = function (event) {
+  let accountreq = store.index('by_name').openCursor(IDBKeyRange.only("Account"));
+
+  accountreq.onsuccess = function (event) {
     let cursor = event.target.result;
-    let req = cursor.update(account);
+    let pnl = $("#pnl-Account");
+
+    let account = cursor.value;
+    account.ifdefault = pnl.find("#ifdefault").prop("checked");
+    account.city = pnl.find("#city").val();
+    account.state = pnl.find("#state").val();
+    account.country = pnl.find("#country").val();
+    account.metric = pnl.find("[name = 'metric'] :checked").prop("id") == "ifmetric";
+    account.ifnotify = pnl.find("#ifnotify").prop("checked");
+    account.ifemail = pnl.find("#ifemail").prop("checked");
+    account.email = pnl.find("#email").val();
+    account.ifsms = pnl.find("#ifsms").prop("checked");
+    account.phone = pnl.find("#phone").val();
+    account.notifylist = [];
+
+    pnl.find("#reminders :checked").each(function () {
+      let name = $(this).prop("id").replace(stripid, "$1");
+      name = /-/g [Symbol.replace](name, " ");
+      account.notifylist.push(name);
+    });
+
+    cursor.update(account);
   };
 }
 
-function loadAccount() {
-  let accountreq = indexedDB.open("account", 1);
+function loadAccount(db) {
+  let store = db.transaction(["account"], "readwrite").objectStore("account");
+  let accountreq = store.index("by_name").get("Account");
 
-  accountreq.onupgradeneeded = function () {
-    doAccountUpgrade(accountreq);
-  };
-
-  accountreq.onsuccess = function () {
-    accountdb = accountreq.result;
-
+  accountreq.onsuccess = function (event) {
+    let account = accountreq.result;
     let pnl = $("#pnl-Account");
-    let store = accountdb.transaction(["account"], "readwrite").objectStore("account");
-    let req = store.get(1);
 
-    req.onsuccess = function () {
-      let account = req.result;
+    pnl.find("#ifdefault").prop("checked", account.ifdefault);
+    pnl.find("#city").val(account.city);
+    pnl.find("#state").val(account.state);
+    pnl.find("#country").val(account.country);
+    pnl.find("#ifimperial").prop("checked", !account.metric);
+    pnl.find("#ifmetric").prop("checked", account.metric);
+    pnl.find("#ifnotify").prop("checked", account.ifnotify);
+    pnl.find("#ifemail").prop("checked", account.ifemail);
+    pnl.find("#email").val(account.email);
+    pnl.find("#ifsms").prop("checked", account.ifsms);
+    pnl.find("#phone").val(account.phone);
 
-      pnl.find("#ifdefault").prop("checked", account.ifdefault);
-      pnl.find("#city").val(account.city);
-      pnl.find("#state").val(account.state);
-      pnl.find("#country").val(account.country);
-      pnl.find("#ifimperial").prop("checked", !account.metric);
-      pnl.find("#ifmetric").prop("checked", account.metric);
-      pnl.find("#ifnotify").prop("checked", account.ifnotify);
-      pnl.find("#ifemail").prop("checked", account.ifemail);
-      pnl.find("#email").val(account.email);
-      pnl.find("#ifsms").prop("checked", account.ifsms);
-      pnl.find("#phone").val(account.phone);
+    pnl.find("[id|=itm]").prop("checked", false);
 
-      pnl.find("[id|=itm]").prop("checked", false);
-
-      for (let i = 0; i < account.notifylist.length; ++i) {
-        let id = / /g [Symbol.replace](account.notifylist[i], "-");
-        pnl.find("#itm-" + id).prop("checked", true);
-      }
+    for (let i = 0; i < account.notifylist.length; ++i) {
+      let id = / /g [Symbol.replace](account.notifylist[i], "-");
+      pnl.find("#itm-" + id).prop("checked", true);
     }
   };
 }
 
 /************************************************** */
 
-function doSetupUpgrade(request) {
-  setupdb = request.result;
-  let store = setupdb.createObjectStore("tracking", {
+function doAccountUpgrade(db) {
+  let store = db.createObjectStore("account", {
     autoIncrement: true
   });
 
@@ -730,31 +724,9 @@ function doSetupUpgrade(request) {
     unique: true
   });
 
-  store.createIndex("by_type", "type", {
-    unique: false
-  });
-
-  for (let i = 0; i < trackerslist.length; ++i) {
-    let tracker = trackerslist[i];
-    tracker.position = i;
-
-    store.put(tracker);
-  }
-}
-
-function doAccountUpgrade(request) {
-  accountdb = request.result;
-
-  let store = accountdb.createObjectStore("account", {
-    autoIncrement: true
-  });
-
-  store.createIndex("by_index", "index", {
-    unique: true
-  });
-
   let account = {};
-  account.index = 1;
+  account.name = "Account";
+  account.position = 0;
   account.ifdefault = true;
   account.city = "";
   account.state = "";
@@ -768,9 +740,15 @@ function doAccountUpgrade(request) {
   account.notifylist = [];
 
   store.put(account);
+
+  for (let i = 0; i < trackerslist.length; ++i) {
+    let tracker = trackerslist[i];
+    tracker.position = i + 1;
+
+    store.put(tracker);
+  }
 }
 
-var setupdb;
 var accountdb;
 const stripid = /^.*?-(.*)/g;
 
@@ -782,63 +760,62 @@ $(document).ready(function () {
     console.log('This browser doesn\'t support IndexedDB');
   }
 
-  let setupreq = indexedDB.open("setup", 1);
+  let accountreq = indexedDB.open("account", 1);
 
-  setupreq.onupgradeneeded = function () {
-    doSetupUpgrade(setupreq);
+  accountreq.onupgradeneeded = function () {
+    doAccountUpgrade(accountreq.result);
   };
 
-  setupreq.onerror = function (event) {
-    console.log("error loading setup: " + setupreq.error);
+  accountreq.onerror = function (event) {
+    console.log("error loading account: " + accountreq.error);
   };
 
-  let pnl = $("#pnl-Account");
+  accountreq.onsuccess = function () {
+    accountdb = accountreq.result;
 
-  setupreq.onsuccess = function () {
-    setupdb = setupreq.result;
+    generateTrackersPanel(accountdb);
+    generateTabsAndPanels(accountdb);
 
-    generateTrackersPanel(setupdb);
-    generateTabsAndPanels(setupdb);
-
+    let pnl = $("#pnl-Account");
     pnl.show();
-  };
 
-  pnl.find("#city").keydown(function (event) {
-    if (event.which === 0x0a || event.which === 0x0d)
-      lookupWeather(this);
-  });
+    pnl.find("#city").keydown(function (event) {
+      if (event.which === 0x0a || event.which === 0x0d)
+        lookupWeather(this);
+    });
 
-  pnl.find("#state").keydown(function (event) {
-    if (event.which === 0x0a || event.which === 0x0d)
-      lookupWeather(this);
-  });
+    pnl.find("#state").keydown(function (event) {
+      if (event.which === 0x0a || event.which === 0x0d)
+        lookupWeather(this);
+    });
 
-  pnl.find("#country").keydown(function (event) {
-    if (event.which === 0x0a || event.which === 0x0d)
-      lookupWeather(this);
-  });
+    pnl.find("#country").keydown(function (event) {
+      if (event.which === 0x0a || event.which === 0x0d)
+        lookupWeather(this);
+    });
 
-  $("#urldrugscom").keydown(function () {
-    $("#loaddrugscom").removeClass("disabled");
-    pnl.find("#loaddrugscom").removeAttr("disabled");
+    $("#urldrugscom").keydown(function () {
+      $("#loaddrugscom").removeClass("disabled");
+      pnl.find("#loaddrugscom").removeAttr("disabled");
 
-    if (event.which === 0x0a || event.which === 0x0d)
+      if (event.which === 0x0a || event.which === 0x0d)
+        loadDrugsCom(this);
+    });
+
+    pnl.find("#loaddrugscom").click(function () {
       loadDrugsCom(this);
-  });
+    });
 
-  pnl.find("#loaddrugscom").click(function () {
-    loadDrugsCom(this);
-  });
+    pnl.find("#demoloaddrugs").click(function () {
+      loadDrugsCom(this, "wx7s49r");
+    });
 
-  pnl.find("#demoloaddrugs").click(function () {
-    loadDrugsCom(this, "wx7s49r");
-  });
+    pnl.find("#useselecteddrugs").click(function () {
+      addSelectedDrugs(this);
+    });
 
-  pnl.find("#useselecteddrugs").click(function () {
-    addSelectedDrugs(this);
-  });
-
-  pnl.find("#submit-acct").click(function () {
-    updateAccount(accountdb);
-  });
+    pnl.find("#submit-acct").click(function () {
+      updateAccount(accountdb);
+    });
+  };
 });
