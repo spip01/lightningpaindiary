@@ -1,5 +1,5 @@
-var setupdb;
-var diarydb;
+let setupdb;
+let diarydb;
 
 $(document).ready(function () {
     $("#javascript").empty();
@@ -9,21 +9,29 @@ $(document).ready(function () {
         console.log('This browser doesn\'t support IndexedDB');
     }
 
-    let setupreq = indexedDB.open("setup", 1);
+    let accountreq = indexedDB.open("account", 1);
 
-    setupreq.onupgradeneeded = function () {
-        //setupoUpgrade(setupreq.result);
+    accountreq.onupgradeneeded = function () {};
+
+    accountreq.onerror = function () {
+        console.log("account not found");
     };
 
-    setupreq.onsuccess = function () {
-        setupdb = setupreq.result;
-
-        setup(setupdb);
+    accountreq.onsuccess = function () {
+        accountdb = accountreq.result;
+        setup(accountdb);
 
         let diaryreq = indexedDB.open("diary", 1);
 
         diaryreq.onupgradeneeded = function () {
-            //diaryUpgrade(diaryreq.result, setupdb);
+            diarydb = diaryreq.result;
+            let store = diarydb.createObjectStore("diary", {
+                autoIncrement: true
+            });
+
+            store.createIndex("by_datetime", "DateTime", {
+                unique: true
+            });
         };
 
         diaryreq.onsuccess = function () {
@@ -31,77 +39,28 @@ $(document).ready(function () {
             newEntry(diarydb);
         };
     };
-
-    $("#updt").click(function () {
-        $("#l8r-Pain-Level").show();
-        $("#last").removeClass("disabled");
-        $("#last").removeAttr("disabled");
-        $("#new").removeClass("disabled");
-        $("#new").removeAttr("disabled");
-        $("#cancel").removeClass("disabled");
-        $("#cancel").removeAttr("disabled");
-
-        updateEntry(accountdb);
-    });
-
-    $("#last").click(function () {
-        lastEntry(accountdb);
-    });
-
-    $("#new").click(function () {
-        newEntry(accountdb);
-    });
-
-    $("#cancel").click(function () {
-        cancelEntry(accountdb);
-    });
 });
+/*
+function newEntry(db) {
+    let entrydate = new Date;
 
-function diaryUpgrade(diarydb, setupdb) {
-    let diaryentry = {};
+    let entry = {};
+    entry["Date"] = entrydate.toDateString();
+    entry["Start-Time"] = entrydate.toLocalTimeString();
+    entry["Pain-Level"] = 0;
 
-    let store = setupdb.transaction(["tracking"], "readwrite").objectStore("tracking");
+    let store = db.transaction(["account"], "readwrite").objectStore("account");
+    store.put(entry);
+}
+*/
+function setup(db) {
+    let store = db.transaction(["account"], "readwrite").objectStore("account");
     let cursor = store.index('by_position').openCursor();
     cursor.onsuccess = function (event) {
-        var cursor = event.target.result;
+        let cursor = event.target.result;
 
         if (cursor) {
             let entry = cursor.value;
-
-            switch (entry.type) {
-                case "blood pressure":
-                    break;
-                case "date":
-                    break;
-                case "list":
-                    break;
-                case "number":
-                    break;
-                case "range":
-                    break;
-                case "text":
-                    break;
-                case "time":
-                    break;
-                case "true false":
-                    break;
-                case "weather":
-                    break;
-            }
-
-            cursor.continue();
-        }
-    }
-}
-
-function setup(db) {
-    var store = db.transaction(["tracking"], "readwrite").objectStore("tracking");
-    var cursor = store.index('by_position').openCursor();
-    cursor.onsuccess = function (event) {
-        var cursor = event.target.result;
-
-        if (cursor) {
-            var entry = cursor.value;
 
             switch (entry.type) {
                 case "blood pressure":
@@ -134,12 +93,36 @@ function setup(db) {
             }
 
             cursor.continue();
+        } else {
+            $("#updt").click(function () {
+                $("#l8r-Pain-Level").show();
+                $("#last").removeClass("disabled");
+                $("#last").removeAttr("disabled");
+                $("#new").removeClass("disabled");
+                $("#new").removeAttr("disabled");
+                $("#cancel").removeClass("disabled");
+                $("#cancel").removeAttr("disabled");
+
+                updateEntry(accountdb);
+            });
+
+            $("#last").click(function () {
+                lastEntry(accountdb);
+            });
+
+            $("#new").click(function () {
+                newEntry(accountdb);
+            });
+
+            $("#cancel").click(function () {
+                cancelEntry(accountdb);
+            });
         }
     }
 }
 
 function buildButtonBars(entry) {
-    var panel =
+    const panel =
         `
             <div id="pnl-idname" class="row border-bottom">
             <div class="col-lg-3 col-md-3 col-sm-4 col-12 h6 clr-dark-green">ttitle</div>
@@ -148,35 +131,35 @@ function buildButtonBars(entry) {
             <div id="l8r-idname" style="display: none"></div>
             `;
 
-    var item =
+    const item =
         `
                     <button type="button" class="btn btn-sm" style="background-color: colors; width:10%" value="ttitle">ttitle</button>
         `;
 
-    var id = / /g [Symbol.replace](entry.name, "-");
+    let id = / /g [Symbol.replace](entry.name, "-");
 
-    var container = /idname/g [Symbol.replace](panel, id);
+    let container = /idname/g [Symbol.replace](panel, id);
     container = /ttitle/g [Symbol.replace](container, entry.name);
 
     if ($("#l8r-Pain-Level").length)
         $("#l8r-Pain-Level").append(container);
     else
         $("#panels").append(container);
-    var pnl = $("#pnl-" + id);
+    let pnl = $("#pnl-" + id);
 
     if (entry.start < entry.end) {
-        for (var i = entry.start; i <= entry.end; i++) {
-            var c = 120 - (i - entry.start) / (entry.end - entry.start) * 120;
-            var h = /ttitle/g [Symbol.replace](item, i);
+        for (let i = entry.start; i <= entry.end; i++) {
+            let c = 120 - (i - entry.start) / (entry.end - entry.start) * 120;
+            let h = /ttitle/g [Symbol.replace](item, i);
             h = h.replace("colors", "hsl(" + c + ",100%,50%)");
 
             pnl.find("#entry").append(h);
         }
     } else {
-        for (var i = entry.start; i >= entry.end; i--) {
-            var c = (i - entry.end) / (entry.start - entry.end) * 120;
+        for (let i = entry.start; i >= entry.end; i--) {
+            let c = (i - entry.end) / (entry.start - entry.end) * 120;
 
-            var h = /ttitle/g [Symbol.replace](item, i);
+            let h = /ttitle/g [Symbol.replace](item, i);
             h = h.replace("colors", "hsl(" + c + ",100%,50%)");
 
             pnl.find("#entry").append(h);
@@ -186,7 +169,7 @@ function buildButtonBars(entry) {
 
 /*
 function buildSlider(entry) {
-    var panel =
+    const panel =
         `
             <div id="pnl-idname" class="row border-bottom">
                 <div class="col-lg-4 col-md-4 col-sm-4 col-6 h6 clr-dark-green">ttitle</div>
@@ -197,9 +180,9 @@ function buildSlider(entry) {
             </div>
         `;
 
-    var id = / /g [Symbol.replace](entry.name, "-");
+    let id = / /g [Symbol.replace](entry.name, "-");
 
-    var container = /idname/g [Symbol.replace](panel, id);
+    let container = /idname/g [Symbol.replace](panel, id);
     container = /ttitle/g [Symbol.replace](container, entry.name);
     container = /istart/g [Symbol.replace](container, entry.start);
     container = /iend/g [Symbol.replace](container, entry.end);
@@ -215,7 +198,7 @@ function buildSlider(entry) {
 */
 
 function buildTextInput(entry) {
-    var panel =
+    const panel =
         `
             <div id="pnl-idname" class="row border-bottom">
                 <div class="col-lg-3 col-md-3 col-sm-4 col-12 h6 clr-dark-green">ttitle</div>
@@ -223,16 +206,16 @@ function buildTextInput(entry) {
             </div>
         `;
 
-    var id = / /g [Symbol.replace](entry.name, "-");
+    let id = / /g [Symbol.replace](entry.name, "-");
 
-    var container = /idname/g [Symbol.replace](panel, id);
+    let container = /idname/g [Symbol.replace](panel, id);
     container = /ttitle/g [Symbol.replace](container, entry.name);
 
     $("#l8r-Pain-Level").append(container);
 }
 
 function buildNumInput(entry) {
-    var panel =
+    const panel =
         `
             <div id="pnl-idname" class="row border-bottom">
                 <div class="col-lg-3 col-md-3 col-sm-4 col-6 h6 clr-dark-green">ttitle</div>
@@ -242,16 +225,16 @@ function buildNumInput(entry) {
             </div>
         `;
 
-    var id = / /g [Symbol.replace](entry.name, "-");
+    let id = / /g [Symbol.replace](entry.name, "-");
 
-    var container = /idname/g [Symbol.replace](panel, id);
+    let container = /idname/g [Symbol.replace](panel, id);
     container = /ttitle/g [Symbol.replace](container, entry.name);
 
     $("#l8r-Pain-Level").append(container);
 }
 
 function buildDateInput(entry) {
-    var panel =
+    const panel =
         `
             <div id="pnl-idname" class="row border-bottom">
                 <div class="col-lg-3 col-md-3 col-sm-4 col-6 h6 clr-dark-green">ttitle</div>
@@ -259,9 +242,9 @@ function buildDateInput(entry) {
             </div>
         `;
 
-    var id = / /g [Symbol.replace](entry.name, "-");
+    let id = / /g [Symbol.replace](entry.name, "-");
 
-    var container = /idname/g [Symbol.replace](panel, id);
+    let container = /idname/g [Symbol.replace](panel, id);
     container = /ttitle/g [Symbol.replace](container, entry.name);
 
     if ($("#l8r-Pain-Level").length)
@@ -271,7 +254,7 @@ function buildDateInput(entry) {
 }
 
 function buildTimeInput(entry) {
-    var panel =
+    const panel =
         `
             <div id="pnl-idname" class="row border-bottom">
                 <div class="col-lg-3 col-md-3 col-sm-4 col-6 h6 clr-dark-green">ttitle</div>
@@ -279,16 +262,16 @@ function buildTimeInput(entry) {
             </div>
         `;
 
-    var id = / /g [Symbol.replace](entry.name, "-");
+    let id = / /g [Symbol.replace](entry.name, "-");
 
-    var container = /idname/g [Symbol.replace](panel, id);
+    let container = /idname/g [Symbol.replace](panel, id);
     container = /ttitle/g [Symbol.replace](container, entry.name);
 
     $("#l8r-Pain-Level").append(container);
 }
 
 function buildBoolInput(entry) {
-    var panel =
+    const panel =
         `
             <div id="pnl-idname" class="row border-bottom">
                 <div class="col-lg-3 col-md-3 col-sm-4 col-6 h6 clr-dark-green">ttitle</div>
@@ -297,16 +280,16 @@ function buildBoolInput(entry) {
             </div>
         `;
 
-    var id = / /g [Symbol.replace](entry.name, "-");
+    let id = / /g [Symbol.replace](entry.name, "-");
 
-    var container = /idname/g [Symbol.replace](panel, id);
+    let container = /idname/g [Symbol.replace](panel, id);
     container = /ttitle/g [Symbol.replace](container, entry.name);
 
     $("#l8r-Pain-Level").append(container);
 }
 
 function buildBPInput(entry) {
-    var panel =
+    const panel =
         `
             <div id="pnl-idname" class="row border-bottom">
                 <div class="col-lg-3 col-md-3 col-sm-4 col-12 h6 clr-dark-green">ttitle</div>
@@ -320,16 +303,16 @@ function buildBPInput(entry) {
             </div>
         `;
 
-    var id = / /g [Symbol.replace](entry.name, "-");
+    let id = / /g [Symbol.replace](entry.name, "-");
 
-    var container = /idname/g [Symbol.replace](panel, id);
+    let container = /idname/g [Symbol.replace](panel, id);
     container = /ttitle/g [Symbol.replace](container, entry.name);
 
     $("#l8r-Pain-Level").append(container);
 }
 
 function buildWeatherInput(entry) {
-    var panel =
+    const panel =
         `
         <div id="pnl-idname" class="row border-bottom">
             <div class="col-lg-3 col-md-3 col-sm-3 col-12 h6 clr-dark-green">ttitle</div>
@@ -338,23 +321,23 @@ function buildWeatherInput(entry) {
 
         `
 
-    var items =
+        const items =
         `
         <input id="idname" class="rounded col-lg-1 col-md-1 col-sm-1 col-1" type="text">
         <div class="col-lg-2 col-md-2 col-sm-3 col-10 text-left">ttitle</div>
         `;
 
-    var id = / /g [Symbol.replace](entry.name, "-");
+    let id = / /g [Symbol.replace](entry.name, "-");
 
-    var container = /idname/g [Symbol.replace](panel, id);
+    let container = /idname/g [Symbol.replace](panel, id);
     container = /ttitle/g [Symbol.replace](container, entry.name);
 
     $("#l8r-Pain-Level").append(container);
-    var pnl = $("#pnl-" + id);
+    let pnl = $("#pnl-" + id);
 
-    for (var i = 0; i < entry.list.length; ++i) {
-        var id = / /g [Symbol.replace](entry.list[i], "-");
-        var h = /idname/g [Symbol.replace](items, id);
+    for (let i = 0; i < entry.list.length; ++i) {
+        let id = / /g [Symbol.replace](entry.list[i], "-");
+        let h = /idname/g [Symbol.replace](items, id);
         h = /ttitle/g [Symbol.replace](h, entry.list[i]);
 
         pnl.find("#entry").append(h);
@@ -362,7 +345,7 @@ function buildWeatherInput(entry) {
 }
 
 function buildCheckboxList(entry) {
-    var panel =
+    const panel =
         `
         <div id="pnl-idname" class="row border-bottom">
             <div class="col-lg-3 col-md-3 col-sm-4 col-12 h6 clr-dark-green">ttitle</div>
@@ -371,7 +354,7 @@ function buildCheckboxList(entry) {
 
         `;
 
-    var items =
+        const items =
         `
         <label class="col-lg-3 col-md-3 col-sm-3 col-5">
             <input id="idname" type="checkbox">
@@ -379,17 +362,17 @@ function buildCheckboxList(entry) {
         </label>
         `;
 
-    var id = / /g [Symbol.replace](entry.name, "-");
+    let id = / /g [Symbol.replace](entry.name, "-");
 
-    var container = /idname/g [Symbol.replace](panel, id);
+    let container = /idname/g [Symbol.replace](panel, id);
     container = /ttitle/g [Symbol.replace](container, entry.name);
 
     $("#l8r-Pain-Level").append(container);
-    var pnl = $("#pnl-" + id);
+    let pnl = $("#pnl-" + id);
 
-    for (var i = 0; i < entry.list.length; ++i) {
-        var id = / /g [Symbol.replace](entry.list[i], "-");
-        var h = /idname/g [Symbol.replace](items, id);
+    for (let i = 0; i < entry.list.length; ++i) {
+        let id = / /g [Symbol.replace](entry.list[i], "-");
+        let h = /idname/g [Symbol.replace](items, id);
         h = /ttitle/g [Symbol.replace](h, entry.list[i]);
 
         pnl.find("#entry").append(h);
@@ -397,8 +380,8 @@ function buildCheckboxList(entry) {
 }
 
 function procCheckboxList(listname) {
-    var i = 0;
-    var set = [];
+    let i = 0;
+    let set = [];
 
     $("#" + listname + " :checked").each(function () {
         set[i++] = $(this).prop("id");
@@ -432,10 +415,10 @@ function entryButtons(evt, id) {
     diag();
 }
 
-Date.prototype.toDateTimeLocalString =
+Date.prototype.toDateLocalTimeString =
     function toDateTimeLocalString() {
-        var date = this;
-        var ten = function (i) {
+        let date = this;
+        let ten = function (i) {
             return i < 10 ? '0' + i : i;
         }
         return date.getFullYear() +
@@ -445,10 +428,20 @@ Date.prototype.toDateTimeLocalString =
             ":" + ten(date.getMinutes());
     }
 
-Date.prototype.toDateLocalString =
+Date.prototype.toLocalTimeString =
     function toDateTimeLocalString() {
-        var date = this;
-        var ten = function (i) {
+        let date = this;
+        let ten = function (i) {
+            return i < 10 ? '0' + i : i;
+        }
+        return ten(date.getHours()) +
+            ":" + ten(date.getMinutes());
+    }
+
+Date.prototype.toDateString =
+    function toDateTimeLocalString() {
+        let date = this;
+        let ten = function (i) {
             return i < 10 ? '0' + i : i;
         }
         return date.getFullYear() +

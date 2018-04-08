@@ -726,6 +726,7 @@ function doAccountUpgrade(db) {
 
   let account = {};
   account.name = "Account";
+  account.type = "account";
   account.position = 0;
   account.ifdefault = true;
   account.city = "";
