@@ -611,9 +611,8 @@ function lookupWeather(evt) {
   let state = $("#state").val();
   let country = $("#country").val();
   let tmpFormat = $("[name='temp'] :checked").text();
-  let apikey = "36241d90d27162ebecabf6c334851f16";
 
-  let url = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "," + state + "," + country + "&units=" + tmpFormat + "&appid=" + apikey;
+  let url = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "," + state + "," + country + "&units=" + tmpFormat + "&appid=" + openweatherapikey;
 
   loadFile(url, function (data) {
     let h = "<div class='row container'>Lon: " + data.coord.lon + " Lat: " + data.coord.lat + "</div>";
@@ -751,6 +750,7 @@ function doAccountUpgrade(db) {
 }
 
 var accountdb;
+const openweatherapikey = "36241d90d27162ebecabf6c334851f16";
 const stripid = /^.*?-(.*)/g;
 
 $(document).ready(function () {

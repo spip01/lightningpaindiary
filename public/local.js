@@ -1,5 +1,6 @@
 let setupdb;
 let diarydb;
+const openweatherapikey = "36241d90d27162ebecabf6c334851f16";
 
 $(document).ready(function () {
     $("#javascript").empty();
@@ -40,19 +41,16 @@ $(document).ready(function () {
         };
     };
 });
-/*
+
 function newEntry(db) {
+    debugger;
     let entrydate = new Date;
 
-    let entry = {};
-    entry["Date"] = entrydate.toDateString();
-    entry["Start-Time"] = entrydate.toLocalTimeString();
-    entry["Pain-Level"] = 0;
+    $("#pnl-Date #date").val(entrydate.toDateString());
+    $("#pnl-Start-Time #time").val(entrydate.toLocalTimeString());
 
-    let store = db.transaction(["account"], "readwrite").objectStore("account");
-    store.put(entry);
 }
-*/
+
 function setup(db) {
     let store = db.transaction(["account"], "readwrite").objectStore("account");
     let cursor = store.index('by_position').openCursor();
@@ -125,15 +123,15 @@ function buildButtonBars(entry) {
     const panel =
         `
             <div id="pnl-idname" class="row border-bottom">
-            <div class="col-lg-3 col-md-3 col-sm-4 col-12 h6 clr-dark-green">ttitle</div>
-            <div id="entry" class="row col-lg-9 col-md-9 col-sm-8 col-12"></div>
+                <div class="col-lg-3 col-md-3 col-sm-4 col-12 h6 clr-dark-green">ttitle</div>
+                <div id="entry" class="row col-lg-9 col-md-9 col-sm-8 col-12"></div>
             </div>
             <div id="l8r-idname" style="display: none"></div>
             `;
 
     const item =
         `
-                    <button type="button" class="btn btn-sm" style="background-color: colors; width:10%" value="ttitle">ttitle</button>
+        <button type="button" class="btn btn-sm" style="background-color: colors; width:10%" value="ttitle">ttitle</button>
         `;
 
     let id = / /g [Symbol.replace](entry.name, "-");
@@ -238,7 +236,7 @@ function buildDateInput(entry) {
         `
             <div id="pnl-idname" class="row border-bottom">
                 <div class="col-lg-3 col-md-3 col-sm-4 col-6 h6 clr-dark-green">ttitle</div>
-                <input id="num" type="date" class="rounded col-lg-3 col-md-3 col-sm-3 col-6">
+                <input id="date" type="date" class="rounded col-lg-3 col-md-3 col-sm-3 col-6">
             </div>
         `;
 
@@ -258,7 +256,7 @@ function buildTimeInput(entry) {
         `
             <div id="pnl-idname" class="row border-bottom">
                 <div class="col-lg-3 col-md-3 col-sm-4 col-6 h6 clr-dark-green">ttitle</div>
-                <input id="num" type="time" class="rounded col-lg-3 col-md-3 col-sm-3 col-6">
+                <input id="time" type="time" class="rounded col-lg-3 col-md-3 col-sm-3 col-6">
             </div>
         `;
 
@@ -311,39 +309,6 @@ function buildBPInput(entry) {
     $("#l8r-Pain-Level").append(container);
 }
 
-function buildWeatherInput(entry) {
-    const panel =
-        `
-        <div id="pnl-idname" class="row border-bottom">
-            <div class="col-lg-3 col-md-3 col-sm-3 col-12 h6 clr-dark-green">ttitle</div>
-            <div id="entry" class="row col-lg-9 col-md-9 col-sm-8 col-12 "></div>
-        </div>
-
-        `
-
-        const items =
-        `
-        <input id="idname" class="rounded col-lg-1 col-md-1 col-sm-1 col-1" type="text">
-        <div class="col-lg-2 col-md-2 col-sm-3 col-10 text-left">ttitle</div>
-        `;
-
-    let id = / /g [Symbol.replace](entry.name, "-");
-
-    let container = /idname/g [Symbol.replace](panel, id);
-    container = /ttitle/g [Symbol.replace](container, entry.name);
-
-    $("#l8r-Pain-Level").append(container);
-    let pnl = $("#pnl-" + id);
-
-    for (let i = 0; i < entry.list.length; ++i) {
-        let id = / /g [Symbol.replace](entry.list[i], "-");
-        let h = /idname/g [Symbol.replace](items, id);
-        h = /ttitle/g [Symbol.replace](h, entry.list[i]);
-
-        pnl.find("#entry").append(h);
-    }
-}
-
 function buildCheckboxList(entry) {
     const panel =
         `
@@ -351,10 +316,9 @@ function buildCheckboxList(entry) {
             <div class="col-lg-3 col-md-3 col-sm-4 col-12 h6 clr-dark-green">ttitle</div>
             <div id="entry" class="col-lg-9 col-md-9 col-sm-8 col-12"></div>
         </div>
-
         `;
 
-        const items =
+    const items =
         `
         <label class="col-lg-3 col-md-3 col-sm-3 col-5">
             <input id="idname" type="checkbox">
@@ -377,6 +341,76 @@ function buildCheckboxList(entry) {
 
         pnl.find("#entry").append(h);
     }
+}
+
+function buildWeatherInput(entry) {
+    const panel =
+        `
+        <div id="pnl-idname" class="row border-bottom">
+            <div class="col-lg-3 col-md-3 col-sm-3 col-12 h6 clr-dark-green">ttitle</div>
+            <div id="weather" class="row col-lg-9 col-md-9 col-sm-8 col-12 "></div>
+        </div>
+        `;
+    const items =
+        `
+        <input id="idname" class="rounded col-lg-1 col-md-2 col-sm-2 col-2" type="text">
+        <div class="col-lg-2 col-md-2 col-sm-4 col-10 text-left">ttitle</div>
+        `;
+
+    let id = / /g [Symbol.replace](entry.name, "-");
+
+    let container = /idname/g [Symbol.replace](panel, id);
+    container = /ttitle/g [Symbol.replace](container, entry.name);
+
+    $("#l8r-Pain-Level").append(container);
+    let pnl = $("#pnl-" + id);
+
+    for (let i = 0; i < entry.list.length; ++i) {
+        let id = / /g [Symbol.replace](entry.list[i], "-");
+        let h = /idname/g [Symbol.replace](items, id);
+        h = /ttitle/g [Symbol.replace](h, entry.list[i]);
+
+        pnl.find("#weather").append(h);
+    }
+
+    loadWeather(entry);
+}
+
+/************************************** */
+
+function loadWeather(entry) {
+    let store = accountdb.transaction(["account"], "readwrite").objectStore("account");
+    let accountreq = store.index("by_name").get("Account");
+
+    accountreq.onsuccess = function (event) {
+        let account = accountreq.result;
+
+        let url = "http://api.openweathermap.org/data/2.5/weather?q=" + account.city + "," +
+            account.state + "," + account.country + "&units=" + (account.ifmetric ? "metric" : "imperial") +
+            "&appid=" + openweatherapikey;
+
+        loadFile(url, function (data) {
+            console.log(data);
+
+            //list: ["temp", "humidity", "pressure", "wind", "clouds"]
+
+            for (let i = 0; i < entry.list.length; ++i) {
+                let name = entry.list[i];
+                let value;
+                switch (name) {
+                    case "wind":
+                        value = data.wind.speed;
+                        break;
+                    case "clouds":
+                        value = data.clouds.all;
+                        break;
+                    default:
+                        value = data.main[entry.list[i]];
+                }
+                $("#weather #" + entry.list[i]).val(Number(value));
+            }
+        });
+    };
 }
 
 function procCheckboxList(listname) {
@@ -415,6 +449,29 @@ function entryButtons(evt, id) {
     diag();
 }
 
+/************************************** */
+
+function loadFile(url, fctn) {
+    $.ajax({
+        url: url,
+        method: 'GET',
+        success: function (data) {
+            fctn(data);
+        }
+    });
+
+    //let xhttp = new XMLHttpRequest();
+    //xhttp.onreadystatechange = function () {
+    //  if (this.readyState == 4) {
+    //    if (this.status == 200) {
+    //      fctn(this.responseText);
+    //    }
+    //  }
+    //}
+    //xhttp.open("GET", url, true);
+    //xhttp.send();
+}
+
 Date.prototype.toDateLocalTimeString =
     function toDateTimeLocalString() {
         let date = this;
@@ -446,6 +503,5 @@ Date.prototype.toDateString =
         }
         return date.getFullYear() +
             "-" + ten(date.getMonth() + 1) +
-            "-" + ten(date.getDate()) +
-            "-" + ten(date.getFullYear());
+            "-" + ten(date.getDate());
     }
