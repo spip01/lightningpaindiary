@@ -20,39 +20,31 @@ $(document).ready(function () {
 
     accountreq.onsuccess = function () {
         accountdb = accountreq.result;
-        setup(accountdb);
 
         let diaryreq = indexedDB.open("diary", 1);
 
         diaryreq.onupgradeneeded = function () {
             diarydb = diaryreq.result;
             let store = diarydb.createObjectStore("diary", {
-                autoIncrement: true
+                autoIncrement: true,
             });
 
             store.createIndex("by_datetime", "DateTime", {
-                unique: true
+                unique: true,
             });
         };
 
         diaryreq.onsuccess = function () {
             diarydb = diaryreq.result;
-            newEntry(diarydb);
+            setup(diarydb, accountdb, false);
         };
     };
 });
 
-function newEntry(db) {
-    debugger;
-    let entrydate = new Date;
+function updateEntry(diarydb, accountdb) {
+    let value = {};
 
-    $("#pnl-Date #date").val(entrydate.toDateString());
-    $("#pnl-Start-Time #time").val(entrydate.toLocalTimeString());
-
-}
-
-function setup(db) {
-    let store = db.transaction(["account"], "readwrite").objectStore("account");
+    let store = accountdb.transaction(["account"], "readwrite").objectStore("account");
     let cursor = store.index('by_position').openCursor();
     cursor.onsuccess = function (event) {
         let cursor = event.target.result;
@@ -62,64 +54,121 @@ function setup(db) {
 
             switch (entry.type) {
                 case "blood pressure":
-                    buildBPInput(entry);
+                    value[entry.name] = extractBPInput(entry);
                     break;
                 case "date":
-                    buildDateInput(entry);
+                    value[entry.name] = extractDateInput(entry);
                     break;
                 case "list":
-                    buildCheckboxList(entry);
+                    value[entry.name] = extractCheckboxList(entry);
                     break;
                 case "number":
-                    buildNumInput(entry);
+                    value[entry.name] = extractNumInput(entry);
                     break;
                 case "range":
-                    buildButtonBars(entry);
+                    value[entry.name] = extractButtonBars(entry);
                     break;
                 case "text":
-                    buildTextInput(entry);
+                    value[entry.name] = extractTextInput(entry);
                     break;
                 case "time":
-                    buildTimeInput(entry);
+                    value[entry.name] = extractTimeInput(entry);
                     break;
                 case "true false":
-                    buildBoolInput(entry);
+                    value[entry.name] = extractBoolInput(entry);
                     break;
                 case "weather":
-                    buildWeatherInput(entry);
+                    value[entry.name] = extractWeatherInput(entry);
                     break;
             }
 
             cursor.continue();
         } else {
-            $("#updt").click(function () {
-                $("#l8r-Pain-Level").show();
-                $("#last").removeClass("disabled");
-                $("#last").removeAttr("disabled");
-                $("#new").removeClass("disabled");
-                $("#new").removeAttr("disabled");
-                $("#cancel").removeClass("disabled");
-                $("#cancel").removeAttr("disabled");
-
-                updateEntry(accountdb);
-            });
-
-            $("#last").click(function () {
-                lastEntry(accountdb);
-            });
-
-            $("#new").click(function () {
-                newEntry(accountdb);
-            });
-
-            $("#cancel").click(function () {
-                cancelEntry(accountdb);
-            });
+            let store = diarydb.transaction(["account"], "readwrite").objectStore("account");
+            store.put(entry);
         }
     }
 }
 
-function buildButtonBars(entry) {
+function setup(diarydb, accountdb, ifcancel) {
+    $("#panels").empty();
+
+    let store = diarydb.transaction(["account"], "readwrite").objectStore("account");
+    let cursor = store.openCursor(null, "prev");
+    cursor.onsuccess = function (event) {
+        let diary = event.target.result.value;
+
+        let store = accountdb.transaction(["account"], "readwrite").objectStore("account");
+
+        let req = store.get("Account");
+        req.onsuccess = function () {
+            let account = accountreq.result;
+            if (!account.ifdefault || ifcancel)
+                diary = null;
+
+            let cursor = store.index('by_position').openCursor();
+            cursor.onsuccess = function (event) {
+                let cursor = event.target.result;
+
+                if (cursor) {
+                    let entry = cursor.value;
+
+                    switch (entry.type) {
+                        case "blood pressure":
+                            buildBPInput(entry, diary);
+                            break;
+                        case "date":
+                            buildDateInput(entry, diary);
+                            break;
+                        case "list":
+                            buildCheckboxList(entry, diary);
+                            break;
+                        case "number":
+                            buildNumInput(entry, diary);
+                            break;
+                        case "range":
+                            buildButtonBars(entry, diary);
+                            break;
+                        case "text":
+                            buildTextInput(entry, diary);
+                            break;
+                        case "time":
+                            buildTimeInput(entry, diary);
+                            break;
+                        case "true false":
+                            buildBoolInput(entry, diary);
+                            break;
+                        case "weather":
+                            buildWeatherInput(entry, diary);
+                            break;
+                    }
+
+                    cursor.continue();
+                } else {
+                    $("#save").click(function () {
+                        $("#l8r-Pain-Level").show();
+                        $("#new").removeClass("disabled");
+                        $("#new").removeAttr("disabled");
+                        $("#del").removeClass("disabled");
+                        $("#del").removeAttr("disabled");
+
+                        updateEntry(accountdb);
+                    });
+
+                    $("#new").click(function () {
+                        setup(diarydb, accountdb, false);
+                    });
+
+                    $("#del").click(function () {
+                        setup(diarydb, accountdb, true);
+                    });
+                }
+            };
+        };
+    };
+}
+
+function buildButtonBars(entry, diary) {
     const panel =
         `
             <div id="pnl-idname" class="row border-bottom">
@@ -166,7 +215,7 @@ function buildButtonBars(entry) {
 }
 
 /*
-function buildSlider(entry) {
+function buildSlider(entry, diary) {
     const panel =
         `
             <div id="pnl-idname" class="row border-bottom">
@@ -195,7 +244,7 @@ function buildSlider(entry) {
 }
 */
 
-function buildTextInput(entry) {
+function buildTextInput(entry, diary) {
     const panel =
         `
             <div id="pnl-idname" class="row border-bottom">
@@ -212,7 +261,7 @@ function buildTextInput(entry) {
     $("#l8r-Pain-Level").append(container);
 }
 
-function buildNumInput(entry) {
+function buildNumInput(entry, diary) {
     const panel =
         `
             <div id="pnl-idname" class="row border-bottom">
@@ -231,7 +280,7 @@ function buildNumInput(entry) {
     $("#l8r-Pain-Level").append(container);
 }
 
-function buildDateInput(entry) {
+function buildDateInput(entry, diary) {
     const panel =
         `
             <div id="pnl-idname" class="row border-bottom">
@@ -251,7 +300,7 @@ function buildDateInput(entry) {
         $("#panels").append(container);
 }
 
-function buildTimeInput(entry) {
+function buildTimeInput(entry, diary) {
     const panel =
         `
             <div id="pnl-idname" class="row border-bottom">
@@ -268,7 +317,7 @@ function buildTimeInput(entry) {
     $("#l8r-Pain-Level").append(container);
 }
 
-function buildBoolInput(entry) {
+function buildBoolInput(entry, diary) {
     const panel =
         `
             <div id="pnl-idname" class="row border-bottom">
@@ -286,7 +335,7 @@ function buildBoolInput(entry) {
     $("#l8r-Pain-Level").append(container);
 }
 
-function buildBPInput(entry) {
+function buildBPInput(entry, diary) {
     const panel =
         `
             <div id="pnl-idname" class="row border-bottom">
@@ -309,7 +358,7 @@ function buildBPInput(entry) {
     $("#l8r-Pain-Level").append(container);
 }
 
-function buildCheckboxList(entry) {
+function buildCheckboxList(entry, diary) {
     const panel =
         `
         <div id="pnl-idname" class="row border-bottom">
@@ -343,7 +392,7 @@ function buildCheckboxList(entry) {
     }
 }
 
-function buildWeatherInput(entry) {
+function buildWeatherInput(entry, diary) {
     const panel =
         `
         <div id="pnl-idname" class="row border-bottom">
@@ -359,12 +408,12 @@ function buildWeatherInput(entry) {
 
     $("#l8r-Pain-Level").append(container);
 
-    loadWeather(entry);
+    loadWeather(entry, diary);
 }
 
 /************************************** */
 
-function loadWeather(entry) {
+function loadWeather(entry, diary) {
     let store = accountdb.transaction(["account"], "readwrite").objectStore("account");
     let accountreq = store.index("by_name").get("Account");
 
@@ -409,7 +458,7 @@ function loadWeather(entry) {
                 h = /value/g [Symbol.replace](h, value);
 
                 pnl.append(h);
-                pnl.find("#"+id).append(j);
+                pnl.find("#" + id).append(j);
             }
         });
     };
@@ -431,24 +480,6 @@ function procButtons(evt, id) {
     $(evt).addClass("w3-light-gray");
 
     return ($(evt).val());
-}
-
-function entryButtons(evt, id) {
-    button = $(evt).text();
-
-    switch (button) {
-        case "Update":
-            updateEntry(evt);
-            break;
-        case "New":
-            newEntry(evt);
-            break;
-        case "Cancel":
-            cancelEntry(evt);
-            break;
-    }
-
-    diag();
 }
 
 /************************************** */
