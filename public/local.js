@@ -351,11 +351,6 @@ function buildWeatherInput(entry) {
             <div id="weather" class="row col-lg-9 col-md-9 col-sm-8 col-12 "></div>
         </div>
         `;
-    const items =
-        `
-        <input id="idname" class="rounded col-lg-1 col-md-2 col-sm-2 col-2" type="text">
-        <div class="col-lg-2 col-md-2 col-sm-4 col-10 text-left">ttitle</div>
-        `;
 
     let id = / /g [Symbol.replace](entry.name, "-");
 
@@ -363,15 +358,6 @@ function buildWeatherInput(entry) {
     container = /ttitle/g [Symbol.replace](container, entry.name);
 
     $("#l8r-Pain-Level").append(container);
-    let pnl = $("#pnl-" + id);
-
-    for (let i = 0; i < entry.list.length; ++i) {
-        let id = / /g [Symbol.replace](entry.list[i], "-");
-        let h = /idname/g [Symbol.replace](items, id);
-        h = /ttitle/g [Symbol.replace](h, entry.list[i]);
-
-        pnl.find("#weather").append(h);
-    }
 
     loadWeather(entry);
 }
@@ -383,6 +369,8 @@ function loadWeather(entry) {
     let accountreq = store.index("by_name").get("Account");
 
     accountreq.onsuccess = function (event) {
+        const items = `<div id="idname" class="col-lg-3 col-md-4 col-sm-6 col-6">ttitle: value</div>`;
+        const icon = `<img src="http://openweathermap.org/img/w/iicon.png">`;
         let account = accountreq.result;
 
         let url = "http://api.openweathermap.org/data/2.5/weather?q=" + account.city + "," +
@@ -391,12 +379,17 @@ function loadWeather(entry) {
 
         loadFile(url, function (data) {
             console.log(data);
-
-            //list: ["temp", "humidity", "pressure", "wind", "clouds"]
+            let pnl = $("#pnl-Weather #weather");
 
             for (let i = 0; i < entry.list.length; ++i) {
                 let name = entry.list[i];
                 let value;
+
+                let id = / /g [Symbol.replace](name, "-");
+                let h = /idname/g [Symbol.replace](items, id);
+                h = /ttitle/g [Symbol.replace](h, name);
+                let j = "";
+
                 switch (name) {
                     case "wind":
                         value = data.wind.speed;
@@ -404,10 +397,19 @@ function loadWeather(entry) {
                     case "clouds":
                         value = data.clouds.all;
                         break;
+                    case "description":
+                        value = data.weather[0].description
+                        let iicon = data.weather[0].icon;
+                        j = /iicon/g [Symbol.replace](icon, iicon);
+                        break;
                     default:
-                        value = data.main[entry.list[i]];
+                        value = data.main[name];
                 }
-                $("#weather #" + entry.list[i]).val(Number(value));
+
+                h = /value/g [Symbol.replace](h, value);
+
+                pnl.append(h);
+                pnl.find("#"+id).append(j);
             }
         });
     };
