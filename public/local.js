@@ -66,7 +66,7 @@ function updateEntry(diarydb, accountdb) {
                     value[entry.name] = extractNumInput(entry);
                     break;
                 case "range":
-                    //value[entry.name] = extractButtonBars(entry);
+                    value[entry.name] = extractRange(entry);
                     break;
                 case "text":
                     value[entry.name] = extractTextInput(entry);
@@ -130,7 +130,7 @@ function setup(diarydb, accountdb, ifcancel) {
                             buildNumInput(entry, diary);
                             break;
                         case "range":
-                            buildButtonBars(entry, diary);
+                            buildRange(entry, diary);
                             break;
                         case "text":
                             buildTextInput(entry, diary);
@@ -165,13 +165,17 @@ function setup(diarydb, accountdb, ifcancel) {
                     $("#del").click(function () {
                         setup(diarydb, accountdb, true);
                     });
+
+                    $("#panels button").click(function () {
+                        procRange(this);
+                    });
                 }
             };
         };
     };
 }
 
-function buildButtonBars(entry, diary) {
+function buildRange(entry, diary) {
     const panel =
         `
             <div id="pnl-idname" class="row border-bottom">
@@ -215,6 +219,16 @@ function buildButtonBars(entry, diary) {
             pnl.find("#entry").append(h);
         }
     }
+}
+
+function extractRange(entry, diary) {
+    let id = / /g [Symbol.replace](entry.name, "-");
+    return ($("#pnl-" + id + " .btn-green").val());
+}
+
+function procRange(evt) {
+    $(evt).parent().find("button").removeClass("btn-green");
+    $(evt).addClass("btn-green");
 }
 
 /*
@@ -511,13 +525,6 @@ function procCheckboxList(listname) {
     });
 
     return (set);
-}
-
-function procButtons(evt, id) {
-    $("#" + id + " button").removeClass("w3-light-gray");
-    $(evt).addClass("w3-light-gray");
-
-    return ($(evt).val());
 }
 
 /************************************** */
