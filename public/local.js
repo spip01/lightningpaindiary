@@ -93,7 +93,7 @@ function updateEntry(diarydb, accountdb) {
 function setup(diarydb, accountdb, ifcancel) {
     $("#panels").empty();
 
-    let store = diarydb.transaction(["account"], "readwrite").objectStore("account");
+    let store = diarydb.transaction(["diary"], "readwrite").objectStore("diary");
     let cursor = store.openCursor(null, "prev");
     cursor.onsuccess = function (event) {
         let diary = event.target.result.value;
