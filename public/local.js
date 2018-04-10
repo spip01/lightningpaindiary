@@ -60,7 +60,7 @@ function updateEntry(diarydb, accountdb) {
                     value[entry.name] = extractDateInput(entry);
                     break;
                 case "list":
-                    //value[entry.name] = extractCheckboxList(entry);
+                    value[entry.name] = extractCheckboxList(entry);
                     break;
                 case "number":
                     value[entry.name] = extractNumInput(entry);
@@ -78,7 +78,7 @@ function updateEntry(diarydb, accountdb) {
                     value[entry.name] = extractBoolInput(entry);
                     break;
                 case "weather":
-                    //value[entry.name] = extractWeatherInput(entry);
+                    value[entry.name] = extractWeatherInput(entry);
                     break;
             }
 
@@ -221,7 +221,7 @@ function buildRange(entry, diary) {
     }
 }
 
-function extractRange(entry, diary) {
+function extractRange(entry) {
     let id = / /g [Symbol.replace](entry.name, "-");
     return ($("#pnl-" + id + " .btn-green").val());
 }
@@ -302,7 +302,7 @@ function buildNumInput(entry, diary) {
     $("#l8r-Pain-Level").append(container);
 }
 
-function extractNumInput(entry, diary) {
+function extractNumInput(entry) {
     let id = / /g [Symbol.replace](entry.name, "-");
     return (Number($("#pnl-" + id + " #num").val()));
 }
@@ -327,7 +327,7 @@ function buildDateInput(entry, diary) {
         $("#panels").append(container);
 }
 
-function extractDateInput(entry, diary) {
+function extractDateInput(entry) {
     let id = / /g [Symbol.replace](entry.name, "-");
     return (Date($("#pnl-" + id + " #date").val()));
 }
@@ -349,7 +349,7 @@ function buildTimeInput(entry, diary) {
     $("#l8r-Pain-Level").append(container);
 }
 
-function extractTimeInput(entry, diary) {
+function extractTimeInput(entry) {
     let id = / /g [Symbol.replace](entry.name, "-");
     return (Date($("#pnl-" + id + " #time").val()));
 }
@@ -372,7 +372,7 @@ function buildBoolInput(entry, diary) {
     $("#l8r-Pain-Level").append(container);
 }
 
-function extractBoolInput(entry, diary) {
+function extractBoolInput(entry) {
     let id = / /g [Symbol.replace](entry.name, "-");
     return ($("#pnl-" + id + " :checked").parent().text() === " Yes");
 }
@@ -400,7 +400,7 @@ function buildBPInput(entry, diary) {
     $("#l8r-Pain-Level").append(container);
 }
 
-function extractBPInput(entry, diary) {
+function extractBPInput(entry) {
     let id = / /g [Symbol.replace](entry.name, "-");
     let value = {
         high: Number($("#pnl-" + id + " #high").val()),
@@ -444,6 +444,19 @@ function buildCheckboxList(entry, diary) {
     }
 }
 
+function extractCheckboxList(entry) {
+    let i = 0;
+    let set = [];
+    let id = / /g [Symbol.replace](entry.name, "-");
+
+    $("#pnl-" + id + " :checked").each(function () {
+        set[i++] = $(this).prop("id");
+    });
+
+    return (set);
+}
+
+
 function buildWeatherInput(entry, diary) {
     const panel =
         `
@@ -461,6 +474,17 @@ function buildWeatherInput(entry, diary) {
     $("#l8r-Pain-Level").append(container);
 
     loadWeather(entry, diary);
+}
+
+function extractWeatherInput(entry) {
+    let id = / /g [Symbol.replace](entry.name, "-");
+    let value = {};
+
+    $("#pnl-" + id + " div").find("div").each(function () {
+        value[$(this).prop("id")] = $(this).text().replace(/.*?: (.*)/g, "$1");
+    });
+
+    return (value);
 }
 
 /************************************** */
@@ -514,17 +538,6 @@ function loadWeather(entry, diary) {
             }
         });
     };
-}
-
-function procCheckboxList(listname) {
-    let i = 0;
-    let set = [];
-
-    $("#" + listname + " :checked").each(function () {
-        set[i++] = $(this).prop("id");
-    });
-
-    return (set);
 }
 
 /************************************** */
