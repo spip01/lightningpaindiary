@@ -60,13 +60,13 @@ function updateEntry(diarydb, accountdb) {
                     value[entry.name] = extractDateInput(entry);
                     break;
                 case "list":
-                    value[entry.name] = extractCheckboxList(entry);
+                    //value[entry.name] = extractCheckboxList(entry);
                     break;
                 case "number":
                     value[entry.name] = extractNumInput(entry);
                     break;
                 case "range":
-                    value[entry.name] = extractButtonBars(entry);
+                    //value[entry.name] = extractButtonBars(entry);
                     break;
                 case "text":
                     value[entry.name] = extractTextInput(entry);
@@ -78,14 +78,14 @@ function updateEntry(diarydb, accountdb) {
                     value[entry.name] = extractBoolInput(entry);
                     break;
                 case "weather":
-                    value[entry.name] = extractWeatherInput(entry);
+                    //value[entry.name] = extractWeatherInput(entry);
                     break;
             }
 
             cursor.continue();
         } else {
-            let store = diarydb.transaction(["account"], "readwrite").objectStore("account");
-            store.put(entry);
+            let store = diarydb.transaction(["diary"], "readwrite").objectStore("diary");
+            store.put(value);
         }
     }
 }
@@ -94,15 +94,18 @@ function setup(diarydb, accountdb, ifcancel) {
     $("#panels").empty();
 
     let store = diarydb.transaction(["diary"], "readwrite").objectStore("diary");
-    let cursor = store.openCursor(null, "prev");
-    cursor.onsuccess = function (event) {
-        let diary = event.target.result.value;
+    let req = store.openCursor(null, "prev");
+    req.onsuccess = function (event) {
+        let cursor = event.target.result;
+        let diary = null;
+
+        if (cursor)
+            diary = cursor.value;
 
         let store = accountdb.transaction(["account"], "readwrite").objectStore("account");
-
-        let req = store.get("Account");
+        let req = store.index("by_name").get("Account");
         req.onsuccess = function () {
-            let account = accountreq.result;
+            let account = req.result;
             if (!account.ifdefault || ifcancel)
                 diary = null;
 
@@ -152,7 +155,7 @@ function setup(diarydb, accountdb, ifcancel) {
                         $("#del").removeClass("disabled");
                         $("#del").removeAttr("disabled");
 
-                        updateEntry(accountdb);
+                        updateEntry(diarydb, accountdb);
                     });
 
                     $("#new").click(function () {
@@ -261,6 +264,11 @@ function buildTextInput(entry, diary) {
     $("#l8r-Pain-Level").append(container);
 }
 
+function extractTextInput(entry) {
+    let id = / /g [Symbol.replace](entry.name, "-");
+    return ($("#pnl-" + id + " #txt").val());
+}
+
 function buildNumInput(entry, diary) {
     const panel =
         `
@@ -278,6 +286,11 @@ function buildNumInput(entry, diary) {
     container = /ttitle/g [Symbol.replace](container, entry.name);
 
     $("#l8r-Pain-Level").append(container);
+}
+
+function extractNumInput(entry, diary) {
+    let id = / /g [Symbol.replace](entry.name, "-");
+    return (Number($("#pnl-" + id + " #num").val()));
 }
 
 function buildDateInput(entry, diary) {
@@ -300,6 +313,11 @@ function buildDateInput(entry, diary) {
         $("#panels").append(container);
 }
 
+function extractDateInput(entry, diary) {
+    let id = / /g [Symbol.replace](entry.name, "-");
+    return (Date($("#pnl-" + id + " #date").val()));
+}
+
 function buildTimeInput(entry, diary) {
     const panel =
         `
@@ -315,6 +333,11 @@ function buildTimeInput(entry, diary) {
     container = /ttitle/g [Symbol.replace](container, entry.name);
 
     $("#l8r-Pain-Level").append(container);
+}
+
+function extractTimeInput(entry, diary) {
+    let id = / /g [Symbol.replace](entry.name, "-");
+    return (Date($("#pnl-" + id + " #time").val()));
 }
 
 function buildBoolInput(entry, diary) {
@@ -335,17 +358,22 @@ function buildBoolInput(entry, diary) {
     $("#l8r-Pain-Level").append(container);
 }
 
+function extractBoolInput(entry, diary) {
+    let id = / /g [Symbol.replace](entry.name, "-");
+    return ($("#pnl-" + id + " :checked").parent().text() === " Yes");
+}
+
 function buildBPInput(entry, diary) {
     const panel =
         `
             <div id="pnl-idname" class="row border-bottom">
                 <div class="col-lg-3 col-md-3 col-sm-4 col-12 h6 clr-dark-green">ttitle</div>
                 <div id="entry" class="row col-lg-9 col-md-9 col-sm-12 col-12">
-                    <input id="idname" class="rounded col-lg-1 col-md-1 col-sm-1 col-1" type="text">
+                    <input id="high" class="rounded col-lg-1 col-md-1 col-sm-1 col-1" type="text">
                     <div class="col-lg-1 col-md-1 col-sm-1 col-1 text-center">/</div>
-                    <input id="idname" class="rounded col-lg-1 col-md-1 col-sm-1 col-1" type="text">
+                    <input id="low" class="rounded col-lg-1 col-md-1 col-sm-1 col-1" type="text">
                     <div class="col-lg-1 col-md-2 col-sm-3 col-3 text-right">pulse</div>
-                    <input id="idname" class="rounded col-lg-1 col-md-1 col-sm-1 col-1" type="text">
+                    <input id="pulse" class="rounded col-lg-1 col-md-1 col-sm-1 col-1" type="text">
                 </div>
             </div>
         `;
@@ -356,6 +384,16 @@ function buildBPInput(entry, diary) {
     container = /ttitle/g [Symbol.replace](container, entry.name);
 
     $("#l8r-Pain-Level").append(container);
+}
+
+function extractBPInput(entry, diary) {
+    let id = / /g [Symbol.replace](entry.name, "-");
+    let value = {
+        high: Number($("#pnl-" + id + " #high").val()),
+        low: Number($("#pnl-" + id + " #low").val()),
+        pulse: Number($("#pnl-" + id + " #pulse").val()),
+    };
+    return (value);
 }
 
 function buildCheckboxList(entry, diary) {
