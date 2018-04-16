@@ -2,6 +2,9 @@ let setupdb;
 let diarydb;
 const openweatherapikey = "36241d90d27162ebecabf6c334851f16";
 
+loadHtml("https://raw.githubusercontent.com/spip01/lightningpaindiary/bootstrap/public/navbar.html", "#navbar");
+loadHtml("https://raw.githubusercontent.com/spip01/lightningpaindiary/bootstrap/public/footer.html", "#footer");
+
 $(document).ready(function () {
     $("#javascript").empty();
     $("#jssite").show();
@@ -575,6 +578,13 @@ function loadWeather(entry, diary) {
 }
 
 /************************************** */
+
+function loadHtml(url, selector) {
+    loadFile(url, function (data) {
+        let html = data.replace(/(?:.*?\n)*?<body>((?:.*?\n)+?)<\/body>(.*?\n?)*/g, "$1");
+        $(selector).append(html);
+    });
+}
 
 function loadFile(url, fctn) {
     $.ajax({
