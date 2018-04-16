@@ -36,7 +36,25 @@ $(document).ready(function () {
 
         diaryreq.onsuccess = function () {
             diarydb = diaryreq.result;
-            setup(diarydb, accountdb, false);
+            setup(diarydb, accountdb, false, false);
+
+            $("#save").click(function () {
+                $("#l8r-Pain-Level").show();
+                $("#new").removeClass("disabled");
+                $("#new").removeAttr("disabled");
+                $("#del").removeClass("disabled");
+                $("#del").removeAttr("disabled");
+
+                updateEntry(diarydb, accountdb);
+            });
+
+            $("#new").click(function () {
+                setup(diarydb, accountdb, false, true);
+            });
+
+            $("#del").click(function () {
+                setup(diarydb, accountdb, true, true);
+            });
         };
     };
 });
@@ -84,13 +102,22 @@ function updateEntry(diarydb, accountdb) {
 
             cursor.continue();
         } else {
+            value.DateTime = new Date(value["Date"] + " " + value["Time"]);
             let store = diarydb.transaction(["diary"], "readwrite").objectStore("diary");
-            store.put(value);
+            let req = store.openCursor(IDBKeyRange.only(value.DateTime));
+            req.onsuccess = function (event) {
+                let cursor = event.target.result;
+
+                if (cursor)
+                    store.update(value);
+                else
+                    store.put(value);
+            };
         }
     }
 }
 
-function setup(diarydb, accountdb, ifcancel) {
+function setup(diarydb, accountdb, ifcancel, ifshow) {
     $("#panels").empty();
 
     let store = diarydb.transaction(["diary"], "readwrite").objectStore("diary");
@@ -148,23 +175,14 @@ function setup(diarydb, accountdb, ifcancel) {
 
                     cursor.continue();
                 } else {
-                    $("#save").click(function () {
-                        $("#l8r-Pain-Level").show();
-                        $("#new").removeClass("disabled");
-                        $("#new").removeAttr("disabled");
-                        $("#del").removeClass("disabled");
-                        $("#del").removeAttr("disabled");
+                    let now = new Date();
+                    $("#pnl-Date input").val(now.toDateString());
+                    $("#pnl-Time input").val(now.toLocalTimeString());
 
-                        updateEntry(diarydb, accountdb);
-                    });
+                    $("#panels").show();
 
-                    $("#new").click(function () {
-                        setup(diarydb, accountdb, false);
-                    });
-
-                    $("#del").click(function () {
-                        setup(diarydb, accountdb, true);
-                    });
+                    //if (ifshow)
+                    $("#l8r-Pain-Level").show();
 
                     $("#panels button").click(function () {
                         procRange(this);
@@ -178,33 +196,33 @@ function setup(diarydb, accountdb, ifcancel) {
 function buildRange(entry, diary) {
     const panel =
         `
-            <div id="pnl-idname" class="row border-bottom">
-                <div class="col-lg-3 col-md-3 col-sm-4 col-12 h6 clr-dark-green">ttitle</div>
-                <div id="entry" class="row col-lg-9 col-md-9 col-sm-8 col-12"></div>
-            </div>
-            <div id="l8r-idname" style="display: none"></div>
-            `;
-
-    const item =
-        `
-        <button type="button" class="btn btn-sm" style="background-color: colors; width:10%" value="ttitle">ttitle</button>
+        <div id="pnl-idname" class="row border-bottom">
+            <div class="col-lg-3 col-md-3 col-sm-4 col-12 h6 clr-dark-green">ttitle</div>
+            <div id="entry" class="row col-lg-9 col-md-9 col-sm-8 col-12"></div>
+        </div>
+        <div id="l8r-idname" style="display: none"></div>
         `;
+
+    const item = `<button id="btn-ttitle" type="button" class="btn btn-sm iffocus" style="background-color: colors; width:10%">ttitle</button>`;
 
     let id = / /g [Symbol.replace](entry.name, "-");
 
     let container = /idname/g [Symbol.replace](panel, id);
     container = /ttitle/g [Symbol.replace](container, entry.name);
 
-    if ($("#l8r-Pain-Level").length)
+    if ($("#l8r-Pain-Level").length) {
         $("#l8r-Pain-Level").append(container);
-    else
+    } else {
         $("#panels").append(container);
+    }
+
     let pnl = $("#pnl-" + id);
 
     if (entry.start < entry.end) {
         for (let i = entry.start; i <= entry.end; i++) {
             let c = 120 - (i - entry.start) / (entry.end - entry.start) * 120;
             let h = /ttitle/g [Symbol.replace](item, i);
+            h = /iffocus/g [Symbol.replace](h, diary[entry.name] == i ? "btn-green" : "");
             h = h.replace("colors", "hsl(" + c + ",100%,50%)");
 
             pnl.find("#entry").append(h);
@@ -214,16 +232,17 @@ function buildRange(entry, diary) {
             let c = (i - entry.end) / (entry.start - entry.end) * 120;
 
             let h = /ttitle/g [Symbol.replace](item, i);
+            h = /iffocus/g [Symbol.replace](h, diary[entry.name] == i ? "btn-green" : "");
             h = h.replace("colors", "hsl(" + c + ",100%,50%)");
 
-            pnl.find("#entry").append(h);
+            let btn = pnl.find("#entry").append(h);
         }
     }
 }
 
 function extractRange(entry) {
     let id = / /g [Symbol.replace](entry.name, "-");
-    return ($("#pnl-" + id + " .btn-green").val());
+    return ($("#pnl-" + id + " .btn-green").prop("id").replace(/btn-(\d+)/g, "$1"));
 }
 
 function procRange(evt) {
@@ -235,13 +254,13 @@ function procRange(evt) {
 function buildSlider(entry, diary) {
     const panel =
         `
-            <div id="pnl-idname" class="row border-bottom">
-                <div class="col-lg-4 col-md-4 col-sm-4 col-6 h6 clr-dark-green">ttitle</div>
-                <div class="range range-primary col-lg-8 col-md-8 col-sm-8 col-8">
-                    <input type="range" name="range" min="istart" max="iend" value="istart" onchange="rangePrimary.value=value" style="width: 90%">&nbsp;
-                    <output id="rangePrimary" class="h6">istart</output>
-                </div>
+        <div id="pnl-idname" class="row border-bottom">
+            <div class="col-lg-4 col-md-4 col-sm-4 col-6 h6 clr-dark-green">ttitle</div>
+            <div class="range range-primary col-lg-8 col-md-8 col-sm-8 col-8">
+                <input type="range" name="range" min="istart" max="iend" value="istart" onchange="rangePrimary.value=value" style="width: 90%">&nbsp;
+                <output id="rangePrimary" class="h6">istart</output>
             </div>
+        </div>
         `;
 
     let id = / /g [Symbol.replace](entry.name, "-");
@@ -251,7 +270,7 @@ function buildSlider(entry, diary) {
     container = /istart/g [Symbol.replace](container, entry.start);
     container = /iend/g [Symbol.replace](container, entry.end);
 
-    $("#panels").append(container);
+        $("#panels").append(container);
 
     $('#slider').slider({
         formatter: function (value) {
@@ -264,16 +283,17 @@ function buildSlider(entry, diary) {
 function buildTextInput(entry, diary) {
     const panel =
         `
-            <div id="pnl-idname" class="row border-bottom">
-                <div class="col-lg-3 col-md-3 col-sm-4 col-12 h6 clr-dark-green">ttitle</div>
-                <textarea id="txt" rows="2" class="rounded col-lg-8 col-md-8 col-sm-8 col-12"></textarea>
-            </div>
+        <div id="pnl-idname" class="row border-bottom">
+            <div class="col-lg-3 col-md-3 col-sm-4 col-12 h6 clr-dark-green">ttitle</div>
+            <textarea id="txt" rows="2" class="rounded col-lg-8 col-md-8 col-sm-8 col-12">vvalue</textarea>
+        </div>
         `;
 
     let id = / /g [Symbol.replace](entry.name, "-");
 
     let container = /idname/g [Symbol.replace](panel, id);
     container = /ttitle/g [Symbol.replace](container, entry.name);
+    container = /vvalue/g [Symbol.replace](container, diary ? diary[entry.name] : "");
 
     $("#l8r-Pain-Level").append(container);
 }
@@ -286,18 +306,19 @@ function extractTextInput(entry) {
 function buildNumInput(entry, diary) {
     const panel =
         `
-            <div id="pnl-idname" class="row border-bottom">
-                <div class="col-lg-3 col-md-3 col-sm-4 col-6 h6 clr-dark-green">ttitle</div>
-                <div id="entry" class="row col-lg-9 col-md-9 col-sm-8 col-6">
-                    <input id="num" type="text" class="rounded col-lg-1 col-md-1 col-sm-1 col-1">
-                </div>
+        <div id="pnl-idname" class="row border-bottom">
+            <div class="col-lg-3 col-md-3 col-sm-4 col-6 h6 clr-dark-green">ttitle</div>
+            <div id="entry" class="row col-lg-9 col-md-9 col-sm-8 col-6">
+                <input id="num" type="text" class="rounded col-lg-1 col-md-1 col-sm-1 col-1" value="vvalue">
             </div>
+        </div>
         `;
 
     let id = / /g [Symbol.replace](entry.name, "-");
 
     let container = /idname/g [Symbol.replace](panel, id);
     container = /ttitle/g [Symbol.replace](container, entry.name);
+    container = /vvalue/g [Symbol.replace](container, diary ? diary[entry.name] : "");
 
     $("#l8r-Pain-Level").append(container);
 }
@@ -310,92 +331,104 @@ function extractNumInput(entry) {
 function buildDateInput(entry, diary) {
     const panel =
         `
-            <div id="pnl-idname" class="row border-bottom">
-                <div class="col-lg-3 col-md-3 col-sm-4 col-6 h6 clr-dark-green">ttitle</div>
-                <input id="date" type="date" class="rounded col-lg-3 col-md-3 col-sm-3 col-6">
-            </div>
+        <div id="pnl-idname" class="row border-bottom">
+            <div class="col-lg-3 col-md-3 col-sm-4 col-6 h6 clr-dark-green">ttitle</div>
+            <input id="date" type="date" class="rounded col-lg-3 col-md-3 col-sm-3 col-6" value="vvalue">
+        </div>
         `;
 
     let id = / /g [Symbol.replace](entry.name, "-");
 
     let container = /idname/g [Symbol.replace](panel, id);
     container = /ttitle/g [Symbol.replace](container, entry.name);
+    container = /vvalue/g [Symbol.replace](container, diary ? diary[entry.name] : "");
 
-    if ($("#l8r-Pain-Level").length)
+    if ($("#l8r-Pain-Level").length) {
         $("#l8r-Pain-Level").append(container);
-    else
+    } else {
         $("#panels").append(container);
+    }
 }
 
 function extractDateInput(entry) {
     let id = / /g [Symbol.replace](entry.name, "-");
-    return (Date($("#pnl-" + id + " #date").val()));
+    return ($("#pnl-" + id + " #date").val());
 }
 
 function buildTimeInput(entry, diary) {
     const panel =
         `
-            <div id="pnl-idname" class="row border-bottom">
-                <div class="col-lg-3 col-md-3 col-sm-4 col-6 h6 clr-dark-green">ttitle</div>
-                <input id="time" type="time" class="rounded col-lg-3 col-md-3 col-sm-3 col-6">
-            </div>
+        <div id="pnl-idname" class="row border-bottom">
+            <div class="col-lg-3 col-md-3 col-sm-4 col-6 h6 clr-dark-green">ttitle</div>
+            <input id="time" type="time" class="rounded col-lg-3 col-md-3 col-sm-3 col-6" value="vvalue">
+        </div>
         `;
 
     let id = / /g [Symbol.replace](entry.name, "-");
 
     let container = /idname/g [Symbol.replace](panel, id);
     container = /ttitle/g [Symbol.replace](container, entry.name);
+    container = /vvalue/g [Symbol.replace](container, diary ? diary[entry.name] : "");
 
-    $("#l8r-Pain-Level").append(container);
+    if ($("#l8r-Pain-Level").length) {
+        $("#l8r-Pain-Level").append(container);
+    } else {
+        $("#panels").append(container);
+    }
 }
 
 function extractTimeInput(entry) {
     let id = / /g [Symbol.replace](entry.name, "-");
-    return (Date($("#pnl-" + id + " #time").val()));
+    return ($("#pnl-" + id + " #time").val());
 }
 
 function buildBoolInput(entry, diary) {
     const panel =
         `
-            <div id="pnl-idname" class="row border-bottom">
-                <div class="col-lg-3 col-md-3 col-sm-4 col-6 h6 clr-dark-green">ttitle</div>
-                <label class="radio-inline"><input type="radio" name="idname">&nbsp;Yes</label>&nbsp;
-                <label class="radio-inline"><input type="radio" name="idname" checked>&nbsp;No</label>
-            </div>
+        <div id="pnl-idname" class="row border-bottom">
+            <div class="col-lg-3 col-md-3 col-sm-4 col-6 h6 clr-dark-green">ttitle</div>
+            <label id="yes" class="radio-inline"><input type="radio" name="idname" ckyes>&nbsp;Yes</label>&nbsp;
+            <label id="no" class="radio-inline"><input type="radio" name="idname" ckno>&nbsp;No</label>
+        </div>
         `;
 
     let id = / /g [Symbol.replace](entry.name, "-");
 
     let container = /idname/g [Symbol.replace](panel, id);
     container = /ttitle/g [Symbol.replace](container, entry.name);
+    container = /ckyes/g [Symbol.replace](container, diary && diary[entry.name] ? "checked" : "");
+    container = /ckno/g [Symbol.replace](container, !diary || !diary[entry.name] ? "checked" : "");
 
     $("#l8r-Pain-Level").append(container);
 }
 
 function extractBoolInput(entry) {
     let id = / /g [Symbol.replace](entry.name, "-");
-    return ($("#pnl-" + id + " :checked").parent().text() === " Yes");
+    return ($("#pnl-" + id + " :checked").parent().text().indexOf("Yes") != -1);
 }
 
 function buildBPInput(entry, diary) {
     const panel =
         `
-            <div id="pnl-idname" class="row border-bottom">
-                <div class="col-lg-3 col-md-3 col-sm-4 col-12 h6 clr-dark-green">ttitle</div>
-                <div id="entry" class="row col-lg-9 col-md-9 col-sm-12 col-12">
-                    <input id="high" class="rounded col-lg-1 col-md-1 col-sm-1 col-1" type="text">
-                    <div class="col-lg-1 col-md-1 col-sm-1 col-1 text-center">/</div>
-                    <input id="low" class="rounded col-lg-1 col-md-1 col-sm-1 col-1" type="text">
-                    <div class="col-lg-1 col-md-2 col-sm-3 col-3 text-right">pulse</div>
-                    <input id="pulse" class="rounded col-lg-1 col-md-1 col-sm-1 col-1" type="text">
-                </div>
+        <div id="pnl-idname" class="row border-bottom">
+            <div class="col-lg-3 col-md-3 col-sm-4 col-12 h6 clr-dark-green">ttitle</div>
+            <div id="entry" class="row col-lg-9 col-md-9 col-sm-12 col-12">
+                <input id="high" class="rounded col-lg-1 col-md-1 col-sm-1 col-1" type="text" value="vbphigh">
+                <div class="col-lg-1 col-md-1 col-sm-1 col-1 text-center">/</div>
+                <input id="low" class="rounded col-lg-1 col-md-1 col-sm-1 col-1" type="text" value="vbplow">
+                <div class="col-lg-1 col-md-2 col-sm-3 col-3 text-right">pulse</div>
+                <input id="pulse" class="rounded col-lg-1 col-md-1 col-sm-1 col-1" type="text" value="vpulse">
             </div>
+        </div>
         `;
 
     let id = / /g [Symbol.replace](entry.name, "-");
 
     let container = /idname/g [Symbol.replace](panel, id);
     container = /ttitle/g [Symbol.replace](container, entry.name);
+    container = /vbphigh/g [Symbol.replace](container, diary ? diary[entry.name].high : "");
+    container = /vbplow/g [Symbol.replace](container, diary ? diary[entry.name].low : "");
+    container = /vpulse/g [Symbol.replace](container, diary ? diary[entry.name].pulse : "");
 
     $("#l8r-Pain-Level").append(container);
 }
@@ -407,6 +440,7 @@ function extractBPInput(entry) {
         low: Number($("#pnl-" + id + " #low").val()),
         pulse: Number($("#pnl-" + id + " #pulse").val()),
     };
+
     return (value);
 }
 
@@ -422,7 +456,7 @@ function buildCheckboxList(entry, diary) {
     const items =
         `
         <label class="col-lg-3 col-md-3 col-sm-3 col-5">
-            <input id="idname" type="checkbox">
+            <input id="idname" type="checkbox" ifchecked>
             ttitle
         </label>
         `;
@@ -438,6 +472,7 @@ function buildCheckboxList(entry, diary) {
     for (let i = 0; i < entry.list.length; ++i) {
         let id = / /g [Symbol.replace](entry.list[i], "-");
         let h = /idname/g [Symbol.replace](items, id);
+        h = /ifchecked/g [Symbol.replace](h, diary[entry.name].indexOf(id) != -1 ? "checked" : "");
         h = /ttitle/g [Symbol.replace](h, entry.list[i]);
 
         pnl.find("#entry").append(h);
@@ -455,7 +490,6 @@ function extractCheckboxList(entry) {
 
     return (set);
 }
-
 
 function buildWeatherInput(entry, diary) {
     const panel =
@@ -564,7 +598,7 @@ function loadFile(url, fctn) {
 }
 
 Date.prototype.toDateLocalTimeString =
-    function toDateTimeLocalString() {
+    function () {
         let date = this;
         let ten = function (i) {
             return i < 10 ? '0' + i : i;
@@ -577,7 +611,7 @@ Date.prototype.toDateLocalTimeString =
     }
 
 Date.prototype.toLocalTimeString =
-    function toDateTimeLocalString() {
+    function () {
         let date = this;
         let ten = function (i) {
             return i < 10 ? '0' + i : i;
@@ -587,7 +621,7 @@ Date.prototype.toLocalTimeString =
     }
 
 Date.prototype.toDateString =
-    function toDateTimeLocalString() {
+    function () {
         let date = this;
         let ten = function (i) {
             return i < 10 ? '0' + i : i;

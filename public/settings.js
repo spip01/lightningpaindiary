@@ -192,8 +192,6 @@ function setPanelEvents(id) {
 }
 
 function newTabBar() {
-  $("#tablist").empty();
-
   addTab({
     name: "Account",
     borderbottom: true,
