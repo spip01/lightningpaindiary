@@ -543,7 +543,7 @@ function loadWeather(entry, diary) {
                 &nbsp;ttitle
             </div>
             `;
-        const icon = `<img src="http://openweathermap.org/img/w/iicon.png">`;
+        const icon = `<img src="https://openweathermap.org/img/w/iicon.png">`;
         const button = `<button type="button" class="btn border btn-sm btn-green">Now</button>&nbsp;`;
         let account = accountreq.result;
 
