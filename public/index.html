@@ -18,7 +18,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.0.0/bootstrap-slider.min.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" type="text/plain" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.0.0/css/bootstrap-slider.min.css">
 
-    <link rel="stylesheet" type="text/plain" href="local.css">
+    <link rel="stylesheet" type="text/css" href="local.css">
     <script src="local.js"></script>
 </head>
 
@@ -26,36 +26,37 @@
     <div id="navbar"></div>
 
     <div id="javascript" class="">
-        <div class="card container nav-menu">
-            <div class="row">
-                <div class="col-lg-6 col-md-6">
-                    <a href="index.html" class="nav-text">
-                        <i class="fa fa-home"></i>
-                        Lightning Pain Diary
-                    </a>
-                </div>
-                <div class="col-lg-2 col-md-2">
-                    <a href="about.html" class="nav-text">
+        <nav class="navbar navbar-expand-sm bkg-light-green">
+            <a class="navbar-brand" href="index.html">
+                <span class=" clr-dark-green h2">
+                    <i class="fa fa-home"></i>
+                    Lightning Pain Diary
+                </span>
+            </a>
+
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link clr-dark-green h6" href="about.html">
                         About
                     </a>
-                </div>
-            </div>
-            </br>
-        </div>
+                </li>
+            </ul>
+        </nav>
 
         <div id="javascript" class="" style="color: rgb(0, 78, 0);">
             Unfortunately, this page cannot function without javasript. Please add this site to your "allowed" sites. For chrome it's
             located at chrome://settings/content/javascript
         </div>
-        </br>
+        <br>
     </div>
 
     <div id="jssite" style="display: none">
         <div class="card card-body bkg-light-green pad-bottom">
             <div class="card card-body pad-bottom">
                 <div class="border-bottom">
-                    To populate remaining values with last entry values hit "last". You can require daily entries from
-                    <a href="settings.html">settings</a> page.
+                    The
+                    <a href="settings.html">settings</a> page has controls to populate new diary values with the last entry by enabling "Always default
+                    entries to last value" and to send a reminder when there hasn't been an entry made for today.
                     <br>
                 </div>
 
@@ -64,8 +65,7 @@
 
                 <div id="entrybuttons" class="row">
                     <button id="save" type="button" class="btn border btn-sm btn-green">Save</button>&nbsp;
-                    <button id="new" type="button" class="btn border btn-sm btn-green disabled" disabled>New</button>&nbsp;
-                    <button id="del" type="button" class="btn border btn-sm btn-green disabled" disabled>Delete</button>
+                    <button id="cancel" type="button" class="btn border btn-sm btn-green">Cancel</button>
                 </div>
             </div>
         </div>

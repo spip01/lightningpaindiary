@@ -1,5 +1,5 @@
-loadHtml("https://raw.githubusercontent.com/spip01/lightningpaindiary/bootstrap/public/navbar.html", "#navbar");
-loadHtml("https://raw.githubusercontent.com/spip01/lightningpaindiary/bootstrap/public/footer.html", "#footer");
+loadHtml("https://lightningpaindiary.firebaseapp.com/navbar.html", "#navbar");
+loadHtml("https://lightningpaindiary.firebaseapp.com/footer.html", "#footer");
 
 function generateTrackersPanel(db) {
   const pnlid = "Trackers";
@@ -13,7 +13,7 @@ function generateTrackersPanel(db) {
   $("#panels").append(panel);
   let pnl = $("#pnl-" + pnlid);
 
-  $("#pnl-Account #reminders").html("");
+  //$("#pnl-Account #reminders").empty();
 
   let store = db.transaction(["account"], "readwrite").objectStore("account");
   let cursor = store.index('by_position').openCursor();
@@ -43,19 +43,19 @@ function generateTrackersPanel(db) {
 
         pnl.find("[id|='cont']").append(entry);
 
-        if (item.fixed === undefined) {
-          const acct_entries =
-            `
-          <label class="col-lg-2 col-md-3 col-sm-6 col-12">
-            <input id="itm-idname" type="checkbox">
-            ttitle
-          </label>
-          `;
+        // if (item.fixed === undefined) {
+        //   const acct_entries =
+        //     `
+        //   <label class="col-lg-2 col-md-3 col-sm-6 col-12">
+        //     <input id="itm-idname" type="checkbox">
+        //     ttitle
+        //   </label>
+        //   `;
 
-          let reminders = /idname/g [Symbol.replace](acct_entries, id);
-          reminders = /ttitle/g [Symbol.replace](reminders, item.name);
-          $("#pnl-Account #reminders").append(reminders);
-        }
+        //   let reminders = /idname/g [Symbol.replace](acct_entries, id);
+        //   reminders = /ttitle/g [Symbol.replace](reminders, item.name);
+        //   $("#pnl-Account #reminders").append(reminders);
+        // }
       }
 
       cursor.continue();
@@ -361,8 +361,8 @@ function panelAddBtn(db, evt) {
   if (pnlid === "Trackers") {
     let pos = $("#cont-Trackers div:last-child").find("[id|='pos']").prop("id").replace(stripid, "$1");
     let entry = {
-      position: Number(pos) + 1,
       name: name,
+      position: Number(pos) + 1,
       type: pnl.find("[id|='sel']").text(),
     };
 
@@ -375,6 +375,12 @@ function panelAddBtn(db, evt) {
 
       if (entry.start === 0 && entry.end === 0)
         return;
+    }
+
+    if (entry.type === "weather") {
+      entry.list = trackerslist.find(function (x) {
+        return (x.type === "weather");
+      }).list;
     }
 
     if (entry.type === "list")
@@ -610,7 +616,7 @@ function lookupWeather(evt) {
   let country = $("#country").val();
   let tmpFormat = $("[name='temp'] :checked").text();
 
-  let url = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "," + state + "," + country + "&units=" + tmpFormat + "&appid=" + openweatherapikey;
+  let url = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "," + state + "," + country + "&units=" + tmpFormat + "&appid=" + openweatherapikey;
 
   loadFile(url, function (data) {
     let h = "<div class='row container'>Lon: " + data.coord.lon + " Lat: " + data.coord.lat + "</div>";

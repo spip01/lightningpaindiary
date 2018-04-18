@@ -1,9 +1,10 @@
 let setupdb;
 let diarydb;
 const openweatherapikey = "36241d90d27162ebecabf6c334851f16";
+const stripid = /^.*?-(.*)/g;
 
-loadHtml("https://raw.githubusercontent.com/spip01/lightningpaindiary/bootstrap/public/navbar.html", "#navbar");
-loadHtml("https://raw.githubusercontent.com/spip01/lightningpaindiary/bootstrap/public/footer.html", "#footer");
+loadHtml("https://lightningpaindiary.firebaseapp.com/navbar.html", "#navbar");
+loadHtml("https://lightningpaindiary.firebaseapp.com/footer.html", "#footer");
 
 $(document).ready(function () {
     $("#javascript").empty();
@@ -42,20 +43,11 @@ $(document).ready(function () {
             setup(diarydb, accountdb, false, false);
 
             $("#save").click(function () {
-                $("#l8r-Pain-Level").show();
-                $("#new").removeClass("disabled");
-                $("#new").removeAttr("disabled");
-                $("#del").removeClass("disabled");
-                $("#del").removeAttr("disabled");
-
+                //$("#l8r-Pain-Level").show();
                 updateEntry(diarydb, accountdb);
             });
 
-            $("#new").click(function () {
-                setup(diarydb, accountdb, false, true);
-            });
-
-            $("#del").click(function () {
+            $("#cancel").click(function () {
                 setup(diarydb, accountdb, true, true);
             });
         };
@@ -105,14 +97,14 @@ function updateEntry(diarydb, accountdb) {
 
             cursor.continue();
         } else {
-            value.DateTime = new Date(value["Date"] + " " + value["Time"]);
+            value.DateTime = new Date(value["Date"] + " " + value["Time"]).toJSON();
             let store = diarydb.transaction(["diary"], "readwrite").objectStore("diary");
-            let req = store.openCursor(IDBKeyRange.only(value.DateTime));
+            let req = store.index('by_datetime').openCursor(IDBKeyRange.only(value.DateTime));
             req.onsuccess = function (event) {
                 let cursor = event.target.result;
 
                 if (cursor)
-                    store.update(value);
+                    cursor.update(value);
                 else
                     store.put(value);
             };
@@ -124,7 +116,7 @@ function setup(diarydb, accountdb, ifcancel, ifshow) {
     $("#panels").empty();
 
     let store = diarydb.transaction(["diary"], "readwrite").objectStore("diary");
-    let req = store.openCursor(null, "prev");
+    let req = store.index('by_datetime').openCursor(null, "prev");
     req.onsuccess = function (event) {
         let cursor = event.target.result;
         let diary = null;
@@ -136,7 +128,7 @@ function setup(diarydb, accountdb, ifcancel, ifshow) {
         let req = store.index("by_name").get("Account");
         req.onsuccess = function () {
             let account = req.result;
-            if (!account.ifdefault || ifcancel)
+            if (!account.ifdefault) // || ifcancel)
                 diary = null;
 
             let cursor = store.index('by_position').openCursor();
@@ -179,8 +171,11 @@ function setup(diarydb, accountdb, ifcancel, ifshow) {
                     cursor.continue();
                 } else {
                     let now = new Date();
-                    $("#pnl-Date input").val(now.toDateString());
-                    $("#pnl-Time input").val(now.toLocalTimeString());
+
+                    if (!ifshow) {
+                        $("#pnl-Date input").val(now.toDateString());
+                        $("#pnl-Time input").val(now.toLocalTimeString());
+                    }
 
                     $("#panels").show();
 
@@ -200,8 +195,8 @@ function buildRange(entry, diary) {
     const panel =
         `
         <div id="pnl-idname" class="row border-bottom">
-            <div class="col-lg-3 col-md-3 col-sm-4 col-12 h6 clr-dark-green">ttitle</div>
-            <div id="entry" class="row col-lg-9 col-md-9 col-sm-8 col-12"></div>
+            <div class="col-lg-3 col-md-3 col-sm-3 col-12 h6 clr-dark-green">ttitle</div>
+            <div id="entry" class="row col-lg-9 col-md-9 col-sm-9 col-12"></div>
         </div>
         <div id="l8r-idname" style="display: none"></div>
         `;
@@ -225,7 +220,7 @@ function buildRange(entry, diary) {
         for (let i = entry.start; i <= entry.end; i++) {
             let c = 120 - (i - entry.start) / (entry.end - entry.start) * 120;
             let h = /ttitle/g [Symbol.replace](item, i);
-            h = /iffocus/g [Symbol.replace](h, diary[entry.name] == i ? "btn-green" : "");
+            h = /iffocus/g [Symbol.replace](h, diary && diary[entry.name] == i ? "btn-green" : "");
             h = h.replace("colors", "hsl(" + c + ",100%,50%)");
 
             pnl.find("#entry").append(h);
@@ -235,7 +230,7 @@ function buildRange(entry, diary) {
             let c = (i - entry.end) / (entry.start - entry.end) * 120;
 
             let h = /ttitle/g [Symbol.replace](item, i);
-            h = /iffocus/g [Symbol.replace](h, diary[entry.name] == i ? "btn-green" : "");
+            h = /iffocus/g [Symbol.replace](h, diary && diary[entry.name] == i ? "btn-green" : "");
             h = h.replace("colors", "hsl(" + c + ",100%,50%)");
 
             let btn = pnl.find("#entry").append(h);
@@ -245,7 +240,8 @@ function buildRange(entry, diary) {
 
 function extractRange(entry) {
     let id = / /g [Symbol.replace](entry.name, "-");
-    return ($("#pnl-" + id + " .btn-green").prop("id").replace(/btn-(\d+)/g, "$1"));
+    let btn = $("#pnl-" + id + " .btn-green").prop("id");
+    return (btn ? btn.replace(/btn-(\d+)/g, "$1") : 0);
 }
 
 function procRange(evt) {
@@ -287,7 +283,7 @@ function buildTextInput(entry, diary) {
     const panel =
         `
         <div id="pnl-idname" class="row border-bottom">
-            <div class="col-lg-3 col-md-3 col-sm-4 col-12 h6 clr-dark-green">ttitle</div>
+            <div class="col-lg-3 col-md-3 col-sm-3 col-12 h6 clr-dark-green">ttitle</div>
             <textarea id="txt" rows="2" class="rounded col-lg-8 col-md-8 col-sm-8 col-12">vvalue</textarea>
         </div>
         `;
@@ -310,9 +306,9 @@ function buildNumInput(entry, diary) {
     const panel =
         `
         <div id="pnl-idname" class="row border-bottom">
-            <div class="col-lg-3 col-md-3 col-sm-4 col-6 h6 clr-dark-green">ttitle</div>
+            <div class="col-lg-3 col-md-3 col-sm-3 col-6 h6 clr-dark-green">ttitle</div>
             <div id="entry" class="row col-lg-9 col-md-9 col-sm-8 col-6">
-                <input id="num" type="text" class="rounded col-lg-1 col-md-1 col-sm-1 col-1" value="vvalue">
+                <input id="num" type="text" class="rounded col-lg-1 col-md-2 col-sm-2 col-7" value="vvalue">
             </div>
         </div>
         `;
@@ -335,7 +331,7 @@ function buildDateInput(entry, diary) {
     const panel =
         `
         <div id="pnl-idname" class="row border-bottom">
-            <div class="col-lg-3 col-md-3 col-sm-4 col-6 h6 clr-dark-green">ttitle</div>
+            <div class="col-lg-3 col-md-3 col-sm-3 col-6 h6 clr-dark-green">ttitle</div>
             <input id="date" type="date" class="rounded col-lg-3 col-md-3 col-sm-3 col-6" value="vvalue">
         </div>
         `;
@@ -362,8 +358,9 @@ function buildTimeInput(entry, diary) {
     const panel =
         `
         <div id="pnl-idname" class="row border-bottom">
-            <div class="col-lg-3 col-md-3 col-sm-4 col-6 h6 clr-dark-green">ttitle</div>
-            <input id="time" type="time" class="rounded col-lg-3 col-md-3 col-sm-3 col-6" value="vvalue">
+            <div class="col-lg-3 col-md-3 col-sm-3 col-6 h6 clr-dark-green">ttitle</div>
+            <input id="time" type="time" class="rounded col-lg-3 col-md-3 col-sm-3 col-6" value="vvalue">&nbsp;
+            <button type="button" class="btn border btn-sm btn-green">Now</button>&nbsp;
         </div>
         `;
 
@@ -378,6 +375,11 @@ function buildTimeInput(entry, diary) {
     } else {
         $("#panels").append(container);
     }
+
+    $("#pnl-" + id + " button").click(function () {
+        let now = new Date();
+        $(this).parent().find("input").val(now.toLocalTimeString());
+    });
 }
 
 function extractTimeInput(entry) {
@@ -389,7 +391,7 @@ function buildBoolInput(entry, diary) {
     const panel =
         `
         <div id="pnl-idname" class="row border-bottom">
-            <div class="col-lg-3 col-md-3 col-sm-4 col-6 h6 clr-dark-green">ttitle</div>
+            <div class="col-lg-3 col-md-3 col-sm-3 col-6 h6 clr-dark-green">ttitle</div>
             <label id="yes" class="radio-inline"><input type="radio" name="idname" ckyes>&nbsp;Yes</label>&nbsp;
             <label id="no" class="radio-inline"><input type="radio" name="idname" ckno>&nbsp;No</label>
         </div>
@@ -414,13 +416,13 @@ function buildBPInput(entry, diary) {
     const panel =
         `
         <div id="pnl-idname" class="row border-bottom">
-            <div class="col-lg-3 col-md-3 col-sm-4 col-12 h6 clr-dark-green">ttitle</div>
-            <div id="entry" class="row col-lg-9 col-md-9 col-sm-12 col-12">
-                <input id="high" class="rounded col-lg-1 col-md-1 col-sm-1 col-1" type="text" value="vbphigh">
-                <div class="col-lg-1 col-md-1 col-sm-1 col-1 text-center">/</div>
-                <input id="low" class="rounded col-lg-1 col-md-1 col-sm-1 col-1" type="text" value="vbplow">
-                <div class="col-lg-1 col-md-2 col-sm-3 col-3 text-right">pulse</div>
-                <input id="pulse" class="rounded col-lg-1 col-md-1 col-sm-1 col-1" type="text" value="vpulse">
+            <div class="col-lg-3 col-md-3 col-sm-3 col-6 h6 clr-dark-green">ttitle</div>
+            <div id="entry" class="row col-lg-9 col-md-9 col-sm-9 col-6">
+                <input id="high" class="rounded col-lg-1 col-md-2 col-sm-2 col-7" type="text" value="vbphigh">
+                <div class="col-lg-1 col-md-1 col-sm-1 col-3 text-center">/</div>
+                <input id="low" class="rounded col-lg-1 col-md-2 col-sm-2 col-7" type="text" value="vbplow">
+                <input id="pulse" class="rounded col-lg-1 col-md-2 col-sm-2 col-7" type="text" value="vpulse">
+                &nbsp;pulse
             </div>
         </div>
         `;
@@ -451,8 +453,8 @@ function buildCheckboxList(entry, diary) {
     const panel =
         `
         <div id="pnl-idname" class="row border-bottom">
-            <div class="col-lg-3 col-md-3 col-sm-4 col-12 h6 clr-dark-green">ttitle</div>
-            <div id="entry" class="col-lg-9 col-md-9 col-sm-8 col-12"></div>
+            <div class="col-lg-3 col-md-3 col-sm-3 col-12 h6 clr-dark-green">ttitle</div>
+            <div id="entry" class="row col-lg-9 col-md-9 col-sm-9 col-12"></div>
         </div>
         `;
 
@@ -475,7 +477,7 @@ function buildCheckboxList(entry, diary) {
     for (let i = 0; i < entry.list.length; ++i) {
         let id = / /g [Symbol.replace](entry.list[i], "-");
         let h = /idname/g [Symbol.replace](items, id);
-        h = /ifchecked/g [Symbol.replace](h, diary[entry.name].indexOf(id) != -1 ? "checked" : "");
+        h = /ifchecked/g [Symbol.replace](h, diary && diary[entry.name].indexOf(id) != -1 ? "checked" : "");
         h = /ttitle/g [Symbol.replace](h, entry.list[i]);
 
         pnl.find("#entry").append(h);
@@ -499,7 +501,7 @@ function buildWeatherInput(entry, diary) {
         `
         <div id="pnl-idname" class="row border-bottom">
             <div class="col-lg-3 col-md-3 col-sm-3 col-12 h6 clr-dark-green">ttitle</div>
-            <div id="weather" class="row col-lg-9 col-md-9 col-sm-8 col-12 "></div>
+            <div id="val-idname" class="row col-lg-9 col-md-9 col-sm-9 col-12 "></div>
         </div>
         `;
 
@@ -517,62 +519,80 @@ function extractWeatherInput(entry) {
     let id = / /g [Symbol.replace](entry.name, "-");
     let value = {};
 
-    $("#pnl-" + id + " div").find("div").each(function () {
-        value[$(this).prop("id")] = $(this).text().replace(/.*?: (.*)/g, "$1");
+    $("#pnl-" + id + " input").each(function () {
+        value[$(this).parent().prop("id").replace(stripid, "$1")] = $(this).val();
     });
+    value.icon = $("#pnl-" + id + " img").prop("src").replace(/^.*\/(.+?).png/g, "$1");
 
     return (value);
 }
 
-/************************************** */
-
 function loadWeather(entry, diary) {
     let store = accountdb.transaction(["account"], "readwrite").objectStore("account");
     let accountreq = store.index("by_name").get("Account");
+    let id = / /g [Symbol.replace](entry.name, "-");
+
+    let pnl = $("#pnl-" + id + " [id|='val']");
+    pnl.empty();
 
     accountreq.onsuccess = function (event) {
-        const items = `<div id="idname" class="col-lg-3 col-md-4 col-sm-6 col-6">ttitle: value</div>`;
+        const items =
+            `
+            <div id="in-idname" class="col-lg-4 col-md-4 col-sm-6 col-12">
+                <input class="rounded col-lg-4 col-md-5 col-sm-6 col-6" type="text" value="vvalue">
+                &nbsp;ttitle
+            </div>
+            `;
         const icon = `<img src="http://openweathermap.org/img/w/iicon.png">`;
+        const button = `<button type="button" class="btn border btn-sm btn-green">Now</button>&nbsp;`;
         let account = accountreq.result;
 
-        let url = "http://api.openweathermap.org/data/2.5/weather?q=" + account.city + "," +
+        let url = "https://api.openweathermap.org/data/2.5/weather?q=" + account.city + "," +
             account.state + "," + account.country + "&units=" + (account.ifmetric ? "metric" : "imperial") +
             "&appid=" + openweatherapikey;
 
         loadFile(url, function (data) {
-            console.log(data);
-            let pnl = $("#pnl-Weather #weather");
-
             for (let i = 0; i < entry.list.length; ++i) {
                 let name = entry.list[i];
                 let value;
 
-                let id = / /g [Symbol.replace](name, "-");
-                let h = /idname/g [Symbol.replace](items, id);
+                let iid = / /g [Symbol.replace](name, "-");
+                let h = /idname/g [Symbol.replace](items, iid);
                 h = /ttitle/g [Symbol.replace](h, name);
                 let j = "";
 
                 switch (name) {
                     case "wind":
-                        value = data.wind.speed;
+                        value = diary ? diary[entry.name].wind : data.wind.speed;
                         break;
                     case "clouds":
-                        value = data.clouds.all;
+                        value = diary ? diary[entry.name].clouds : data.clouds.all;
                         break;
                     case "description":
-                        value = data.weather[0].description
-                        let iicon = data.weather[0].icon;
+                        value = diary ? diary[entry.name].description : data.weather[0].description
+                        let iicon = diary ? diary[entry.name].icon : data.weather[0].icon;
                         j = /iicon/g [Symbol.replace](icon, iicon);
                         break;
                     default:
-                        value = data.main[name];
+                        value = diary ? diary[entry.name][name] : data.main[name];
                 }
 
-                h = /value/g [Symbol.replace](h, value);
+                h = /vvalue/g [Symbol.replace](h, value);
 
                 pnl.append(h);
-                pnl.find("#" + id).append(j);
+
+                if (name === "description") {
+                    pnl.find("#in-description input").prop("class", "rounded col-lg-8 col-md-10 col-sm-10 col-10")
+                    pnl.find("#in-description input").after(j);
+                }
             }
+
+            let h = /idname/g [Symbol.replace](button, id);
+            pnl.append(h);
+
+            pnl.find("button").click(function () {
+                loadWeather(entry, null);
+            });
         });
     };
 }

@@ -16,7 +16,7 @@
         crossorigin="anonymous"></script>
     <script src="https://unpkg.com/xregexp/xregexp-all.js"></script>
 
-    <link rel="stylesheet" type="text/plain" href="local.css">
+    <link rel="stylesheet" type="text/css" href="local.css">
     <script src="settings.js"></script>
 </head>
 
@@ -24,29 +24,30 @@
     <!--div w3-include-html="https://raw.githubusercontent.com/spip01/lightningpaindiary/bootstrap/public/navbar.html"></div-->
     <div id="navbar"></div>
 
-    <div id="javascript" class="">
-        <div class="card container nav-menu">
-            <div class="row">
-                <div class="col-lg-6 col-md-6">
-                    <a href="index.html" class="nav-text">
-                        <i class="fa fa-home"></i>
-                        Lightning Pain Diary
-                    </a>
-                </div>
-                <div class="col-lg-2 col-md-2">
-                    <a href="about.html" class="nav-text">
+    <div id="javascript">
+        <nav class="navbar navbar-expand-sm bkg-light-green">
+            <a class="navbar-brand" href="index.html">
+                <span class=" clr-dark-green h2">
+                    <i class="fa fa-home"></i>
+                    Lightning Pain Diary
+                </span>
+            </a>
+
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link clr-dark-green h6" href="about.html">
                         About
                     </a>
-                </div>
-            </div>
-            </br>
-        </div>
+                </li>
+            </ul>
+        </nav>
+        <br>
 
-        <div id="javascript" class="" style="color: rgb(0, 78, 0);">
+        <div id="javascript" style="color: rgb(0, 78, 0);">
             Unfortunately, this page cannot function without javasript. Please add this site to your "allowed" sites. For chrome it's
             located at chrome://settings/content/javascript
         </div>
-        </br>
+        <br>
     </div>
 
     <div id="jssite" style="display: none">
@@ -88,7 +89,7 @@
 
                 <div class="row border-top">
                     <label>
-                        <input id="ifdefault" type="checkbox"> Always default values to previous entry
+                        <input id="ifdefault" type="checkbox"> Always default entries to last value
                     </label>
                 </div>
 
@@ -112,7 +113,7 @@
 
                 <div class="row">
                     <label>
-                        <input id="ifnotify" type="checkbox"> Send a reminder if today's entry isn't completed by the end of day
+                        <input id="ifnotify" type="checkbox"> Send a reminder if there hasn't been an entry today.
                     </label>
                 </div>
 
@@ -133,9 +134,9 @@
                     <div class="col-lg-2 col-md-2 col-sm-3 col-4">phone</div>
                 </div>
 
-                <div class="row container">Require a daily entry for these items</div>
+                <!--div class="row container">Require a daily entry for these items</div-->
 
-                <div id="reminders" class="row container"></div>
+                <!--div id="reminders" class="row container"></div-->
 
                 <button id="submit-acct" type="button" class="btn border btn-sm btn-green">Submit</button>
                 <br>
