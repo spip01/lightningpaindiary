@@ -4,24 +4,74 @@
 <head>
     <title>Lightning Pain Diary</title>
     <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
-    <meta charset="utf-8">
-    <meta id="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-    <script src="https://www.w3schools.com/lib/w3.js"></script>
+    <meta charset="utfoot-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/xregexp/xregexp-all.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.0.0/bootstrap-slider.min.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/plain" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.0.0/css/bootstrap-slider.min.css">
+
+    <link rel="stylesheet" type="text/css" href="local.css">
+    <script src="reports.js"></script>
 </head>
 
 <body>
-    <div w3-include-html="https://raw.githubusercontent.com/spip01/lightningpaindiary/master/navbar.html"></div>
-    <br>
+    <div id="navbar"></div>
 
-    log (table)z
-    calendar
-    printed report (pdf)
+    <div id="javascript" class="">
+        <nav class="navbar navbar-expand-sm bkg-light-green">
+            <a class="navbar-brand" href="index.html">
+                <span class=" clr-dark-green h2">
+                    <i class="fa fa-home"></i>
+                    Lightning Pain Diary
+                </span>
+            </a>
 
-    <br>
-    <div w3-include-html="https://raw.githubusercontent.com/spip01/lightningpaindiary/master/footer.html"></div>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link clr-dark-green h6" href="about.html">
+                        About
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <div id="javascript" class="" style="color: rgb(0, 78, 0);">
+            Unfortunately, this page cannot function without javasript. Please add this site to your "allowed" sites. For chrome it's
+            located at chrome://settings/content/javascript
+        </div>
+        <br>
+    </div>
+
+    <div id="jssite" style="display: none">
+        <div class="card card-body bkg-light-green pad-bottom">
+            <div class="card card-body pad-bottom">
+                <div class="row border-bottom">
+                    <h2 class="clr-dark-green col-lg-4 col-md-4 col-sm-4 col-4">Report Generator</h2>
+
+                    <!--button id="save" type="button" class="btn border btn-sm btn-green">Save</button-->&nbsp;
+                    <!--button id="modify" type="button" class="btn border btn-sm btn-green">Modify</button-->
+                </div>
+                <br>
+
+                <div id="report" class="card card-body pad-bottom" style="display: none"> </div>
+                <br>
+
+                <div id="panels" class="card card-body pad-bottom"> </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="footer"></div>
+
 </body>
 
 </html>
