@@ -466,6 +466,8 @@ function buildCheckboxList(entry, diary) {
         </label>
         `;
 
+    const add = `<input id="add-idname" class="rounded col-lg-3 col-md-3 col-sm-3 col-5" placeholder="ttitle">`;
+
     let id = / /g [Symbol.replace](entry.name, "-");
 
     let container = /idname/g [Symbol.replace](panel, id);
@@ -482,16 +484,23 @@ function buildCheckboxList(entry, diary) {
 
         pnl.find("#entry").append(h);
     }
+
+        let h = /idname/g [Symbol.replace](add, id);
+    h = /ttitle/g [Symbol.replace](h, "add item");
+    pnl.find("#entry").append(h);
 }
 
 function extractCheckboxList(entry) {
-    let i = 0;
     let set = [];
     let id = / /g [Symbol.replace](entry.name, "-");
 
     $("#pnl-" + id + " :checked").each(function () {
-        set[i++] = $(this).prop("id");
+        set.push( $(this).prop("id"));
     });
+
+    let t = $("#pnl-" + id + " [id|='add']").val();
+    if (t !== "add item") 
+    set.push(t);
 
     return (set);
 }

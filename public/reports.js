@@ -36,22 +36,22 @@ $(document).ready(function () {
 
 function display(accountdb, diarydb) {
     const row =
-        `
-        <div id="row-idname" class="grid-container row border-bottom"></div>
-        `;
-    const entry =
-        `
-        <div id="ent-idname"></div>
-        `;
-    const mult =
-        `
-        <div id="mult-idname"></div>
-        `;
+        `<div id="row-idname" class="row" style="font-size: 15px; border-bottom: 1px solid #008000;">
+            <div class="col-md-2 col-sm-2 col-3 border-right">
+                <div id="date"></div>
+                <div id="time"></div>
+                <input id="sel-idname" type="checkbox">
+            </div>
+            <div id="rem" class="container row col-md-10 col-sm-10 col-9"></div>
+        </div>`;
+    const entry = `<div id="ent-idname" class="col-md-2 col-sm-4 col-6 border-right border-bottom">dvalue</div>`;
+    const mult = `<div id="mult">dvalue</div>`;
 
     let account = [];
     let h = /idname/g [Symbol.replace](row, "header");
     let pnl = $("#panels");
     pnl.append(h);
+    let header = pnl.find("#row-header");
 
     let store = accountdb.transaction(["account"], "readwrite").objectStore("account");
     let req = store.index('by_position').openCursor();
@@ -60,11 +60,8 @@ function display(accountdb, diarydb) {
 
         if (cursor) {
             let item = cursor.value;
-            let id = / /g [Symbol.replace](item.name, "-");
             let name = item.name;
-            item.id = id;
-
-            let h = /idname/g [Symbol.replace](entry, id);
+            item.id = / /g [Symbol.replace](name, "-");
 
             switch (item.type) {
                 case "account":
@@ -73,8 +70,10 @@ function display(accountdb, diarydb) {
                     item.id = null;
                     break;
                 case "date":
-                    if (item.name === "Date")
-                        name = "Date & Time";
+                    if (item.name === "Date") {
+                        header.children().find("#date").text("Date & Time");
+                        header.children().find("#sel-header").hide();
+                    }
                     break;
                 case "time":
                     if (item.name === "Time")
@@ -82,15 +81,12 @@ function display(accountdb, diarydb) {
                     break;
                 case "blood pressure":
                     name = "Blood Pressure & Pulse";
-                    break;
+                default:
+                    let h = /dvalue/g [Symbol.replace](entry, name);
+                    header.find("#rem").append(h);
             }
 
             account.push(item);
-
-            if (item.id) {
-                pnl.find("#row-header").append(h);
-                pnl.find("#ent-" + item.id).text(name);
-            }
 
             cursor.continue();
         } else {
@@ -102,57 +98,58 @@ function display(accountdb, diarydb) {
                 if (cursor) {
                     let diary = cursor.value;
 
-                    let did = /:/g [Symbol.replace](diary.DateTime, "");
-                    did = /\./g [Symbol.replace](did, "");
+                    let id = /:/g [Symbol.replace](diary.DateTime, "--");
+                    id = /\./g [Symbol.replace](id, "--");
 
-                    let h = /idname/g [Symbol.replace](row, did);
+                    let h = /idname/g [Symbol.replace](row, id);
                     pnl.append(h);
-                    let hrow = pnl.find("#row-" + did);
+                    let header = pnl.find("#row-" + id);
 
                     for (let i = 0; i < account.length; ++i) {
                         let item = account[i];
                         let txt = diary[item.name];
 
                         if (item.id) {
-                            let h = /idname/g [Symbol.replace](entry, item.id);
-                            hrow.append(h);
-                            let hent = hrow.find("#ent-" + item.id);
-
                             switch (item.type) {
                                 case "date":
                                     if (item.name === "Date") {
-                                        let h = /idname/g [Symbol.replace](mult, "Date-Date");
-                                        hent.append(h);
-                                        hent.find("#mult-Date-Date").text(diary.Date);
-
-                                        h = /idname/g [Symbol.replace](mult, "Date-Time");
-                                        hent.append(h);
-                                        hent.find("#mult-Date-Time").text(diary.Time);
+                                        header.children().find("#date").text(diary.Date);
+                                        header.children().find("#time").text(diary.Time);
+                                    } else {
+                                        h = /dvalue/g [Symbol.replace](entry, txt ? "" : "n/a");
+                                        h = /idname/g [Symbol.replace](h, item.id);
+                                        header.find("#rem").append(h);
                                     }
                                     break;
                                 case "weather":
-                                    for (let i = 0; i < item.list.length; ++i) {
-                                        let litem = item.list[i];
-                                        let txt = litem + ": " + diary[item.name][litem];
-                                        let id = / /g [Symbol.replace](item.id + "-" + litem, "-");
-                                        let h = /idname/g [Symbol.replace](mult, id);
-                                        hent.append(h);
-                                        hent.find("#mult-" + id).text(txt);
+                                    h = /dvalue/g [Symbol.replace](entry, txt ? "" : "n/a");
+                                    h = /idname/g [Symbol.replace](h, item.id);
+                                    header.find("#rem").append(h);
+
+                                    for (let i = 0; txt && i < item.list.length; ++i) {
+                                        let name = item.list[i];
+                                        let txt = name + ": " + diary[item.name][name];
+
+                                        h = /dvalue/g [Symbol.replace](mult, txt);
+                                        header.find("#rem #ent-" + item.id).append(h);
                                     }
                                     break;
                                 case "list":
-                                    for (let i = 0; i < item.list.length; ++i) {
-                                        let txt = item.list[i];
-                                        let id = / /g [Symbol.replace](item.id + "-" + txt, "-");
-                                        let h = /idname/g [Symbol.replace](mult, id);
-                                        hent.append(h);
-                                        hent.find("#mult-" + id).text(txt);
+                                    h = /dvalue/g [Symbol.replace](entry, txt ? "" : "n/a");
+                                    h = /idname/g [Symbol.replace](h, item.id);
+                                    header.find("#rem").append(h);
+
+                                    for (let i = 0; txt && i < diary[item.name].length; ++i) {
+                                        h = /dvalue/g [Symbol.replace](mult, diary[item.name][i]);
+                                        header.find("#rem #ent-" + item.id).append(h);
                                     }
                                     break;
                                 case "blood pressure":
-                                    txt = diary[item.name].high + " / " + diary[item.name].low + " " + diary[item.name].pulse;
+                                    txt = txt ? diary[item.name].high + " / " + diary[item.name].low + " " + diary[item.name].pulse : "n/a";
                                 default:
-                                    hent.text(txt);
+                                    h = /dvalue/g [Symbol.replace](entry, txt ? txt : "n/a");
+                                    h = /idname/g [Symbol.replace](h, item.id);
+                                    header.find("#rem").append(h);
                             }
                         }
                     }
@@ -163,6 +160,10 @@ function display(accountdb, diarydb) {
         }
     };
 }
+
+/*
+function selectReport(accountdb, diarydb) {}
+*/
 
 /************************************** */
 
