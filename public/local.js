@@ -431,9 +431,9 @@ function buildBPInput(entry, diary) {
 
     let container = /idname/g [Symbol.replace](panel, id);
     container = /ttitle/g [Symbol.replace](container, entry.name);
-    container = /vbphigh/g [Symbol.replace](container, diary ? diary[entry.name].high : "");
-    container = /vbplow/g [Symbol.replace](container, diary ? diary[entry.name].low : "");
-    container = /vpulse/g [Symbol.replace](container, diary ? diary[entry.name].pulse : "");
+    container = /vbphigh/g [Symbol.replace](container, diary && diary[entry.name] ? diary[entry.name].high : "");
+    container = /vbplow/g [Symbol.replace](container, diary && diary[entry.name] ? diary[entry.name].low : "");
+    container = /vpulse/g [Symbol.replace](container, diary && diary[entry.name] ? diary[entry.name].pulse : "");
 
     $("#l8r-Pain-Level").append(container);
 }
@@ -460,7 +460,7 @@ function buildCheckboxList(entry, diary) {
 
     const items =
         `
-        <label class="col-lg-3 col-md-3 col-sm-3 col-5">
+        <label class="col-lg-3 col-md-3 col-sm-4 col-5">
             <input id="idname" type="checkbox" ifchecked>
             ttitle
         </label>
@@ -479,13 +479,13 @@ function buildCheckboxList(entry, diary) {
     for (let i = 0; i < entry.list.length; ++i) {
         let id = / /g [Symbol.replace](entry.list[i], "-");
         let h = /idname/g [Symbol.replace](items, id);
-        h = /ifchecked/g [Symbol.replace](h, diary && diary[entry.name].indexOf(id) != -1 ? "checked" : "");
+        h = /ifchecked/g [Symbol.replace](h, diary && diary[entry.name] && diary[entry.name].indexOf(id) != -1 ? "checked" : "");
         h = /ttitle/g [Symbol.replace](h, entry.list[i]);
 
         pnl.find("#entry").append(h);
     }
 
-        let h = /idname/g [Symbol.replace](add, id);
+    let h = /idname/g [Symbol.replace](add, id);
     h = /ttitle/g [Symbol.replace](h, "add item");
     pnl.find("#entry").append(h);
 }
@@ -495,12 +495,12 @@ function extractCheckboxList(entry) {
     let id = / /g [Symbol.replace](entry.name, "-");
 
     $("#pnl-" + id + " :checked").each(function () {
-        set.push( $(this).prop("id"));
+        set.push($(this).prop("id"));
     });
 
     let t = $("#pnl-" + id + " [id|='add']").val();
-    if (t !== "add item") 
-    set.push(t);
+    if (t !== "add item")
+        set.push(t);
 
     return (set);
 }

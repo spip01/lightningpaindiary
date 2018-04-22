@@ -98,10 +98,32 @@
                 </div>
                 <br>
 
-                <div id="report" class="card card-body pad-bottom" style="display: none"> </div>
+                <div id="selectfields" class="card card-body border pad-bottom">
+                    <div class="row border-bottom">
+                        <h5 class="clr-dark-green col-lg-6 col-md-6 col-sm-6 col-12">Select Fields for Report</h5>
+
+                        <label class="col-lg-2 col-md-2 col-sm-3 col-6">
+                            <input id="show" type="checkbox">Show
+                        </label>
+
+                        <div id="selectmenu" class="col-lg-2 col-md-2 col-sm-3 col-6 dropdown" iftrackers>
+                            <button id="report" class="btn border btn-sm btn-green dropdown-toggle" type="button" data-toggle="dropdown">
+                                default
+                                <span class="caret"></span>
+                            </button>
+                            <ul id="list-idname" class="dropdown-menu" style="cursor: pointer"></ul>
+                        </div>
+                    </div>
+
+                    <div id="savereport" class="row" style="display: none">
+                        <input id="name" class="rounded col-lg-3 col-md-3 col-sm-4 col-6" type="text" placeholder="save as report">&nbsp;
+                        <button id="save" type="button" class="btn border btn-sm btn-green">Save</button>&nbsp;
+                        <button id="cancel" type="button" class="btn border btn-sm btn-green">cancel</button>
+                    </div>
+                </div>
                 <br>
 
-                <div id="panels" class="well border pad-bottom"> </div>
+                <div id="panels" class="card card-body border pad-bottom"> </div>
 
             </div>
         </div>
