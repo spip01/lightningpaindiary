@@ -17,10 +17,6 @@ $(document).ready(function () {
 
     accountreq.onupgradeneeded = function () {};
 
-    accountreq.onerror = function () {
-        console.log("account not found");
-    };
-
     accountreq.onsuccess = function () {
         accountdb = accountreq.result;
 
@@ -30,7 +26,6 @@ $(document).ready(function () {
             diarydb = diaryreq.result;
 
             selectFields(accountdb, diarydb);
-            display(accountdb, diarydb);
         };
     };
 });
@@ -154,8 +149,11 @@ function display(accountdb, diarydb) {
                                     for (let i = 0; txt && i < diary[item.name].length; ++i) {
                                         let name = diary[item.name][i];
                                         let lid = / /g [Symbol.replace](name, "-");;
-                                       
-                                        if ($("#sub-" + item.id + "--" + lid).prop("checked")) {
+
+                                        if ($("#sub-" + item.id + "--" + lid).prop("checked") ||
+                                            $("#sub-" + item.id + "--all-others").prop("checked") &&
+                                            item.list.indexOf(name) == -1) {
+
                                             h = /dvalue/g [Symbol.replace](mult, name);
                                             header.find("#rem #ent-" + item.id).append(h);
                                         }
@@ -191,6 +189,7 @@ function selectFields(accountdb, diarydb) {
             <input id="sub-idname--subname" type="checkbox" checked>ttitle
         </label>
         `;
+    let lastReport;
 
     let store = accountdb.transaction(["account"], "readwrite").objectStore("account");
     let req = store.index('by_position').openCursor();
@@ -203,6 +202,7 @@ function selectFields(accountdb, diarydb) {
 
             switch (item.type) {
                 case "account":
+                    lastReport = item.lastreport;
                 case "reports":
                 case "text":
                     break;
@@ -240,11 +240,13 @@ function selectFields(accountdb, diarydb) {
                             sel.find("#cont-" + id).append(h);
                         }
 
-                        h = /idname/g [Symbol.replace](sub, id);
-                        h = /subname/g [Symbol.replace](h, "all-others");
-                        h = /ttitle/g [Symbol.replace](h, "all others");
+                        if (item.type === "list") {
+                            h = /idname/g [Symbol.replace](sub, id);
+                            h = /subname/g [Symbol.replace](h, "all-others");
+                            h = /ttitle/g [Symbol.replace](h, "all others");
 
-                        sel.find("#cont-" + id).append(h);
+                            sel.find("#cont-" + id).append(h);
+                        }
                     }
             }
 
@@ -273,12 +275,45 @@ function selectFields(accountdb, diarydb) {
                 }
             });
 
+            loadReport(accountdb, diarydb, lastReport);
         }
     };
 }
 
-function loadReport(accountdb, reportname) {
+function loadReport(accountdb, diarydb, reportname) {
+    if (reportname === "all on" || !reportname) {
+        $("#selectfields [id|='pnt']").prop("checked", "true");
+        $("#selectfields [id|='sub']").prop("checked", "true");
+        display(accountdb, diarydb);
 
+    } else {
+        $("#selectfields [id|='pnt']").removeAttr("checked");
+        $("#selectfields [id|='sub']").removeAttr("checked");
+
+        let store = accountdb.transaction(["account"], "readwrite").objectStore("account");
+        let accountreq = store.index("by_name").get(IDBKeyRange.only(reportname));
+
+        accountreq.onsuccess = function (event) {
+            let account = accountreq.result;
+
+            for (let i = 0; i < account.list.length; ++i) {
+                let name = account.list[i];
+                let id = / /g [Symbol.replace](name, "-");
+
+                $("#selectfields #pnt-" + id).prop("checked", "true");
+
+                if (account[name] !== undefined) {
+                    for (let j = 0; j < account[name].length; ++j) {
+                        let lid = / /g [Symbol.replace](account[name][j], "-");
+
+                        $("#selectfields #sub-" + id + "--" + lid).prop("checked", "true");
+                    }
+                }
+            }
+
+            display(accountdb, diarydb);
+        };
+    }
 }
 
 function saveReport(accountdb, reportname) {
@@ -317,6 +352,19 @@ function saveReport(accountdb, reportname) {
             cursor.update(show);
         else
             store.put(show);
+    };
+
+    store = accountdb.transaction(["account"], "readwrite").objectStore("account");
+    req = store.index('by_name').openCursor(IDBKeyRange.only("Account"));
+    req.onsuccess = function (event) {
+        let cursor = event.target.result;
+
+        if (cursor) {
+            let account = cursor.value;
+
+            account.lastreport = reportname;
+            cursor.update(account);
+        }
     };
 }
 
