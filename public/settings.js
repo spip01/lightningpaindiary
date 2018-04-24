@@ -357,62 +357,68 @@ function panelAddBtn(db, evt) {
   let id = / /g [Symbol.replace](name, "-");
 
   let store = db.transaction(["account"], "readwrite").objectStore("account");
+  req = store.index('by_name').openCursor(IDBKeyRange.only("Account"));
+  req.onsuccess = function (event) {
+    let cursor = event.target.result;
 
-  if (pnlid === "Trackers") {
-    let pos = $("#cont-Trackers div:last-child").find("[id|='pos']").prop("id").replace(stripid, "$1");
-    let entry = {
-      name: name,
-      position: Number(pos) + 1,
-      type: pnl.find("[id|='sel']").text(),
-    };
+    let account = cursor.value;
 
-    if (entry.type.indexOf("Type") != -1)
-      return;
+    if (pnlid === "Trackers") {
+      let entry = {
+        name: name,
+        position: ++account.lastposition,
+        type: pnl.find("[id|='sel']").text(),
+      };
 
-    if (entry.type === "range") {
-      entry.start = Number(pnl.find("[id|='newstart']").val());
-      entry.end = Number(pnl.find("[id|='newend']").val());
-
-      if (entry.start === 0 && entry.end === 0)
+      if (entry.type.indexOf("Type") != -1)
         return;
-    }
 
-    if (entry.type === "weather") {
-      entry.list = trackerslist.find(function (x) {
-        return (x.type === "weather");
-      }).list;
-    }
+      if (entry.type === "range") {
+        entry.start = Number(pnl.find("[id|='newstart']").val());
+        entry.end = Number(pnl.find("[id|='newend']").val());
 
-    if (entry.type === "list")
-      entry.list = [];
+        if (entry.start === 0 && entry.end === 0)
+          return;
+      }
 
-    store.add(entry);
+      if (entry.type === "weather") {
+        entry.list = trackerslist.find(function (x) {
+          return (x.type === "weather");
+        }).list;
+      }
 
-    if (entry.type === "list") {
-      addTab(entry);
-      addPanel(entry);
-    }
+      if (entry.type === "list")
+        entry.list = [];
 
-    generateTrackersPanel(db);
-    $("#pnl-" + pnlid).show();
-  } else {
-    let panel = store.index("by_name").openCursor(IDBKeyRange.only(pnlname));
+      store.add(entry);
+      cursor.update(account);
 
-    panel.onsuccess = function (event) {
-      let cursor = event.target.result;
-
-      if (cursor) {
-        let entry = cursor.value;
-        if (!entry.list.includes(name))
-          entry.list.push(name);
-
-        cursor.update(entry);
-
+      if (entry.type === "list") {
+        addTab(entry);
         addPanel(entry);
-        $("#pnl-" + pnlid).show();
+      }
+
+      generateTrackersPanel(db);
+      $("#pnl-" + pnlid).show();
+    } else {
+      let req = store.index("by_name").openCursor(IDBKeyRange.only(pnlname));
+
+      req.onsuccess = function (event) {
+        let cursor = event.target.result;
+
+        if (cursor) {
+          let entry = cursor.value;
+          if (!entry.list.includes(name))
+            entry.list.push(name);
+
+          cursor.update(entry);
+
+          addPanel(entry);
+          $("#pnl-" + pnlid).show();
+        }
       }
     }
-  }
+  };
 }
 
 function panelEditBtn(db, evt) {
@@ -451,9 +457,9 @@ function doneEdit(db, evt) {
   let store = db.transaction(["account"], "readwrite").objectStore("account");
 
   if (pnlid === "Trackers") {
-    let tracker = store.index("by_name").openCursor(IDBKeyRange.only(oldname));
+    let req = store.index("by_name").openCursor(IDBKeyRange.only(oldname));
 
-    tracker.onsuccess = function (event) {
+    req.onsuccess = function (event) {
       let cursor = event.target.result;
 
       if (cursor) {
@@ -475,9 +481,9 @@ function doneEdit(db, evt) {
       }
     }
   } else {
-    let panel = store.index("by_name").openCursor(IDBKeyRange.only(pnlname));
+    let req = store.index("by_name").openCursor(IDBKeyRange.only(pnlname));
 
-    panel.onsuccess = function (event) {
+    req.onsuccess = function (event) {
       let cursor = event.target.result;
 
       if (cursor) {
@@ -502,9 +508,9 @@ function panelDeleteBtn(db, evt) {
   let store = db.transaction(["account"], "readwrite").objectStore("account");
 
   if (pnlid === "Trackers") {
-    let tracker = store.index("by_name").openCursor(IDBKeyRange.only(name));
+    let req = store.index("by_name").openCursor(IDBKeyRange.only(name));
 
-    tracker.onsuccess = function (event) {
+    req.onsuccess = function (event) {
       let cursor = event.target.result;
 
       if (cursor) {
@@ -516,9 +522,9 @@ function panelDeleteBtn(db, evt) {
       }
     }
   } else {
-    let panel = store.index("by_name").openCursor(IDBKeyRange.only(pnlname));
+    let req = store.index("by_name").openCursor(IDBKeyRange.only(pnlname));
 
-    panel.onsuccess = function (event) {
+    req.onsuccess = function (event) {
       let cursor = event.target.result;
 
       if (cursor) {
@@ -543,8 +549,8 @@ function addSelectedDrugs(evt) {
   });
 
   let store = accountdb.transaction(["account"], "readwrite").objectStore("account");
-  let remediesreq = store.index("by_name").openCursor(IDBKeyRange.only("Remedies"));
-  remediesreq.onsuccess = function (event) {
+  let remreq = store.index("by_name").openCursor(IDBKeyRange.only("Remedies"));
+  remreq.onsuccess = function (event) {
     let cursor = event.target.result;
 
     if (cursor) {
@@ -555,22 +561,28 @@ function addSelectedDrugs(evt) {
 
       cursor.update(remedies);
     } else {
-      let pos = $("#cont-Trackers div:last-child").find("div:first").prop("id").replace(stripid, "$1");
-      let remedies = {
-        position: Number(pos) + 1,
-        name: "Remedies",
-        type: "list",
-        list: list,
-        editable: false,
+      let acctreq = store.index("by_name").openCursor(IDBKeyRange.only("Account"));
+      acctreq.onsuccess = function (event) {
+        let cursor = event.target.result;
+        let account = cursor.value;
+
+        let remedies = {
+          position: ++account.lastposition,
+          name: "Remedies",
+          type: "list",
+          list: list,
+          editable: false,
+        };
+
+        store.add(remedies);
+        cursor.update(account);
+
+        generateTrackersPanel(accountdb);
+        generateTabsAndPanels(accountdb);
+        addPanel(remedies);
       };
-
-      store.add(remedies);
-
-      generateTrackersPanel(accountdb);
-      generateTabsAndPanels(accountdb);
-      addPanel(remedies);
     }
-  }
+  };
 }
 
 function loadDrugsCom(evt, page) {
@@ -654,9 +666,9 @@ function loadFile(url, fctn) {
 
 function updateAccount(db) {
   let store = db.transaction(["account"], "readwrite").objectStore("account");
-  let accountreq = store.index('by_name').openCursor(IDBKeyRange.only("Account"));
+  let req = store.index('by_name').openCursor(IDBKeyRange.only("Account"));
 
-  accountreq.onsuccess = function (event) {
+  req.onsuccess = function (event) {
     let cursor = event.target.result;
     let pnl = $("#pnl-Account");
 
@@ -685,10 +697,10 @@ function updateAccount(db) {
 
 function loadAccount(db) {
   let store = db.transaction(["account"], "readwrite").objectStore("account");
-  let accountreq = store.index("by_name").get("Account");
+  let req = store.index("by_name").get("Account");
 
-  accountreq.onsuccess = function (event) {
-    let account = accountreq.result;
+  req.onsuccess = function (event) {
+    let account = req.result;
     let pnl = $("#pnl-Account");
 
     pnl.find("#ifdefault").prop("checked", account.ifdefault);
@@ -731,6 +743,7 @@ function doAccountUpgrade(db) {
   account.name = "Account";
   account.type = "account";
   account.position = 0;
+  account.lastposition = 0;
   account.ifdefault = true;
   account.city = "";
   account.state = "";
@@ -743,14 +756,14 @@ function doAccountUpgrade(db) {
   account.phone = "";
   account.notifylist = [];
 
-  store.put(account);
-
   for (let i = 0; i < trackerslist.length; ++i) {
     let tracker = trackerslist[i];
-    tracker.position = i + 1;
+    tracker.position = ++account.lastposition;
 
-    store.put(tracker);
+    store.add(tracker);
   }
+
+  store.add(account);
 }
 
 var accountdb;

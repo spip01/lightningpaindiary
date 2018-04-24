@@ -26,8 +26,36 @@ $(document).ready(function () {
             diarydb = diaryreq.result;
 
             selectFields(accountdb, diarydb);
+
+            $("#selectfields :checkbox").click(function () {
+                display(accountdb, diarydb);
+            });
+
+            $("#selectfields #save").click(function () {
+                saveReport(accountdb, $("#savereport #name").val());
+            });
+
+            $("#selectfields #cancel").click(function () {
+                loadReport(accountdb, $("#selectmenu #report").text());
+                display(accountdb, diarydb);
+            });
+
+            $("#edit").click(function () {
+                editSel(accountdb);
+            });
         };
     };
+
+    $("#selectfields #show").click(function () {
+        if ($(this).prop("checked")) {
+            $("#selectfields [id|='row']").show();
+            $("#selectfields #savereport").show();
+        } else {
+            $("#selectfields [id|='row']").hide();
+            $("#selectfields #savereport").hide();
+        }
+    });
+
 });
 
 function display(accountdb, diarydb) {
@@ -36,7 +64,7 @@ function display(accountdb, diarydb) {
             <div class="col-md-2 col-sm-2 col-3 border-right">
                 <div id="date"></div>
                 <div id="time"></div>
-                <input id="sel-idname" type="checkbox">
+                <input id="sel-idname" class="radio-inline" type="radio" name="selected">
             </div>
             <div id="rem" class="container row col-md-10 col-sm-10 col-9"></div>
         </div>
@@ -70,7 +98,7 @@ function display(accountdb, diarydb) {
                 case "date":
                     if (item.name === "Date") {
                         header.children().find("#date").text("Date & Time");
-                        header.children().find("#sel-header").hide();
+                        header.children().find("#sel-header").remove();
                         break;
                     }
                 case "time":
@@ -102,7 +130,7 @@ function display(accountdb, diarydb) {
                     let diary = cursor.value;
 
                     let id = /:/g [Symbol.replace](diary.DateTime, "--");
-                    id = /\./g [Symbol.replace](id, "--");
+                    id = /\./g [Symbol.replace](id, "---");
 
                     let h = /idname/g [Symbol.replace](row, id);
                     pnl.append(h);
@@ -170,9 +198,35 @@ function display(accountdb, diarydb) {
                     }
 
                     cursor.continue();
+                } else {
+                    $("[name='selected']").off();
+                    $("[name='selected']").click(function () {
+                        $("#edit").removeClass("disabled");
+                        $("#edit").removeAttr("disabled");
+                    });
                 }
             };
         }
+    };
+}
+
+function editSel(accountdb) {
+    let sel = $("#panels :checked");
+    let edit = sel.prop("id");
+    edit = edit.replace(/\S*?-(.*)/g, "$1");
+    edit = /---/g [Symbol.replace](edit, ".");
+    edit = /--/g [Symbol.replace](edit, ":");
+
+    let store = accountdb.transaction(["account"], "readwrite").objectStore("account");
+    let req = store.index('by_name').openCursor(IDBKeyRange.only("Account"));
+    req.onsuccess = function (event) {
+        let cursor = event.target.result;
+        let account = cursor.value;
+
+        account.lastedit = edit;
+        cursor.update(account);
+
+        window.location.assign("index.html")
     };
 }
 
@@ -189,7 +243,11 @@ function selectFields(accountdb, diarydb) {
             <input id="sub-idname--subname" type="checkbox" checked>ttitle
         </label>
         `;
-    let lastReport;
+    const menu = `<li id="item">ttype</li>`;
+
+    let lastReport = "all on";
+    let mnu = /ttype/g [Symbol.replace](menu, lastReport);
+    $("#selectmenu [id|='list']").append(mnu);
 
     let store = accountdb.transaction(["account"], "readwrite").objectStore("account");
     let req = store.index('by_position').openCursor();
@@ -203,7 +261,11 @@ function selectFields(accountdb, diarydb) {
             switch (item.type) {
                 case "account":
                     lastReport = item.lastreport;
-                case "reports":
+                    break;
+                case "report":
+                    let mnu = /ttype/g [Symbol.replace](menu, item.name);
+                    $("#selectmenu [id|='list']").append(mnu);
+                    break;
                 case "text":
                     break;
                 case "date":
@@ -252,27 +314,9 @@ function selectFields(accountdb, diarydb) {
 
             cursor.continue();
         } else {
-            $("#selectfields :checkbox").click(function () {
-                display(accountdb, diarydb);
-            });
-
-            $("#selectfields #save").click(function () {
-                saveReport(accountdb, $("#savereport #name").val());
-            });
-
-            $("#selectfields #cancel").click(function () {
-                loadReport(accountdb, $("#selectmenu #report").text());
-                display(accountdb, diarydb);
-            });
-
-            $("#selectfields #show").click(function () {
-                if ($(this).prop("checked")) {
-                    $("#selectfields [id|='row']").show();
-                    $("#selectfields #savereport").show();
-                } else {
-                    $("#selectfields [id|='row']").hide();
-                    $("#selectfields #savereport").hide();
-                }
+            $("#selectmenu [id|='item']").off();
+            $("#selectmenu [id|='item']").click(function () {
+                selectReport(accountdb, diarydb, $(this).text());
             });
 
             loadReport(accountdb, diarydb, lastReport);
@@ -280,33 +324,51 @@ function selectFields(accountdb, diarydb) {
     };
 }
 
-function loadReport(accountdb, diarydb, reportname) {
-    if (reportname === "all on" || !reportname) {
-        $("#selectfields [id|='pnt']").prop("checked", "true");
-        $("#selectfields [id|='sub']").prop("checked", "true");
-        display(accountdb, diarydb);
+function selectReport(accountdb, diarydb, report) {
+    $("#report").text(report);
 
+    let store = accountdb.transaction(["account"], "readwrite").objectStore("account");
+    let req = store.index('by_name').openCursor(IDBKeyRange.only("Account"));
+    req.onsuccess = function (event) {
+        let cursor = event.target.result;
+
+        let account = cursor.value;
+
+        account.lastreport = report;
+        cursor.update(account);
+
+        loadReport(accountdb, diarydb, report);
+    };
+}
+
+function loadReport(accountdb, diarydb, reportname) {
+    let sel = $("#selectfields");
+
+    if (reportname === "all on" || !reportname) {
+        sel.find("[id|='pnt']").prop("checked", "true");
+        sel.find("[id|='sub']").prop("checked", "true");
+        display(accountdb, diarydb);
     } else {
-        $("#selectfields [id|='pnt']").removeAttr("checked");
-        $("#selectfields [id|='sub']").removeAttr("checked");
+        sel.find("[id|='pnt']").removeAttr("checked");
+        sel.find("[id|='sub']").removeAttr("checked");
 
         let store = accountdb.transaction(["account"], "readwrite").objectStore("account");
-        let accountreq = store.index("by_name").get(IDBKeyRange.only(reportname));
+        let req = store.index("by_name").get(IDBKeyRange.only(reportname));
 
-        accountreq.onsuccess = function (event) {
-            let account = accountreq.result;
+        req.onsuccess = function (event) {
+            let account = req.result;
 
             for (let i = 0; i < account.list.length; ++i) {
                 let name = account.list[i];
                 let id = / /g [Symbol.replace](name, "-");
 
-                $("#selectfields #pnt-" + id).prop("checked", "true");
+                sel.find("#pnt-" + id).prop("checked", "true");
 
                 if (account[name] !== undefined) {
                     for (let j = 0; j < account[name].length; ++j) {
                         let lid = / /g [Symbol.replace](account[name][j], "-");
 
-                        $("#selectfields #sub-" + id + "--" + lid).prop("checked", "true");
+                        sel.find("#sub-" + id + "--" + lid).prop("checked", "true");
                     }
                 }
             }
@@ -317,6 +379,8 @@ function loadReport(accountdb, diarydb, reportname) {
 }
 
 function saveReport(accountdb, reportname) {
+    const menu = `<li id="item">ttype</li>`;
+
     let show = {};
 
     show.name = reportname;
@@ -343,28 +407,35 @@ function saveReport(accountdb, reportname) {
         }
     });
 
-    let store = accountdb.transaction(["account"], "readwrite").objectStore("account");
-    let req = store.index('by_name').openCursor(IDBKeyRange.only(show.name));
-    req.onsuccess = function (event) {
-        let cursor = event.target.result;
-
-        if (cursor)
-            cursor.update(show);
-        else
-            store.put(show);
-    };
-
     store = accountdb.transaction(["account"], "readwrite").objectStore("account");
     req = store.index('by_name').openCursor(IDBKeyRange.only("Account"));
     req.onsuccess = function (event) {
         let cursor = event.target.result;
 
-        if (cursor) {
-            let account = cursor.value;
+        let account = cursor.value;
+        account.lastreport = reportname;
 
-            account.lastreport = reportname;
+        let rptreq = store.index('by_name').openCursor(IDBKeyRange.only(show.name));
+        rptreq.onsuccess = function (event) {
+            let rptcursor = event.target.result;
+
+            if (rptcursor)
+                rptcursor.update(show);
+            else {
+                show.position = ++account.lastposition;
+                store.add(show);
+
+                let mnu = /ttype/g [Symbol.replace](menu, show.name);
+                $("#selectmenu [id|='list']").append(mnu);
+
+                $("#selectmenu [id|='item']").off();
+                $("#selectmenu [id|='item']").click(function () {
+                    selectReport(accountdb, diarydb, $(this).text());
+                });
+            }
+
             cursor.update(account);
-        }
+        };
     };
 }
 

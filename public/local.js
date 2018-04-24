@@ -98,45 +98,55 @@ function updateEntry(diarydb, accountdb) {
             cursor.continue();
         } else {
             value.DateTime = new Date(value["Date"] + " " + value["Time"]).toJSON();
-            let store = diarydb.transaction(["diary"], "readwrite").objectStore("diary");
-            let req = store.index('by_datetime').openCursor(IDBKeyRange.only(value.DateTime));
-            req.onsuccess = function (event) {
+
+            let diarystore = diarydb.transaction(["diary"], "readwrite").objectStore("diary");
+            let diaryreq = diarystore.index('by_datetime').openCursor(IDBKeyRange.only(value.DateTime));
+            diaryreq.onsuccess = function (event) {
                 let cursor = event.target.result;
 
                 if (cursor)
                     cursor.update(value);
                 else
-                    store.put(value);
+                    diarystore.add(value);
+            };
+
+            let acctstore = accountdb.transaction(["account"], "readwrite").objectStore("account");
+            let acctreq = astore.index('by_name').openCursor("Account");
+            acctreq.onsuccess = function (event) {
+                let cursor = event.target.result;
+                let account = cursor.value;
+                account.lastedit = value.DateTime;
+
+                cursor.update(account);
             };
         }
     }
 }
 
-function setup(diarydb, accountdb, ifcancel, ifshow) {
+function setup(diarydb, accountdb) {
     $("#panels").empty();
 
-    let store = diarydb.transaction(["diary"], "readwrite").objectStore("diary");
-    let req = store.index('by_datetime').openCursor(null, "prev");
-    req.onsuccess = function (event) {
-        let cursor = event.target.result;
-        let diary = null;
+    let acctstore = accountdb.transaction(["account"], "readwrite").objectStore("account");
+    let acctreq = acctstore.index('by_name').get(IDBKeyRange.only("Account"));
+    acctreq.onsuccess = function (event) {
+        let account = {};
 
-        if (cursor)
-            diary = cursor.value;
+        let diarystore = diarydb.transaction(["diary"], "readwrite").objectStore("diary");
+        let diaryreq = diarystore.index('by_datetime').openCursor(account.lastedit);
+        diaryreq.onsuccess = function (event) {
+            let diarycursor = event.target.result;
+            let diary = diarycursor ? diarycursor.value : null;
 
-        let store = accountdb.transaction(["account"], "readwrite").objectStore("account");
-        let req = store.index("by_name").get("Account");
-        req.onsuccess = function () {
-            let account = req.result;
-            if (!account.ifdefault) // || ifcancel)
-                diary = null;
+            //if (!account.ifdefault) // || ifcancel)
+            //    diary = null;
 
-            let cursor = store.index('by_position').openCursor();
-            cursor.onsuccess = function (event) {
-                let cursor = event.target.result;
+            let posstore = accountdb.transaction(["account"], "readwrite").objectStore("account");
+            let posreq = posstore.index('by_position').openCursor();
+            posreq.onsuccess = function (event) {
+                let poscursor = event.target.result;
 
-                if (cursor) {
-                    let entry = cursor.value;
+                if (poscursor) {
+                    let entry = poscursor.value;
 
                     switch (entry.type) {
                         case "blood pressure":
@@ -168,18 +178,15 @@ function setup(diarydb, accountdb, ifcancel, ifshow) {
                             break;
                     }
 
-                    cursor.continue();
+                    poscursor.continue();
                 } else {
-                    let now = new Date();
-
-                    if (!ifshow) {
+                    if (!account.lastedit) {
+                        let now = new Date();
                         $("#pnl-Date input").val(now.toDateString());
                         $("#pnl-Time input").val(now.toLocalTimeString());
                     }
 
                     $("#panels").show();
-
-                    //if (ifshow)
                     $("#l8r-Pain-Level").show();
 
                     $("#panels button").click(function () {
@@ -379,6 +386,7 @@ function buildTimeInput(entry, diary) {
     $("#pnl-" + id + " button").click(function () {
         let now = new Date();
         $(this).parent().find("input").val(now.toLocalTimeString());
+        $("#pnl-Date input").val(now.toDateString());
     });
 }
 
@@ -392,8 +400,8 @@ function buildBoolInput(entry, diary) {
         `
         <div id="pnl-idname" class="row border-bottom">
             <div class="col-lg-3 col-md-3 col-sm-3 col-6 h6 clr-dark-green">ttitle</div>
-            <label id="yes" class="radio-inline"><input type="radio" name="idname" ckyes>&nbsp;Yes</label>&nbsp;
-            <label id="no" class="radio-inline"><input type="radio" name="idname" ckno>&nbsp;No</label>
+            <label class="radio-inline"><input id="yes" type="radio" name="idname" ckyes>&nbsp;Yes</label>&nbsp;
+            <label class="radio-inline"><input id="no" type="radio" name="idname" ckno>&nbsp;No</label>
         </div>
         `;
 
@@ -409,7 +417,7 @@ function buildBoolInput(entry, diary) {
 
 function extractBoolInput(entry) {
     let id = / /g [Symbol.replace](entry.name, "-");
-    return ($("#pnl-" + id + " :checked").parent().text().indexOf("Yes") != -1);
+    return ($("#pnl-" + id + " :checked").prop("id") === "yes");
 }
 
 function buildBPInput(entry, diary) {
@@ -537,23 +545,23 @@ function extractWeatherInput(entry) {
 }
 
 function loadWeather(entry, diary) {
-    let store = accountdb.transaction(["account"], "readwrite").objectStore("account");
-    let accountreq = store.index("by_name").get("Account");
-    let id = / /g [Symbol.replace](entry.name, "-");
-
-    let pnl = $("#pnl-" + id + " [id|='val']");
-    pnl.empty();
-
-    accountreq.onsuccess = function (event) {
-        const items =
-            `
+    const items =
+        `
             <div id="in-idname" class="col-lg-4 col-md-4 col-sm-6 col-12">
                 <input class="rounded col-lg-4 col-md-5 col-sm-6 col-6" type="text" value="vvalue">
                 &nbsp;ttitle
             </div>
             `;
-        const icon = `<img src="https://openweathermap.org/img/w/iicon.png">`;
-        const button = `<button type="button" class="btn border btn-sm btn-green">Now</button>&nbsp;`;
+    const icon = `<img src="https://openweathermap.org/img/w/iicon.png">`;
+    const button = `<button type="button" class="btn border btn-sm btn-green">Now</button>&nbsp;`;
+
+    let id = / /g [Symbol.replace](entry.name, "-");
+    let pnl = $("#pnl-" + id + " [id|='val']");
+    pnl.empty();
+
+    let store = accountdb.transaction(["account"], "readwrite").objectStore("account");
+    let accountreq = store.index("by_name").get("Account");
+    accountreq.onsuccess = function (event) {
         let account = accountreq.result;
 
         let url = "https://api.openweathermap.org/data/2.5/weather?q=" + account.city + "," +
