@@ -744,6 +744,7 @@ function doAccountUpgrade(db) {
   account.type = "account";
   account.position = 0;
   account.lastposition = 0;
+  account.lastreport="all on";
   account.ifdefault = true;
   account.city = "";
   account.state = "";

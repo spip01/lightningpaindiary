@@ -111,7 +111,7 @@ function updateEntry(diarydb, accountdb) {
             };
 
             let acctstore = accountdb.transaction(["account"], "readwrite").objectStore("account");
-            let acctreq = astore.index('by_name').openCursor("Account");
+            let acctreq = acctstore.index('by_name').openCursor("Account");
             acctreq.onsuccess = function (event) {
                 let cursor = event.target.result;
                 let account = cursor.value;

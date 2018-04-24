@@ -344,7 +344,7 @@ function selectReport(accountdb, diarydb, report) {
 function loadReport(accountdb, diarydb, reportname) {
     let sel = $("#selectfields");
 
-    if (reportname === "all on" || !reportname) {
+    if (reportname === "all on") {
         sel.find("[id|='pnt']").prop("checked", "true");
         sel.find("[id|='sub']").prop("checked", "true");
         display(accountdb, diarydb);
