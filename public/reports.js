@@ -319,6 +319,16 @@ function selectFields(accountdb, diarydb) {
                 selectReport(accountdb, diarydb, $(this).text());
             });
 
+            $("#selectfields [id|='pnt']").off();
+            $("#selectfields [id|='pnt']").click(function () {
+                display(accountdb, diarydb);
+            });
+
+            $("#selectfields [id|='sub']").off();
+            $("#selectfields [id|='sub']").click(function () {
+                display(accountdb, diarydb);
+            });
+
             loadReport(accountdb, diarydb, lastReport);
         }
     };
