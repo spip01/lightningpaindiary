@@ -247,7 +247,11 @@ function selectFields(accountdb, diarydb) {
 
     let lastReport = "all on";
     let mnu = /ttype/g [Symbol.replace](menu, lastReport);
+    $("#selectmenu [id|='list']").empty();
     $("#selectmenu [id|='list']").append(mnu);
+
+    let fld=$("#fields");
+    fld.empty();
 
     let store = accountdb.transaction(["account"], "readwrite").objectStore("account");
     let req = store.index('by_position').openCursor();
@@ -278,12 +282,12 @@ function selectFields(accountdb, diarydb) {
                     let id = / /g [Symbol.replace](name, "-");
                     let h = /idname/g [Symbol.replace](row, id);
 
-                    $("#savereport").before(h);
+                    fld.append(h);
 
                     h = /idname/g [Symbol.replace](entry, id);
                     h = /ttitle/g [Symbol.replace](h, name);
 
-                    let sel = $("#selectfields #row-" + id);
+                    let sel = fld.find("#row-" + id);
                     sel.append(h);
 
                     if (item.type === "weather" || item.type === "list") {
@@ -314,18 +318,15 @@ function selectFields(accountdb, diarydb) {
 
             cursor.continue();
         } else {
-            $("#selectmenu [id|='item']").off();
             $("#selectmenu [id|='item']").click(function () {
                 selectReport(accountdb, diarydb, $(this).text());
             });
 
-            $("#selectfields [id|='pnt']").off();
-            $("#selectfields [id|='pnt']").click(function () {
+            fld.find("[id|='pnt']").click(function () {
                 display(accountdb, diarydb);
             });
 
-            $("#selectfields [id|='sub']").off();
-            $("#selectfields [id|='sub']").click(function () {
+            fld.find("[id|='sub']").click(function () {
                 display(accountdb, diarydb);
             });
 
