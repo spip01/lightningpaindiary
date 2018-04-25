@@ -239,12 +239,12 @@ function selectFields(accountdb, diarydb, reportname) {
     const cont = `<div id="cont-idname" class="col-lg-10 col-md-9 col-sm-9 col-6"></div>`;
     const entry =
         `<label class="col-lg-2 col-md-3 col-sm-3 col-6">
-            <input id="pnt-idname" type="checkbox" ifchecked>ttitle
+            <input id="pnt-idname" type="checkbox" ifchecked> ttitle
         </label>
         `;
     const sub =
         `<label class="col-lg-2 col-md-3 col-sm-5 col-12">
-            <input id="sub-idname--subname" type="checkbox" ifchecked>ttitle
+            <input id="sub-idname--subname" type="checkbox" ifchecked> ttitle
         </label>
         `;
     const menu = `<li id="item">ttype</li>`;
