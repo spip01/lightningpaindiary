@@ -15,8 +15,6 @@ $(document).ready(function () {
 
     let accountreq = indexedDB.open("account", 1);
 
-    accountreq.onupgradeneeded = function () {};
-
     accountreq.onsuccess = function () {
         accountdb = accountreq.result;
 
@@ -25,7 +23,14 @@ $(document).ready(function () {
         diaryreq.onsuccess = function () {
             diarydb = diaryreq.result;
 
-            selectFields(accountdb, diarydb);
+            let store = accountdb.transaction(["account"], "readwrite").objectStore("account");
+            let req = store.index("by_name").get(IDBKeyRange.only("Account"));
+
+            req.onsuccess = function (event) {
+                let account = req.result;
+
+                selectFields(accountdb, diarydb, account.lastreport);
+            };
 
             $("#selectfields :checkbox").click(function () {
                 display(accountdb, diarydb);
@@ -36,8 +41,7 @@ $(document).ready(function () {
             });
 
             $("#selectfields #cancel").click(function () {
-                loadReport(accountdb, $("#selectmenu #report").text());
-                display(accountdb, diarydb);
+                selectFields(accountdb, diarydb, $("#selectmenu #report").text());
             });
 
             $("#edit").click(function () {
@@ -48,11 +52,11 @@ $(document).ready(function () {
 
     $("#selectfields #show").click(function () {
         if ($(this).prop("checked")) {
-            $("#selectfields [id|='row']").show();
-            $("#selectfields #savereport").show();
+            $("#fields").show();
+            $("#savereport").show();
         } else {
-            $("#selectfields [id|='row']").hide();
-            $("#selectfields #savereport").hide();
+            $("#fields").hide();
+            $("#savereport").hide();
         }
     });
 
@@ -230,108 +234,121 @@ function editSel(accountdb) {
     };
 }
 
-function selectFields(accountdb, diarydb) {
-    const row = `<div id="row-idname" class="row border-bottom" style="display: none"></div>`;
+function selectFields(accountdb, diarydb, reportname) {
+    const row = `<div id="row-idname" class="row border-bottom"></div>`;
     const cont = `<div id="cont-idname" class="col-lg-10 col-md-9 col-sm-9 col-6"></div>`;
     const entry =
         `<label class="col-lg-2 col-md-3 col-sm-3 col-6">
-            <input id="pnt-idname" type="checkbox" checked>ttitle
+            <input id="pnt-idname" type="checkbox" ifchecked>ttitle
         </label>
         `;
     const sub =
         `<label class="col-lg-2 col-md-3 col-sm-5 col-12">
-            <input id="sub-idname--subname" type="checkbox" checked>ttitle
+            <input id="sub-idname--subname" type="checkbox" ifchecked>ttitle
         </label>
         `;
     const menu = `<li id="item">ttype</li>`;
 
-    let lastReport = "all on";
-    let mnu = /ttype/g [Symbol.replace](menu, lastReport);
     $("#selectmenu [id|='list']").empty();
+    $("#selectmenu #report").text(reportname);
+    let mnu = /ttype/g [Symbol.replace](menu, "all on");
     $("#selectmenu [id|='list']").append(mnu);
 
-    let fld=$("#fields");
+    let fld = $("#fields");
     fld.empty();
 
     let store = accountdb.transaction(["account"], "readwrite").objectStore("account");
-    let req = store.index('by_position').openCursor();
+    let req = store.index("by_name").openCursor(IDBKeyRange.only(reportname));
     req.onsuccess = function (event) {
         let cursor = event.target.result;
+        let report = {};
+        report.list = [];
 
-        if (cursor) {
-            let item = cursor.value;
-            let name = item.name;
+        if (cursor)
+            report = cursor.value;
 
-            switch (item.type) {
-                case "account":
-                    lastReport = item.lastreport;
-                    break;
-                case "report":
-                    let mnu = /ttype/g [Symbol.replace](menu, item.name);
-                    $("#selectmenu [id|='list']").append(mnu);
-                    break;
-                case "text":
-                    break;
-                case "date":
-                    if (name === "Date")
+        let store = accountdb.transaction(["account"], "readwrite").objectStore("account");
+        let req = store.index('by_position').openCursor();
+        req.onsuccess = function (event) {
+            let cursor = event.target.result;
+
+            if (cursor) {
+                let item = cursor.value;
+                let name = item.name;
+
+                switch (item.type) {
+                    case "account":
                         break;
-                case "time":
-                    if (name === "Time")
+                    case "report":
+                        let mnu = /ttype/g [Symbol.replace](menu, item.name);
+                        $("#selectmenu [id|='list']").append(mnu);
                         break;
-                default:
-                    let id = / /g [Symbol.replace](name, "-");
-                    let h = /idname/g [Symbol.replace](row, id);
+                    case "text":
+                        break;
+                    case "date":
+                        if (name === "Date")
+                            break;
+                    case "time":
+                        if (name === "Time")
+                            break;
+                    default:
+                        let id = / /g [Symbol.replace](name, "-");
+                        let h = /idname/g [Symbol.replace](row, id);
 
-                    fld.append(h);
+                        fld.append(h);
 
-                    h = /idname/g [Symbol.replace](entry, id);
-                    h = /ttitle/g [Symbol.replace](h, name);
+                        h = /idname/g [Symbol.replace](entry, id);
+                        h = /ttitle/g [Symbol.replace](h, name);
+                        h = /ifchecked/g [Symbol.replace](h, reportname=="all on" || report.list.indexOf(name) != -1 ? "checked" : "");
 
-                    let sel = fld.find("#row-" + id);
-                    sel.append(h);
-
-                    if (item.type === "weather" || item.type === "list") {
-                        h = /idname/g [Symbol.replace](cont, id);
+                        let sel = fld.find("#row-" + id);
                         sel.append(h);
-                        sel.find("#cont-" + id).addClass("container");
 
-                        for (let i = 0; i < item.list.length; ++i) {
-                            let name = item.list[i];
-                            let iid = / /g [Symbol.replace](name, "-");
+                        if (item.type === "weather" || item.type === "list") {
+                            h = /idname/g [Symbol.replace](cont, id);
+                            sel.append(h);
+                            sel.find("#cont-" + id).addClass("container");
 
-                            h = /idname/g [Symbol.replace](sub, id);
-                            h = /subname/g [Symbol.replace](h, iid);
-                            h = /ttitle/g [Symbol.replace](h, name);
+                            for (let i = 0; i < item.list.length; ++i) {
+                                let iname = item.list[i];
+                                let iid = / /g [Symbol.replace](iname, "-");
 
-                            sel.find("#cont-" + id).append(h);
+                                h = /idname/g [Symbol.replace](sub, id);
+                                h = /subname/g [Symbol.replace](h, iid);
+                                h = /ttitle/g [Symbol.replace](h, iname);
+                                h = /ifchecked/g [Symbol.replace](h, reportname=="all on" || report[name] && report[name].indexOf(iname) != -1 ? "checked" : "");
+
+                                sel.find("#cont-" + id).append(h);
+                            }
+
+                            if (item.type === "list") {
+                                h = /idname/g [Symbol.replace](sub, id);
+                                h = /subname/g [Symbol.replace](h, "all-others");
+                                h = /ttitle/g [Symbol.replace](h, "all others");
+                                h = /ifchecked/g [Symbol.replace](h, reportname=="all on" || report[name] && report[name].indexOf("all others") != -1 ? "checked" : "");
+
+                                sel.find("#cont-" + id).append(h);
+                            }
                         }
+                }
 
-                        if (item.type === "list") {
-                            h = /idname/g [Symbol.replace](sub, id);
-                            h = /subname/g [Symbol.replace](h, "all-others");
-                            h = /ttitle/g [Symbol.replace](h, "all others");
+                cursor.continue();
+            } else {
+                $("#selectmenu [id|='item']").click(function () {
+                    selectReport(accountdb, diarydb, $(this).text());
+                });
 
-                            sel.find("#cont-" + id).append(h);
-                        }
-                    }
+                fld.find("[id|='pnt']").click(function () {
+                    display(accountdb, diarydb);
+                });
+
+                fld.find("[id|='sub']").click(function () {
+                    display(accountdb, diarydb);
+                });
+
+                display(accountdb, diarydb);
             }
-
-            cursor.continue();
-        } else {
-            $("#selectmenu [id|='item']").click(function () {
-                selectReport(accountdb, diarydb, $(this).text());
-            });
-
-            fld.find("[id|='pnt']").click(function () {
-                display(accountdb, diarydb);
-            });
-
-            fld.find("[id|='sub']").click(function () {
-                display(accountdb, diarydb);
-            });
-
-            loadReport(accountdb, diarydb, lastReport);
-        }
+        };
     };
 }
 
@@ -348,45 +365,8 @@ function selectReport(accountdb, diarydb, report) {
         account.lastreport = report;
         cursor.update(account);
 
-        loadReport(accountdb, diarydb, report);
+        selectFields(accountdb, diarydb, report);
     };
-}
-
-function loadReport(accountdb, diarydb, reportname) {
-    let sel = $("#selectfields");
-
-    if (reportname === "all on") {
-        sel.find("[id|='pnt']").prop("checked", "true");
-        sel.find("[id|='sub']").prop("checked", "true");
-        display(accountdb, diarydb);
-    } else {
-        sel.find("[id|='pnt']").removeAttr("checked");
-        sel.find("[id|='sub']").removeAttr("checked");
-
-        let store = accountdb.transaction(["account"], "readwrite").objectStore("account");
-        let req = store.index("by_name").get(IDBKeyRange.only(reportname));
-
-        req.onsuccess = function (event) {
-            let account = req.result;
-
-            for (let i = 0; i < account.list.length; ++i) {
-                let name = account.list[i];
-                let id = / /g [Symbol.replace](name, "-");
-
-                sel.find("#pnt-" + id).prop("checked", "true");
-
-                if (account[name] !== undefined) {
-                    for (let j = 0; j < account[name].length; ++j) {
-                        let lid = / /g [Symbol.replace](account[name][j], "-");
-
-                        sel.find("#sub-" + id + "--" + lid).prop("checked", "true");
-                    }
-                }
-            }
-
-            display(accountdb, diarydb);
-        };
-    }
 }
 
 function saveReport(accountdb, reportname) {
@@ -412,7 +392,7 @@ function saveReport(accountdb, reportname) {
         if (type === "pnt") {
             show.list.push(parent);
         } else {
-            if (show[parent] === undefined)
+            if (!show[parent])
                 show[parent] = [];
             show[parent].push(sub);
         }

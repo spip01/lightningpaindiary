@@ -43,7 +43,7 @@ function generateTrackersPanel(db) {
 
         pnl.find("[id|='cont']").append(entry);
 
-        // if (item.fixed === undefined) {
+        // if (item.fixed) {
         //   const acct_entries =
         //     `
         //   <label class="col-lg-2 col-md-3 col-sm-6 col-12">
@@ -588,7 +588,7 @@ function addSelectedDrugs(evt) {
 function loadDrugsCom(evt, page) {
   let url = "'http://www.whateverorigin.org/get?url=";
 
-  if (page === undefined) {
+  if (page) {
     page = $("#urldrugscom").val();
     page = page.replace(/.*\/(\S.*)/g, "$1");
   }
