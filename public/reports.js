@@ -247,7 +247,7 @@ function selectFields(accountdb, diarydb, reportname) {
             <input id="sub-idname--subname" type="checkbox" ifchecked> ttitle
         </label>
         `;
-    const menu = `<li id="item">ttype</li>`;
+    const menu = `<button id="item" class="dropdown-item" type="button" style="cursor: pointer">ttype</button>`;
 
     $("#selectmenu [id|='list']").empty();
     $("#selectmenu #report").text(reportname);

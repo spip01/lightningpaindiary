@@ -60,7 +60,7 @@ function generateTrackersPanel(db) {
 
       cursor.continue();
     } else {
-      const menu_entries = `<li id="item">ttype</li>`;
+      const menu_entries = `<button id="item" class="dropdown-item" type="button" style="cursor: pointer">ttype</button>`;
 
       for (let i = 0; i < trackerstypes.length; ++i) {
         let menu = /ttype/g [Symbol.replace](menu_entries, trackerstypes[i]);
