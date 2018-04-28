@@ -3,6 +3,9 @@ let diarydb;
 const openweatherapikey = "36241d90d27162ebecabf6c334851f16";
 const stripid = /^.*?-(.*)/g;
 
+loadHtml("https://lightningpaindiary.firebaseapp.com/navbar.html", "#navbar");
+loadHtml("https://lightningpaindiary.firebaseapp.com/footer.html", "#footer");
+
 const trackerstypes = ["blood pressure", "date", "list", "number", "range", "text",
     "time", "true false", "weather"
 ];
@@ -85,7 +88,7 @@ const trackerslist = [ // sql, can't reuse names with stored data unless confirm
     }
 ];
 
-function doAccountError(errstr) {
+function doReqError(errstr) {
     console.log("error loading account: " + errstr);
 };
 

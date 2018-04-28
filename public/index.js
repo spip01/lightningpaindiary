@@ -1,57 +1,3 @@
-
-loadHtml("https://lightningpaindiary.firebaseapp.com/navbar.html", "#navbar");
-loadHtml("https://lightningpaindiary.firebaseapp.com/footer.html", "#footer");
-
-$(document).ready(function () {
-    $("#javascript").empty();
-    $("#jssite").show();
-
-    if (!('indexedDB' in window)) {
-        console.log('This browser doesn\'t support IndexedDB');
-    }
-
-    let accountreq = indexedDB.open("account", 1);
-
-    accountreq.onupgradeneeded = function () {
-        doAccountUpgrade(accountreq.result);
-    };
-    
-    accountreq.onerror = function (event) {
-     doAccountError(accountreq.error);
-    };
-
-    accountreq.onsuccess = function () {
-        accountdb = accountreq.result;
-
-        let diaryreq = indexedDB.open("diary", 1);
-
-        diaryreq.onupgradeneeded = function () {
-            diarydb = diaryreq.result;
-            let store = diarydb.createObjectStore("diary", {
-                autoIncrement: true,
-            });
-
-            store.createIndex("by_datetime", "DateTime", {
-                unique: true,
-            });
-        };
-
-        diaryreq.onsuccess = function () {
-            diarydb = diaryreq.result;
-            setup(diarydb, accountdb, false, false);
-
-            $("#save").click(function () {
-                //$("#l8r-Pain-Level").show();
-                updateEntry(diarydb, accountdb);
-            });
-
-            $("#cancel").click(function () {
-                setup(diarydb, accountdb, true, true);
-            });
-        };
-    };
-});
-
 function updateEntry(diarydb, accountdb) {
     let value = {};
 
@@ -611,3 +557,59 @@ function loadWeather(entry, diary) {
         });
     };
 }
+
+/**************************************** */
+
+//$(document).ready(function () {
+    $("#javascript").empty();
+    $("#jssite").show();
+
+    if (!('indexedDB' in window)) {
+        console.log('This browser doesn\'t support IndexedDB');
+    }
+
+    let accountreq = indexedDB.open("account", 1);
+
+    accountreq.onupgradeneeded = function () {
+        doAccountUpgrade(accountreq.result);
+    };
+
+    accountreq.onerror = function (event) {
+        doReqError(accountreq.error);
+    };
+
+    accountreq.onsuccess = function () {
+        accountdb = accountreq.result;
+
+        let diaryreq = indexedDB.open("diary", 1);
+
+        diaryreq.onerror = function () {
+            doReqError(diaryreq.error);
+        };
+
+        diaryreq.onupgradeneeded = function () {
+            diarydb = diaryreq.result;
+            let store = diarydb.createObjectStore("diary", {
+                autoIncrement: true,
+            });
+
+            store.createIndex("by_datetime", "DateTime", {
+                unique: true,
+            });
+        };
+
+        diaryreq.onsuccess = function () {
+            diarydb = diaryreq.result;
+            setup(diarydb, accountdb, false, false);
+
+            $("#save").click(function () {
+                //$("#l8r-Pain-Level").show();
+                updateEntry(diarydb, accountdb);
+            });
+
+            $("#cancel").click(function () {
+                setup(diarydb, accountdb, true, true);
+            });
+        };
+    };
+//});

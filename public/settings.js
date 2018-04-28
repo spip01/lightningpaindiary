@@ -1,6 +1,3 @@
-loadHtml("https://lightningpaindiary.firebaseapp.com/navbar.html", "#navbar");
-loadHtml("https://lightningpaindiary.firebaseapp.com/footer.html", "#footer");
-
 const panels =
   `            
 <div id="pnl-idname" class="card card-body container-fluid" style="display: none">
@@ -749,70 +746,72 @@ function loadAccount(db) {
 
 /************************************************** */
 
-$(document).ready(function () {
-  $("#javascript").hide();
-  $("#jssite").show();
+//$(document).ready(function () {
 
-  if (!('indexedDB' in window)) {
-    console.log('This browser doesn\'t support IndexedDB');
-  }
+$("#javascript").hide();
+$("#jssite").show();
 
-  let accountreq = indexedDB.open("account", 1);
+if (!('indexedDB' in window)) {
+  console.log('This browser doesn\'t support IndexedDB');
+}
 
-  accountreq.onupgradeneeded = function () {
-    doAccountUpgrade(accountreq.result);
-  };
+let accountreq = indexedDB.open("account", 1);
 
-  accountreq.onerror = function (event) {
-    doAccountError(accountreq.error);
-  };
+accountreq.onupgradeneeded = function () {
+  doAccountUpgrade(accountreq.result);
+};
 
-  accountreq.onsuccess = function () {
-    accountdb = accountreq.result;
+accountreq.onerror = function (event) {
+  doReqError(accountreq.error);
+};
 
-    generateTrackersPanel(accountdb);
-    generateTabsAndPanels(accountdb);
+accountreq.onsuccess = function () {
+  accountdb = accountreq.result;
 
-    let pnl = $("#pnl-Account");
-    pnl.show();
+  generateTrackersPanel(accountdb);
+  generateTabsAndPanels(accountdb);
 
-    pnl.find("#city").keydown(function (event) {
-      if (event.which === 0x0a || event.which === 0x0d)
-        lookupWeather(this);
-    });
+  let pnl = $("#pnl-Account");
+  pnl.show();
 
-    pnl.find("#state").keydown(function (event) {
-      if (event.which === 0x0a || event.which === 0x0d)
-        lookupWeather(this);
-    });
+  pnl.find("#city").keydown(function (event) {
+    if (event.which === 0x0a || event.which === 0x0d)
+      lookupWeather(this);
+  });
 
-    pnl.find("#country").keydown(function (event) {
-      if (event.which === 0x0a || event.which === 0x0d)
-        lookupWeather(this);
-    });
+  pnl.find("#state").keydown(function (event) {
+    if (event.which === 0x0a || event.which === 0x0d)
+      lookupWeather(this);
+  });
 
-    $("#urldrugscom").keydown(function () {
-      $("#loaddrugscom").removeClass("disabled");
-      pnl.find("#loaddrugscom").removeAttr("disabled");
+  pnl.find("#country").keydown(function (event) {
+    if (event.which === 0x0a || event.which === 0x0d)
+      lookupWeather(this);
+  });
 
-      if (event.which === 0x0a || event.which === 0x0d)
-        loadDrugsCom(this);
-    });
+  $("#urldrugscom").keydown(function () {
+    $("#loaddrugscom").removeClass("disabled");
+    pnl.find("#loaddrugscom").removeAttr("disabled");
 
-    pnl.find("#loaddrugscom").click(function () {
+    if (event.which === 0x0a || event.which === 0x0d)
       loadDrugsCom(this);
-    });
+  });
 
-    pnl.find("#demoloaddrugs").click(function () {
-      loadDrugsCom(this, "wx7s49r");
-    });
+  pnl.find("#loaddrugscom").click(function () {
+    loadDrugsCom(this);
+  });
 
-    pnl.find("#useselecteddrugs").click(function () {
-      addSelectedDrugs(this);
-    });
+  pnl.find("#demoloaddrugs").click(function () {
+    loadDrugsCom(this, "wx7s49r");
+  });
 
-    pnl.find("#save-acct").click(function () {
-      updateAccount(accountdb);
-    });
-  };
-});
+  pnl.find("#useselecteddrugs").click(function () {
+    addSelectedDrugs(this);
+  });
+
+  pnl.find("#save-acct").click(function () {
+    updateAccount(accountdb);
+  });
+};
+
+//});

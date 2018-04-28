@@ -1,71 +1,3 @@
-loadHtml("https://lightningpaindiary.firebaseapp.com/navbar.html", "#navbar");
-loadHtml("https://lightningpaindiary.firebaseapp.com/footer.html", "#footer");
-
-$(document).ready(function () {
-    $("#javascript").empty();
-    $("#jssite").show();
-
-    if (!('indexedDB' in window)) {
-        console.log('This browser doesn\'t support IndexedDB');
-    }
-
-    let accountreq = indexedDB.open("account", 1);
-
-    accountreq.onupgradeneeded = function () {
-        doAccountUpgrade(accountreq.result);
-    };
-
-    accountreq.onerror = function (event) {
-        doAccountError(accountreq.error);
-    };
-
-    accountreq.onsuccess = function () {
-        accountdb = accountreq.result;
-
-        let diaryreq = indexedDB.open("diary", 1);
-
-        diaryreq.onsuccess = function () {
-            diarydb = diaryreq.result;
-
-            let store = accountdb.transaction(["account"], "readwrite").objectStore("account");
-            let req = store.index("by_name").get(IDBKeyRange.only("Account"));
-
-            req.onsuccess = function (event) {
-                let account = req.result;
-
-                selectFields(accountdb, diarydb, account.lastreport);
-            };
-
-            $("#selectfields :checkbox").click(function () {
-                display(accountdb, diarydb);
-            });
-
-            $("#selectfields #save").click(function () {
-                saveReport(accountdb, $("#savereport #name").val());
-            });
-
-            $("#selectfields #cancel").click(function () {
-                selectFields(accountdb, diarydb, $("#selectmenu #report").text());
-            });
-
-            $("#edit").click(function () {
-                editSel(accountdb);
-            });
-        };
-    };
-
-    $("#selectfields #show").click(function () {
-        if ($(this).prop("checked")) {
-            $("#fields").show();
-            $("#savereport").show();
-        } else {
-            $("#fields").hide();
-            $("#savereport").hide();
-        }
-    });
-
-});
-
 function display(accountdb, diarydb) {
     const row =
         `<div id="row-idname" class="row" style="font-size: 15px; border-bottom: 1px solid #008000;">
@@ -433,3 +365,74 @@ function saveReport(accountdb, reportname) {
         };
     };
 }
+
+/*********************************** */
+
+//$(document).ready(function () {
+$("#javascript").empty();
+$("#jssite").show();
+
+if (!('indexedDB' in window)) {
+    console.log('This browser doesn\'t support IndexedDB');
+}
+
+let accountreq = indexedDB.open("account", 1);
+
+accountreq.onupgradeneeded = function () {
+    doAccountUpgrade(accountreq.result);
+};
+
+accountreq.onerror = function (event) {
+    doReqError(accountreq.error);
+};
+
+accountreq.onsuccess = function () {
+    accountdb = accountreq.result;
+
+    let diaryreq = indexedDB.open("diary", 1);
+
+    diaryreq.onerror = function () {
+        doReqError(diaryreq.error);
+    };
+
+    diaryreq.onsuccess = function () {
+        diarydb = diaryreq.result;
+
+        let store = accountdb.transaction(["account"], "readwrite").objectStore("account");
+        let req = store.index("by_name").get(IDBKeyRange.only("Account"));
+
+        req.onsuccess = function (event) {
+            let account = req.result;
+
+            selectFields(accountdb, diarydb, account.lastreport);
+        };
+
+        $("#selectfields :checkbox").click(function () {
+            display(accountdb, diarydb);
+        });
+
+        $("#selectfields #save").click(function () {
+            saveReport(accountdb, $("#savereport #name").val());
+        });
+
+        $("#selectfields #cancel").click(function () {
+            selectFields(accountdb, diarydb, $("#selectmenu #report").text());
+        });
+
+        $("#edit").click(function () {
+            editSel(accountdb);
+        });
+    };
+};
+
+$("#selectfields #show").click(function () {
+    if ($(this).prop("checked")) {
+        $("#fields").show();
+        $("#savereport").show();
+    } else {
+        $("#fields").hide();
+        $("#savereport").hide();
+    }
+});
+
+//});
