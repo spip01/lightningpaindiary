@@ -1,7 +1,3 @@
-let setupdb;
-let diarydb;
-const stripid = /^.*?-(.*)/g;
-
 loadHtml("https://lightningpaindiary.firebaseapp.com/navbar.html", "#navbar");
 loadHtml("https://lightningpaindiary.firebaseapp.com/footer.html", "#footer");
 
@@ -14,6 +10,14 @@ $(document).ready(function () {
     }
 
     let accountreq = indexedDB.open("account", 1);
+
+    accountreq.onupgradeneeded = function () {
+        doAccountUpgrade(accountreq.result);
+    };
+
+    accountreq.onerror = function (event) {
+        doAccountError(accountreq.error);
+    };
 
     accountreq.onsuccess = function () {
         accountdb = accountreq.result;
@@ -299,7 +303,7 @@ function selectFields(accountdb, diarydb, reportname) {
 
                         h = /idname/g [Symbol.replace](entry, id);
                         h = /ttitle/g [Symbol.replace](h, name);
-                        h = /ifchecked/g [Symbol.replace](h, reportname=="all on" || report.list.indexOf(name) != -1 ? "checked" : "");
+                        h = /ifchecked/g [Symbol.replace](h, reportname == "all on" || report.list.indexOf(name) != -1 ? "checked" : "");
 
                         let sel = fld.find("#row-" + id);
                         sel.append(h);
@@ -316,7 +320,7 @@ function selectFields(accountdb, diarydb, reportname) {
                                 h = /idname/g [Symbol.replace](sub, id);
                                 h = /subname/g [Symbol.replace](h, iid);
                                 h = /ttitle/g [Symbol.replace](h, iname);
-                                h = /ifchecked/g [Symbol.replace](h, reportname=="all on" || report[name] && report[name].indexOf(iname) != -1 ? "checked" : "");
+                                h = /ifchecked/g [Symbol.replace](h, reportname == "all on" || report[name] && report[name].indexOf(iname) != -1 ? "checked" : "");
 
                                 sel.find("#cont-" + id).append(h);
                             }
@@ -325,7 +329,7 @@ function selectFields(accountdb, diarydb, reportname) {
                                 h = /idname/g [Symbol.replace](sub, id);
                                 h = /subname/g [Symbol.replace](h, "all-others");
                                 h = /ttitle/g [Symbol.replace](h, "all others");
-                                h = /ifchecked/g [Symbol.replace](h, reportname=="all on" || report[name] && report[name].indexOf("all others") != -1 ? "checked" : "");
+                                h = /ifchecked/g [Symbol.replace](h, reportname == "all on" || report[name] && report[name].indexOf("all others") != -1 ? "checked" : "");
 
                                 sel.find("#cont-" + id).append(h);
                             }
@@ -429,68 +433,3 @@ function saveReport(accountdb, reportname) {
         };
     };
 }
-
-
-/************************************** */
-
-function loadHtml(url, selector) {
-    loadFile(url, function (data) {
-        let html = data.replace(/(?:.*?\n)*?<body>((?:.*?\n)+?)<\/body>(.*?\n?)*/g, "$1");
-        $(selector).append(html);
-    });
-}
-
-function loadFile(url, fctn) {
-    $.ajax({
-        url: url,
-        method: 'GET',
-        success: function (data) {
-            fctn(data);
-        }
-    });
-
-    //let xhttp = new XMLHttpRequest();
-    //xhttp.onreadystatechange = function () {
-    //  if (this.readyState == 4) {
-    //    if (this.status == 200) {
-    //      fctn(this.responseText);
-    //    }
-    //  }
-    //}
-    //xhttp.open("GET", url, true);
-    //xhttp.send();
-}
-
-Date.prototype.toDateLocalTimeString =
-    function () {
-        let date = this;
-        let ten = function (i) {
-            return i < 10 ? '0' + i : i;
-        }
-        return date.getFullYear() +
-            "-" + ten(date.getMonth() + 1) +
-            "-" + ten(date.getDate()) +
-            "T" + ten(date.getHours()) +
-            ":" + ten(date.getMinutes());
-    }
-
-Date.prototype.toLocalTimeString =
-    function () {
-        let date = this;
-        let ten = function (i) {
-            return i < 10 ? '0' + i : i;
-        }
-        return ten(date.getHours()) +
-            ":" + ten(date.getMinutes());
-    }
-
-Date.prototype.toDateString =
-    function () {
-        let date = this;
-        let ten = function (i) {
-            return i < 10 ? '0' + i : i;
-        }
-        return date.getFullYear() +
-            "-" + ten(date.getMonth() + 1) +
-            "-" + ten(date.getDate());
-    }

@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
 
     <link rel="stylesheet" type="text/css" href="local.css">
+    <script src="shared.js"></script>
     <script src="settings.js"></script>
 </head>
 
@@ -160,87 +161,6 @@
     <script>
         //w3.includeHTML();
 
-        const trackerstypes = ["blood pressure", "date", "list", "number", "range", "text",
-            "time", "true false", "weather"
-        ];
-
-        const trackerslist = [ // sql, can't reuse names with stored data unless confirmed by user for deletion
-            // new user start pain level, start time, remedies, relief
-            {
-                name: "Date",
-                type: "date",
-                fixed: true,
-            }, {
-                name: "Time",
-                type: "time",
-                fixed: true,
-            }, {
-                name: "Pain Level",
-                type: "range",
-                start: "1",
-                end: "10",
-                fixed: true,
-            }, {
-                name: "Woke Up With",
-                type: "true false",
-            }, {
-                name: "Lasted All Day",
-                type: "true false",
-            }, {
-                name: "End Time",
-                type: "time",
-            }, {
-                name: "Pain Location",
-                type: "list",
-                list: ["forehead", "temple", "eyes", "left", "right"],
-            }, {
-                name: "Pain Type",
-                type: "list",
-                list: ["throbbing", "burning", "pressure", "sharp"],
-            }, {
-                name: "Sensitivities",
-                type: "list",
-                list: ["light", "sound"],
-            }, {
-                name: "Remedies",
-                type: "list",
-                list: ["Kepra", "Relafin", "Haldol", "Cogentin", "Benadryl", "Compazine", "sleep"],
-            }, {
-                name: "Triggered By",
-                type: "list",
-                list: ["weather", "smells", "sleep", "bright light", "flashing light", "loud noises"],
-            }, {
-                name: "Warnings",
-                type: "list",
-                list: ["aura", "tunnel vision", "light sensitivity", "sound sensitivity",
-                    "smell sensitivity"
-                ],
-            }, {
-                name: "Pain Relief",
-                type: "range",
-                start: "5",
-                end: "1",
-            }, {
-                name: "Mood Level",
-                type: "range",
-                start: "5",
-                end: "1",
-            }, {
-                name: "Blood Pressure",
-                type: "blood pressure",
-            }, {
-                name: "Weight",
-                type: "number",
-            }, {
-                name: "Weather",
-                type: "weather",
-                list: ["temp", "humidity", "pressure", "wind", "clouds", "description"],
-                // http://openweathermap.org/api
-            }, {
-                name: "Notes",
-                type: "text",
-            }
-        ];
 
         // replace: idname, ttitle, ttype, Type, iftrackers
         // cont-idname: gets appended with entry contents

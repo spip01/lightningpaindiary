@@ -1,7 +1,3 @@
-let setupdb;
-let diarydb;
-const openweatherapikey = "36241d90d27162ebecabf6c334851f16";
-const stripid = /^.*?-(.*)/g;
 
 loadHtml("https://lightningpaindiary.firebaseapp.com/navbar.html", "#navbar");
 loadHtml("https://lightningpaindiary.firebaseapp.com/footer.html", "#footer");
@@ -16,10 +12,12 @@ $(document).ready(function () {
 
     let accountreq = indexedDB.open("account", 1);
 
-    accountreq.onupgradeneeded = function () {};
-
-    accountreq.onerror = function () {
-        console.log("account not found");
+    accountreq.onupgradeneeded = function () {
+        doAccountUpgrade(accountreq.result);
+    };
+    
+    accountreq.onerror = function (event) {
+     doAccountError(accountreq.error);
     };
 
     accountreq.onsuccess = function () {
@@ -613,67 +611,3 @@ function loadWeather(entry, diary) {
         });
     };
 }
-
-/************************************** */
-
-function loadHtml(url, selector) {
-    loadFile(url, function (data) {
-        let html = data.replace(/(?:.*?\n)*?<body>((?:.*?\n)+?)<\/body>(.*?\n?)*/g, "$1");
-        $(selector).append(html);
-    });
-}
-
-function loadFile(url, fctn) {
-    $.ajax({
-        url: url,
-        method: 'GET',
-        success: function (data) {
-            fctn(data);
-        }
-    });
-
-    //let xhttp = new XMLHttpRequest();
-    //xhttp.onreadystatechange = function () {
-    //  if (this.readyState == 4) {
-    //    if (this.status == 200) {
-    //      fctn(this.responseText);
-    //    }
-    //  }
-    //}
-    //xhttp.open("GET", url, true);
-    //xhttp.send();
-}
-
-Date.prototype.toDateLocalTimeString =
-    function () {
-        let date = this;
-        let ten = function (i) {
-            return i < 10 ? '0' + i : i;
-        }
-        return date.getFullYear() +
-            "-" + ten(date.getMonth() + 1) +
-            "-" + ten(date.getDate()) +
-            "T" + ten(date.getHours()) +
-            ":" + ten(date.getMinutes());
-    }
-
-Date.prototype.toLocalTimeString =
-    function () {
-        let date = this;
-        let ten = function (i) {
-            return i < 10 ? '0' + i : i;
-        }
-        return ten(date.getHours()) +
-            ":" + ten(date.getMinutes());
-    }
-
-Date.prototype.toDateString =
-    function () {
-        let date = this;
-        let ten = function (i) {
-            return i < 10 ? '0' + i : i;
-        }
-        return date.getFullYear() +
-            "-" + ten(date.getMonth() + 1) +
-            "-" + ten(date.getDate());
-    }
