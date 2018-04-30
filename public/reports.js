@@ -1,4 +1,4 @@
-function display(accountdb, diarydb) {
+function display(accountdb, diarydb, startdate) {
     const row =
         `<div id="row-idname" class="row" style="font-size: 15px; border-bottom: 1px solid #008000;">
             <div class="col-md-2 col-sm-2 col-3 border-right">
@@ -62,7 +62,7 @@ function display(accountdb, diarydb) {
             cursor.continue();
         } else {
             store = diarydb.transaction(["diary"], "readwrite").objectStore("diary");
-            req = store.index('by_datetime').openCursor();
+            req = store.index('by_datetime').openCursor(IDBKeyRange.lowerBound(startdate ? startdate : 0));
             req.onsuccess = function (event) {
                 let cursor = event.target.result;
 
@@ -433,6 +433,10 @@ $("#selectfields #show").click(function () {
         $("#fields").hide();
         $("#savereport").hide();
     }
+});
+
+$("#search").click(function (event) {
+    display(accountdb, diarydb, $(this).val());
 });
 
 //});

@@ -3,8 +3,8 @@ let diarydb;
 const openweatherapikey = "36241d90d27162ebecabf6c334851f16";
 const stripid = /^.*?-(.*)/g;
 
-loadHtml("https://lightningpaindiary.firebaseapp.com/navbar.html", "#navbar");
-loadHtml("https://lightningpaindiary.firebaseapp.com/footer.html", "#footer");
+loadHtml("https://lightningpaindiary.firebaseapp.com/navbar.html", "http://raw.githubusercontent.com/spip01/lightningpaindiary/bootstrap/public/navbar.html", "#navbar");
+loadHtml("https://lightningpaindiary.firebaseapp.com/footer.html", "http://raw.githubusercontent.com/spip01/lightningpaindiary/bootstrap/public/footer.html", "#footer");
 
 const trackerstypes = ["blood pressure", "date", "list", "number", "range", "text",
     "time", "true false", "weather"
@@ -133,19 +133,23 @@ function doAccountUpgrade(db) {
     store.add(account);
 }
 
-function loadHtml(url, selector) {
-    loadFile(url, function (data) {
+function loadHtml(url, alturl, selector) {
+    loadFile(url, alturl, function (data) {
         let html = data.replace(/(?:.*?\n)*?<body>((?:.*?\n)+?)<\/body>(.*?\n?)*/g, "$1");
         $(selector).append(html);
     });
 }
 
-function loadFile(url, fctn) {
+function loadFile(url, alturl, fctn) {
     $.ajax({
         url: url,
         method: 'GET',
         success: function (data) {
             fctn(data);
+        },
+        error: function (data) {
+            if (alturl)
+                loadFile(alturl, null, fctn);
         }
     });
 

@@ -512,7 +512,7 @@ function loadWeather(entry, diary) {
             account.state + "," + account.country + "&units=" + (account.ifmetric ? "metric" : "imperial") +
             "&appid=" + openweatherapikey;
 
-        loadFile(url, function (data) {
+        loadFile(url, null, function (data) {
             for (let i = 0; i < entry.list.length; ++i) {
                 let name = entry.list[i];
                 let value;

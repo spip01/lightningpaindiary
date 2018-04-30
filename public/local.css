@@ -1,3 +1,11 @@
+.main,.jssite {
+    margin-top: 60px;
+}
+
+.navbar a:hover {
+    color: black;
+}
+
 .clr-dark-green {
     color: #008000;
 }
@@ -35,7 +43,7 @@
 
 .btn-green.disabled,
 .btn-green:disabled {
-    color: #408040;
+    color: #75b675;
     border: 0px;
 }
 
