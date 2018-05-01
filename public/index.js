@@ -70,10 +70,10 @@ function updateEntry(diarydb, accountdb) {
 function setup(diarydb, accountdb) {
     $("#panels").empty();
 
-    let acctstore = accountdb.transaction(["account"], "readwrite").objectStore("account");
-    let acctreq = acctstore.index('by_name').get(IDBKeyRange.only("Account"));
-    acctreq.onsuccess = function (event) {
-        let account = {};
+    let store = accountdb.transaction(["account"], "readwrite").objectStore("account");
+    let accountreq = store.index("by_name").get(IDBKeyRange.only("Account"));
+    accountreq.onsuccess = function (event) {
+        let account = accountreq.result;
 
         let diarystore = diarydb.transaction(["diary"], "readwrite").objectStore("diary");
         let diaryreq = diarystore.index('by_datetime').openCursor(account.lastedit);
@@ -504,7 +504,7 @@ function loadWeather(entry, diary) {
     pnl.empty();
 
     let store = accountdb.transaction(["account"], "readwrite").objectStore("account");
-    let accountreq = store.index("by_name").get("Account");
+    let accountreq = store.index("by_name").get(IDBKeyRange.only("Account"));
     accountreq.onsuccess = function (event) {
         let account = accountreq.result;
 
