@@ -143,6 +143,8 @@ function display(accountdb, diarydb, startdate) {
                     $("[name='selected']").click(function () {
                         $("#edit").removeClass("disabled");
                         $("#edit").removeAttr("disabled");
+                        $("#delete").removeClass("disabled");
+                        $("#delete").removeAttr("disabled");
                     });
                 }
             };
@@ -167,6 +169,23 @@ function editSel(accountdb) {
         cursor.update(account);
 
         window.location.assign("index.html")
+    };
+}
+
+function deleteSel(accountdb, diarydb) {
+    let sel = $("#panels :checked");
+    let del = sel.prop("id");
+    del = del.replace(/\S*?-(.*)/g, "$1");
+    del = /---/g [Symbol.replace](del, ".");
+    del = /--/g [Symbol.replace](del, ":");
+
+    let store = diarydb.transaction(["diary"], "readwrite").objectStore("diary");
+    let req = store.index('by_datetime').openCursor(IDBKeyRange.only(del));
+    req.onsuccess = function (event) {
+        let cursor = event.target.result;
+
+        cursor.delete();
+        display(accountdb, diarydb);
     };
 }
 
@@ -421,6 +440,10 @@ accountreq.onsuccess = function () {
 
         $("#edit").click(function () {
             editSel(accountdb);
+        });
+
+        $("#delete").click(function () {
+            deleteSel(accountdb, diarydb);
         });
     };
 };
