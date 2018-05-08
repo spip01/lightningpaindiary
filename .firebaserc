@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "lightningpaindiary"
+    "default": "lightningpaindiary",
+    "lightningpaindiary": "lightningpaindiary"
   }
 }

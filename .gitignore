@@ -1,11 +1,8 @@
 
-/functions/node_modules/
-/node_modules/
+/functions/
 *.log
 bootstrap.min.css
 bootstrap.min.js
-w3.js
-
 
 
 .metadata
