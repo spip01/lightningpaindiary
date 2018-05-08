@@ -1,3 +1,5 @@
+'use strict';
+
 function updateEntry(diarydb, accountdb) {
     let value = {};
 
@@ -560,7 +562,7 @@ function loadWeather(entry, diary) {
 
 /**************************************** */
 
-//$(document).ready(function () {
+$(document).ready(function () {
     $("#javascript").empty();
     $("#jssite").show();
 
@@ -612,4 +614,4 @@ function loadWeather(entry, diary) {
             });
         };
     };
-//});
+});

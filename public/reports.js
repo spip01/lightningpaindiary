@@ -1,3 +1,5 @@
+'use strict';
+
 function display(accountdb, diarydb, startdate) {
     const row =
         `<div id="row-idname" class="row" style="font-size: 15px; border-bottom: 1px solid #008000;">
@@ -387,79 +389,79 @@ function saveReport(accountdb, reportname) {
 
 /*********************************** */
 
-//$(document).ready(function () {
-$("#javascript").empty();
-$("#jssite").show();
+$(document).ready(function () {
+    $("#javascript").empty();
+    $("#jssite").show();
 
-if (!('indexedDB' in window)) {
-    console.log('This browser doesn\'t support IndexedDB');
-}
+    if (!('indexedDB' in window)) {
+        console.log('This browser doesn\'t support IndexedDB');
+    }
 
-let accountreq = indexedDB.open("account", 1);
+    let accountreq = indexedDB.open("account", 1);
 
-accountreq.onupgradeneeded = function () {
-    doAccountUpgrade(accountreq.result);
-};
-
-accountreq.onerror = function (event) {
-    doReqError(accountreq.error);
-};
-
-accountreq.onsuccess = function () {
-    accountdb = accountreq.result;
-
-    let diaryreq = indexedDB.open("diary", 1);
-
-    diaryreq.onerror = function () {
-        doReqError(diaryreq.error);
+    accountreq.onupgradeneeded = function () {
+        doAccountUpgrade(accountreq.result);
     };
 
-    diaryreq.onsuccess = function () {
-        diarydb = diaryreq.result;
+    accountreq.onerror = function (event) {
+        doReqError(accountreq.error);
+    };
 
-        let store = accountdb.transaction(["account"], "readwrite").objectStore("account");
-        let req = store.index("by_name").get(IDBKeyRange.only("Account"));
+    accountreq.onsuccess = function () {
+        accountdb = accountreq.result;
 
-        req.onsuccess = function (event) {
-            let account = req.result;
+        let diaryreq = indexedDB.open("diary", 1);
 
-            selectFields(accountdb, diarydb, account.lastreport);
+        diaryreq.onerror = function () {
+            doReqError(diaryreq.error);
         };
 
-        $("#selectfields :checkbox").click(function () {
-            display(accountdb, diarydb);
-        });
+        diaryreq.onsuccess = function () {
+            diarydb = diaryreq.result;
 
-        $("#selectfields #save").click(function () {
-            saveReport(accountdb, $("#savereport #name").val());
-        });
+            let store = accountdb.transaction(["account"], "readwrite").objectStore("account");
+            let req = store.index("by_name").get(IDBKeyRange.only("Account"));
 
-        $("#selectfields #cancel").click(function () {
-            selectFields(accountdb, diarydb, $("#selectmenu #report").text());
-        });
+            req.onsuccess = function (event) {
+                let account = req.result;
 
-        $("#edit").click(function () {
-            editSel(accountdb);
-        });
+                selectFields(accountdb, diarydb, account.lastreport);
+            };
 
-        $("#delete").click(function () {
-            deleteSel(accountdb, diarydb);
-        });
+            $("#selectfields :checkbox").click(function () {
+                display(accountdb, diarydb);
+            });
+
+            $("#selectfields #save").click(function () {
+                saveReport(accountdb, $("#savereport #name").val());
+            });
+
+            $("#selectfields #cancel").click(function () {
+                selectFields(accountdb, diarydb, $("#selectmenu #report").text());
+            });
+
+            $("#edit").click(function () {
+                editSel(accountdb);
+            });
+
+            $("#delete").click(function () {
+                deleteSel(accountdb, diarydb);
+            });
+        };
     };
-};
 
-$("#selectfields #show").click(function () {
-    if ($(this).prop("checked")) {
-        $("#fields").show();
-        $("#savereport").show();
-    } else {
-        $("#fields").hide();
-        $("#savereport").hide();
-    }
+    $("#selectfields #show").click(function () {
+        if ($(this).prop("checked")) {
+            $("#fields").show();
+            $("#savereport").show();
+        } else {
+            $("#fields").hide();
+            $("#savereport").hide();
+        }
+    });
+
+    $("#search").click(function (event) {
+        display(accountdb, diarydb, $(this).val());
+    });
+
 });
-
-$("#search").click(function (event) {
-    display(accountdb, diarydb, $(this).val());
-});
-
-//});

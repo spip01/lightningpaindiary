@@ -1,3 +1,5 @@
+'use strict';
+
 let accountdb;
 let diarydb;
 const openweatherapikey = "36241d90d27162ebecabf6c334851f16";
@@ -88,6 +90,69 @@ const trackerslist = [ // sql, can't reuse names with stored data unless confirm
     }
 ];
 
+var fbauth;
+var fbdatabase;
+var fbstorage;
+
+$(document).ready(function () {
+    initFirebase();
+});
+
+// Sets up shortcuts to Firebase features and initiate firebase auth.
+function initFirebase() {
+    // Shortcuts to Firebase SDK features.
+    fbauth = firebase.auth();
+    fbdatabase = firebase.database();
+    fbstorage = firebase.storage();
+
+    fbauth.onAuthStateChanged(onAuthStateChanged.bind(this));
+};
+
+function signIn() {
+    let provider = new firebase.auth.GoogleAuthProvider();
+    fbauth.signInWithPopup(provider);
+};
+
+function signOut() {
+    fbauth.signOut();
+};
+
+function onAuthStateChanged(user) {
+    if (user) { 
+        let profilePicUrl = user.photoURL;
+        let userName = user.displayName;
+
+        $("#userpic").attr('src', profilePicUrl || '/images/profile_placeholder.png');
+        $("#username").text(userName);
+
+        $("#userpic").show();
+        $("#username").show();
+        $("#signout").show();
+        $("#signin").hide();
+    } else { 
+        $("#userpic").hide();
+        $("#username").hide();
+        $("#signout").hide();
+        $("#signin").show();
+    }
+};
+
+// Returns true if user is signed-in. Otherwise false and displays a message.
+function checkSignedInWithMessage() {
+    // Return true if the user is signed in Firebase
+    if (fbauth.currentUser) {
+        return true;
+    }
+
+    // Display a message to the user using a Toast.
+    var data = {
+        message: 'You must sign-in first',
+        timeout: 2000
+    };
+    this.signInSnackbar.MaterialSnackbar.showSnackbar(data);
+    return false;
+};
+
 function doReqError(errstr) {
     console.log("error loading account: " + errstr);
 };
@@ -137,32 +202,41 @@ function loadHtml(url, alturl, selector) {
     loadFile(url, alturl, function (data) {
         let html = data.replace(/(?:.*?\n)*?<body>((?:.*?\n)+?)<\/body>(.*?\n?)*/g, "$1");
         $(selector).append(html);
+
+        $("#signin").click(function () {
+            signIn();
+        });
+    
+        $("#signout").click(function () {
+            signOut();
+        });    
     });
 }
 
 function loadFile(url, alturl, fctn) {
-    $.ajax({
-        url: url,
-        method: 'GET',
-        success: function (data) {
-            fctn(data);
-        },
-        error: function (data) {
-            if (alturl)
+    //$.ajax({
+    //    url: url,
+    //    method: 'GET',
+    //    success: function (data) {
+    //        fctn(data);
+    //    },
+    //    error: function (data) {
+    //        if (alturl)
+    //            loadFile(alturl, null, fctn);
+    //    }
+    //});
+
+    let xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4) {
+            if (this.status == 200)
+                fctn(this.responseText);
+            else if (alturl)
                 loadFile(alturl, null, fctn);
         }
-    });
-
-    //let xhttp = new XMLHttpRequest();
-    //xhttp.onreadystatechange = function () {
-    //  if (this.readyState == 4) {
-    //    if (this.status == 200) {
-    //      fctn(this.responseText);
-    //    }
-    //  }
-    //}
-    //xhttp.open("GET", url, true);
-    //xhttp.send();
+    }
+    xhttp.open("GET", url, true);
+    xhttp.send();
 }
 
 Date.prototype.toDateLocalTimeString =

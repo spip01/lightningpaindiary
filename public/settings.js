@@ -1,3 +1,5 @@
+'use strict';
+
 const panels =
   `            
 <div id="pnl-idname" class="card card-body container-fluid" style="display: none">
@@ -746,72 +748,72 @@ function loadAccount(db) {
 
 /************************************************** */
 
-//$(document).ready(function () {
+$(document).ready(function () {
 
-$("#javascript").hide();
-$("#jssite").show();
+  $("#javascript").hide();
+  $("#jssite").show();
 
-if (!('indexedDB' in window)) {
-  console.log('This browser doesn\'t support IndexedDB');
-}
+  if (!('indexedDB' in window)) {
+    console.log('This browser doesn\'t support IndexedDB');
+  }
 
-let accountreq = indexedDB.open("account", 1);
+  let accountreq = indexedDB.open("account", 1);
 
-accountreq.onupgradeneeded = function () {
-  doAccountUpgrade(accountreq.result);
-};
+  accountreq.onupgradeneeded = function () {
+    doAccountUpgrade(accountreq.result);
+  };
 
-accountreq.onerror = function (event) {
-  doReqError(accountreq.error);
-};
+  accountreq.onerror = function (event) {
+    doReqError(accountreq.error);
+  };
 
-accountreq.onsuccess = function () {
-  accountdb = accountreq.result;
+  accountreq.onsuccess = function () {
+    accountdb = accountreq.result;
 
-  generateTrackersPanel(accountdb);
-  generateTabsAndPanels(accountdb);
+    generateTrackersPanel(accountdb);
+    generateTabsAndPanels(accountdb);
 
-  let pnl = $("#pnl-Account");
-  pnl.show();
+    let pnl = $("#pnl-Account");
+    pnl.show();
 
-  pnl.find("#city").keydown(function (event) {
-    if (event.which === 0x0a || event.which === 0x0d)
-      lookupWeather(this);
-  });
+    pnl.find("#city").keydown(function (event) {
+      if (event.which === 0x0a || event.which === 0x0d)
+        lookupWeather(this);
+    });
 
-  pnl.find("#state").keydown(function (event) {
-    if (event.which === 0x0a || event.which === 0x0d)
-      lookupWeather(this);
-  });
+    pnl.find("#state").keydown(function (event) {
+      if (event.which === 0x0a || event.which === 0x0d)
+        lookupWeather(this);
+    });
 
-  pnl.find("#country").keydown(function (event) {
-    if (event.which === 0x0a || event.which === 0x0d)
-      lookupWeather(this);
-  });
+    pnl.find("#country").keydown(function (event) {
+      if (event.which === 0x0a || event.which === 0x0d)
+        lookupWeather(this);
+    });
 
-  $("#urldrugscom").keydown(function () {
-    $("#loaddrugscom").removeClass("disabled");
-    pnl.find("#loaddrugscom").removeAttr("disabled");
+    $("#urldrugscom").keydown(function () {
+      $("#loaddrugscom").removeClass("disabled");
+      pnl.find("#loaddrugscom").removeAttr("disabled");
 
-    if (event.which === 0x0a || event.which === 0x0d)
+      if (event.which === 0x0a || event.which === 0x0d)
+        loadDrugsCom(this);
+    });
+
+    pnl.find("#loaddrugscom").click(function () {
       loadDrugsCom(this);
-  });
+    });
 
-  pnl.find("#loaddrugscom").click(function () {
-    loadDrugsCom(this);
-  });
+    pnl.find("#demoloaddrugs").click(function () {
+      loadDrugsCom(this, "wx7s49r");
+    });
 
-  pnl.find("#demoloaddrugs").click(function () {
-    loadDrugsCom(this, "wx7s49r");
-  });
+    pnl.find("#useselecteddrugs").click(function () {
+      addSelectedDrugs(this);
+    });
 
-  pnl.find("#useselecteddrugs").click(function () {
-    addSelectedDrugs(this);
-  });
+    pnl.find("#save-acct").click(function () {
+      updateAccount(accountdb);
+    });
+  };
 
-  pnl.find("#save-acct").click(function () {
-    updateAccount(accountdb);
-  });
-};
-
-//});
+});

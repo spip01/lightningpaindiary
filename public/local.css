@@ -2,8 +2,20 @@
     margin-top: 60px;
 }
 
-.navbar a:hover {
+.nav-text {
+    text-align: center;
+    padding-top: 8px;
+}
+
+.navbar a:hover,
+.navbar button:hover {
     color: black;
+    background-color: #f0fff0;
+}
+
+.navbar :focus,
+ {
+    border-radius: .2rem
 }
 
 .clr-dark-green {
@@ -14,7 +26,8 @@
     color: #e8ffe8;
 }
 
-.bkg-light-green {
+.bkg-light-green,
+.navbar button {
     background-color: #f0fff0;
 }
 
@@ -36,21 +49,18 @@
     background-color: #f9fff9;
 }
 
-.btn-green.focus,
-.btn-green:focus {
-    box-shadow: 0 0 0 .2rem rgba(0, 128, 0, .1);
-}
-
 .btn-green.disabled,
 .btn-green:disabled {
     color: #75b675;
     border: 0px;
 }
 
+.btn-green.focus,
+.btn-green:focus,
 .btn-green:not(:disabled):not(.disabled).active:focus,
 .btn-green:not(:disabled):not(.disabled):active:focus,
 .show>.btn-green.dropdown-toggle:focus {
-    box-shadow: 0 0 0 .2rem rgba(0, 128, 0, 0.1);
+    box-shadow: 0 0 0 .2rem #008000;
 }
 
 .no-border {
