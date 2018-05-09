@@ -131,7 +131,7 @@ function generateTabsAndPanels(db) {
     let cursor = event.target.result;
 
     if (cursor) {
-      item = cursor.value;
+      let item = cursor.value;
 
       if (item.type === "list") {
         addTab(item);

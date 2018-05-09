@@ -108,12 +108,12 @@ function initFirebase() {
     fbauth.onAuthStateChanged(onAuthStateChanged.bind(this));
 };
 
-function signIn() {
+function logIn() {
     let provider = new firebase.auth.GoogleAuthProvider();
     fbauth.signInWithPopup(provider);
 };
 
-function signOut() {
+function logOut() {
     fbauth.signOut();
 };
 
@@ -122,33 +122,27 @@ function onAuthStateChanged(user) {
         let profilePicUrl = user.photoURL;
         let userName = user.displayName;
 
-        $("#userpic").attr('src', profilePicUrl || '/images/profile_placeholder.png');
+        $("#userpic").attr('src', profilePicUrl || '/images/body_image.png');
         $("#username").text(userName);
 
-        $("#userpic").show();
-        $("#username").show();
-        $("#signout").show();
-        $("#signin").hide();
+        $("#usermenu").show();
+        $("#login").hide();
     } else { 
-        $("#userpic").hide();
-        $("#username").hide();
-        $("#signout").hide();
-        $("#signin").show();
+        $("#usermenu").hide();
+        $("#login").show();
     }
 };
 
-// Returns true if user is signed-in. Otherwise false and displays a message.
-function checkSignedInWithMessage() {
-    // Return true if the user is signed in Firebase
+function checkLoggedInWithMessage() {
     if (fbauth.currentUser) {
         return true;
     }
 
-    // Display a message to the user using a Toast.
     var data = {
-        message: 'You must sign-in first',
+        message: 'You must Login first',
         timeout: 2000
     };
+    
     this.signInSnackbar.MaterialSnackbar.showSnackbar(data);
     return false;
 };
@@ -203,29 +197,30 @@ function loadHtml(url, alturl, selector) {
         let html = data.replace(/(?:.*?\n)*?<body>((?:.*?\n)+?)<\/body>(.*?\n?)*/g, "$1");
         $(selector).append(html);
 
-        $("#signin").click(function () {
-            signIn();
+        $("#login").click(function () {
+            logIn();
         });
     
-        $("#signout").click(function () {
-            signOut();
+        $("#logout").click(function () {
+            logOut();
         });    
     });
 }
 
 function loadFile(url, alturl, fctn) {
-    //$.ajax({
-    //    url: url,
-    //    method: 'GET',
-    //    success: function (data) {
-    //        fctn(data);
-    //    },
-    //    error: function (data) {
-    //        if (alturl)
-    //            loadFile(alturl, null, fctn);
-    //    }
-    //});
+   $.ajax({
+      url: url,
+        method: 'GET',
+        success: function (data) {
+            fctn(data);
+        },
+        error: function (data) {
+            if (alturl)
+                loadFile(alturl, null, fctn);
+        }
+    });
 
+    /***************
     let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4) {
@@ -237,6 +232,7 @@ function loadFile(url, alturl, fctn) {
     }
     xhttp.open("GET", url, true);
     xhttp.send();
+    *************/
 }
 
 Date.prototype.toDateLocalTimeString =

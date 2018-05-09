@@ -1,21 +1,33 @@
-.main,#jssite {
-    margin-top: 60px;
+/* xs (for phones - screens less than 768px wide)
+   sm (for tablets - screens equal to or greater than 768px wide)
+   md (for small laptops - screens equal to or greater than 992px wide)
+   lg (for laptops and desktops - screens equal to or greater than 1200px wide)
+*/
+
+@media only screen and (max-width: 767px) {
+    #jssite {
+        margin-top: 80px;
+    }
+}
+
+@media only screen and (min-width: 768px) {}
+
+@media only screen and (min-width: 992px) {
+    #jssite {
+        margin-top: 60px;
+    }
+}
+
+@media only screen and (min-width: 1200px) {
+    #jssite {
+        margin-top: 50px;
+    }
 }
 
 .nav-text {
-    text-align: center;
     padding-top: 8px;
-}
-
-.navbar a:hover,
-.navbar button:hover {
-    color: black;
+    color: #008000;
     background-color: #f0fff0;
-}
-
-.navbar :focus,
- {
-    border-radius: .2rem
 }
 
 .clr-dark-green {
@@ -26,8 +38,7 @@
     color: #e8ffe8;
 }
 
-.bkg-light-green,
-.navbar button {
+.bkg-light-green {
     background-color: #f0fff0;
 }
 
@@ -46,7 +57,7 @@
 }
 
 .btn-green:hover {
-    background-color: #f9fff9;
+    background-color: #ffffff;
 }
 
 .btn-green.disabled,
@@ -60,7 +71,28 @@
 .btn-green:not(:disabled):not(.disabled).active:focus,
 .btn-green:not(:disabled):not(.disabled):active:focus,
 .show>.btn-green.dropdown-toggle:focus {
-    box-shadow: 0 0 0 .2rem #008000;
+    box-shadow: 0 0 0 .2rem rgba(0, 128, 0, .1);
+    animation: pulse .25s 1;
+}
+
+@-webkit-keyframes pulse {
+    from {
+        background-color: #008000;
+    }
+    to {
+        background-color: #e8ffe8;
+    }
+}
+
+/* Standard syntax */
+
+@keyframes pulse {
+    from {
+        background-color: #008000;
+    }
+    to {
+        background-color: #e8ffe8;
+    }
 }
 
 .no-border {
