@@ -1,3 +1,5 @@
+<html lang="en">
+
 <head>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
@@ -19,24 +21,22 @@
                 </h3>
             </a>
 
-            <a class="h5 col-2" href="reports.html">
+            <a class="h5 nav-text col-sm-2 col-3" href="reports.html">
                 Reports
             </a>
 
-            <div class="container col-sm-4 col-12">
+            <div class="container col-sm-4 col-9">
                 <button id="login" type="button" class="nav-text no-border">
                     <h5>Login</h5>
                 </button>
 
-                <div id="usermenu" class="dropdown no-border" style="display: none">
-                    <button type="button" class="row nav-text no-border dripdown-item" data-toggle="dropdown">
-                        <img id="userpic" style="width:32px; height:32px;">&nbsp;
+                <div id="usermenu" class="dropdown" style="display: none">
+                    <button type="button" class="row nav-text no-border dropdown-toggle" data-toggle="dropdown">
+                        <img id="userpic" style="width:32px; height:32px; border-radius: 50%;">&nbsp;
 
                         <h5 id="username">
                             User
-                        </h5>&nbsp;
-
-                        <i class="fas fa-caret-down"></i>
+                        </h5>
                     </button>
 
                     <div class="dropdown-menu">
@@ -44,7 +44,7 @@
                             <i class="fas fa-user-cog"></i>
                         </a>
 
-                        <button id="logout" type="button" class="no-border dripdown-item clr-dark-green">
+                        <button id="logout" type="button" class="no-border dripdown-item bkg-light-green clr-dark-green">
                             <h5>Logout</h5>
                         </button>
                     </div>

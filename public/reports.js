@@ -130,9 +130,9 @@ function display(accountdb, diarydb, startdate) {
                                     }
                                     break;
                                 case "blood pressure":
-                                    txt = txt ? diary[item.name].high + " / " + diary[item.name].low + " " + diary[item.name].pulse : "n/a";
+                                    txt = typeof txt === undefined ? "n/a" : diary[item.name].high + " / " + diary[item.name].low + " " + diary[item.name].pulse;
                                 default:
-                                    h = /dvalue/g [Symbol.replace](entry, txt ? txt : "n/a");
+                                    h = /dvalue/g [Symbol.replace](entry, typeof txt === undefined ? "n/a" : txt);
                                     h = /idname/g [Symbol.replace](h, item.id);
                                     header.find("#rem").append(h);
                             }

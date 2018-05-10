@@ -5,8 +5,8 @@ let diarydb;
 const openweatherapikey = "36241d90d27162ebecabf6c334851f16";
 const stripid = /^.*?-(.*)/g;
 
-loadHtml("https://lightningpaindiary.firebaseapp.com/navbar.html", "http://raw.githubusercontent.com/spip01/lightningpaindiary/bootstrap/public/navbar.html", "#navbar");
-loadHtml("https://lightningpaindiary.firebaseapp.com/footer.html", "http://raw.githubusercontent.com/spip01/lightningpaindiary/bootstrap/public/footer.html", "#footer");
+loadHtml("https://lightningpaindiary.firebaseapp.com/navbar.html", "http://raw.githubusercontent.com/spip01/lightningpaindiary/firebase/public/navbar.html", "#navbar");
+loadHtml("https://lightningpaindiary.firebaseapp.com/footer.html", "http://raw.githubusercontent.com/spip01/lightningpaindiary/firebase/public/footer.html", "#footer");
 
 const trackerstypes = ["blood pressure", "date", "list", "number", "range", "text",
     "time", "true false", "weather"
@@ -194,7 +194,7 @@ function doAccountUpgrade(db) {
 
 function loadHtml(url, alturl, selector) {
     loadFile(url, alturl, function (data) {
-        let html = data.replace(/(?:.*?\n)*?<body>((?:.*?\n)+?)<\/body>(.*?\n?)*/g, "$1");
+        let html = data.substring(data.indexOf("<body>")+6, data.indexOf("</body>"));
         $(selector).append(html);
 
         $("#login").click(function () {
