@@ -563,9 +563,6 @@ function loadWeather(entry, diary) {
 /**************************************** */
 
 $(document).ready(function () {
-    $("#javascript").empty();
-    $("#jssite").show();
-
     if (!('indexedDB' in window)) {
         console.log('This browser doesn\'t support IndexedDB');
     }

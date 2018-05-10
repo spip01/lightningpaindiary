@@ -1,12 +1,9 @@
 'use strict';
 
-let accountdb;
-let diarydb;
+var accountdb;
+var diarydb;
 const openweatherapikey = "36241d90d27162ebecabf6c334851f16";
 const stripid = /^.*?-(.*)/g;
-
-loadHtml("https://lightningpaindiary.firebaseapp.com/navbar.html", "http://raw.githubusercontent.com/spip01/lightningpaindiary/firebase/public/navbar.html", "#navbar");
-loadHtml("https://lightningpaindiary.firebaseapp.com/footer.html", "http://raw.githubusercontent.com/spip01/lightningpaindiary/firebase/public/footer.html", "#footer");
 
 const trackerstypes = ["blood pressure", "date", "list", "number", "range", "text",
     "time", "true false", "weather"
@@ -95,6 +92,12 @@ var fbdatabase;
 var fbstorage;
 
 $(document).ready(function () {
+    $("#javascript").empty();
+    $("#jssite").show();
+    
+    loadHtml("https://lightningpaindiary.firebaseapp.com/navbar.html", "http://raw.githubusercontent.com/spip01/lightningpaindiary/firebase/public/navbar.html", "#navbar");
+    loadHtml("https://lightningpaindiary.firebaseapp.com/footer.html", "http://raw.githubusercontent.com/spip01/lightningpaindiary/firebase/public/footer.html", "#footer");
+
     initFirebase();
 });
 

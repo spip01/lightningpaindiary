@@ -749,10 +749,6 @@ function loadAccount(db) {
 /************************************************** */
 
 $(document).ready(function () {
-
-  $("#javascript").hide();
-  $("#jssite").show();
-
   if (!('indexedDB' in window)) {
     console.log('This browser doesn\'t support IndexedDB');
   }

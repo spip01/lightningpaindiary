@@ -5,6 +5,9 @@
   "storage": {
     "rules": "storage.rules"
   },
+  "firestore": {
+    "rules": "firestore.rules"
+  },
   "hosting": {
     "public": "public",
     "ignore": [
@@ -15,11 +18,11 @@
       "storage.rules"
     ],
     "headers": [{
-      "source" : "**/*.@(js|html)",
-      "headers" : [ {
-        "key" : "Cache-Control",
-        "value" : "max-age=0"
-      } ]
+      "source": "**/*.@(js|html)",
+      "headers": [{
+        "key": "Cache-Control",
+        "value": "max-age=0"
+      }]
     }]
   }
 }
