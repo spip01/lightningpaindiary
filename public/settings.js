@@ -407,7 +407,7 @@ function panelAddBtn(db, evt) {
   let id = / /g [Symbol.replace](name, "-");
 
   let store = db.transaction(["account"], "readwrite").objectStore("account");
-  req = store.index('by_name').openCursor(IDBKeyRange.only("Account"));
+  let req = store.index('by_name').openCursor(IDBKeyRange.only("Account"));
   req.onsuccess = function (event) {
     let cursor = event.target.result;
 
