@@ -103,7 +103,13 @@ $(document).ready(function () {
 
 // Sets up shortcuts to Firebase features and initiate firebase auth.
 function initFirebase() {
-    // Shortcuts to Firebase SDK features.
+    firebase.initializeApp({
+        apiKey: 'AIzaSyBb58wdzKURN8OipGiaOgmpF_UJgA2yUEk',
+        authDomain: 'lightningpaindiary.firebaseapp.com',
+        databaseURL: "https://lightningpaindiary.firebaseio.com",
+        projectId: 'lightningpaindiary'
+      });
+      
     fbauth = firebase.auth();
     fbdatabase = firebase.database();
     fbstorage = firebase.storage();

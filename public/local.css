@@ -6,7 +6,8 @@
 
 @media only screen and (max-width: 767px) {
     #jssite {
-        margin-top: 80px;
+        margin-top: 65px;
+        margin-right: 0px;
     }
     .h1,
     h1 {
@@ -34,17 +35,24 @@
     }
 }
 
-@media only screen and (min-width: 768px) {}
+@media only screen and (min-width: 768px) {
+    #jssite {
+        margin-top: 30px;
+        margin-right: 0px;
+    }
+}
 
 @media only screen and (min-width: 992px) {
     #jssite {
-        margin-top: 60px;
+        margin-top: 30px;
+        margin-right: 0px;
     }
 }
 
 @media only screen and (min-width: 1200px) {
     #jssite {
-        margin-top: 40px;
+        margin-top: 30px;
+        margin-right: 0px;
     }
 }
 

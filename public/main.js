@@ -194,7 +194,7 @@ function buildRange(entry, diary) {
 function extractRange(entry) {
     let id = / /g [Symbol.replace](entry.name, "-");
     let btn = $("#pnl-" + id + " .btn-green").prop("id");
-    return (btn ? btn.replace(/btn-(\d+)/g, "$1") : 0);
+    return (btn ? btn.replace(/btn-(\d+)/g, "$1") : "");
 }
 
 function procRange(evt) {
@@ -420,7 +420,7 @@ function buildCheckboxList(entry, diary) {
         </label>
         `;
 
-    const add = `<input id="add-idname" class="rounded col-lg-3 col-md-3 col-sm-3 col-5" placeholder="ttitle">`;
+    const add = `<input id="add-idname" class="rounded col-lg-3 col-md-3 col-sm-3 col-6" placeholder="ttitle">`;
 
     let id = / /g [Symbol.replace](entry.name, "-");
 

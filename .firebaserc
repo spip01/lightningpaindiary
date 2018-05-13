@@ -1,6 +1,7 @@
 {
   "projects": {
     "default": "lightningpaindiary",
-    "lightningpaindiary": "lightningpaindiary"
+    "lightningpaindiary": "lightningpaindiary",
+    "lpdtest": "lpdtest-b4f14"
   }
 }

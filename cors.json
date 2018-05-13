@@ -1,0 +1,9 @@
+[
+  {
+    "origin": ["*"],
+    "allowedHeaders": ["Content-Type", "Authorization", "Content-Length", "X-Requested-With", "Accept"],
+    "method": ["GET", "PUT", "POST", "DELETE", "OPTIONS"],
+    "maxAgeSeconds": 3600,
+    "optionsSuccessStatus": 200
+  }
+]
