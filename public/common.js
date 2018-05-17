@@ -191,17 +191,17 @@ function doAccountWrite() {
 };
 
 function doAccountInit() {
-    account.lastreport = "all on";
-    account.ifdefault = true;
     account.city = "";
     account.state = "";
     account.country = "";
-    account.metric = false;
+    account.ifmetric = false;
     account.ifnotify = false;
+    account.notifytime = "20:00:00";
     account.ifemail = false;
     account.email = "";
     account.ifsms = false;
     account.phone = "";
+    account.lastreport = "all on";
 
     for (let i = 0; i < demotrackerlist.length; ++i)
         trackerlist.push(demotrackerlist[i]);
