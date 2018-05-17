@@ -214,10 +214,12 @@ function loadHtml(url, alturl, selector) {
         let html = data.substring(data.indexOf("<body>") + 6, data.indexOf("</body>"));
         $(selector).append(html);
 
+        $("#login").off();
         $("#login").click(function () {
             logIn();
         });
 
+        $("#logout").off();
         $("#logout").click(function () {
             logOut();
         });
