@@ -2,14 +2,18 @@
 
 var accountdb;
 var diarydb;
+
+var account = {};
+var trackerlist = [];
+
 const openweatherapikey = "36241d90d27162ebecabf6c334851f16";
 const stripid = /^.*?-(.*)/g;
 
-const trackerstypes = ["blood pressure", "date", "list", "number", "range", "text",
+const trackertypes = ["blood pressure", "date", "list", "number", "range", "text",
     "time", "true false", "weather"
 ];
 
-const trackerslist = [ // sql, can't reuse names with stored data unless confirmed by user for deletion
+const demotrackerlist = [ // sql, can't reuse names with stored data unless confirmed by user for deletion
     // new user start pain level, start time, remedies, relief
     {
         name: "Date",
@@ -94,10 +98,11 @@ var fbstorage;
 $(document).ready(function () {
     $("#javascript").empty();
     $("#jssite").show();
-    
+
     loadHtml("https://lightningpaindiary.firebaseapp.com/navbar.html", "http://raw.githubusercontent.com/spip01/lightningpaindiary/firebase/public/navbar.html", "#navbar");
     loadHtml("https://lightningpaindiary.firebaseapp.com/footer.html", "http://raw.githubusercontent.com/spip01/lightningpaindiary/firebase/public/footer.html", "#footer");
 
+    doAccountInit();
     initFirebase();
 });
 
@@ -107,9 +112,10 @@ function initFirebase() {
         apiKey: 'AIzaSyBb58wdzKURN8OipGiaOgmpF_UJgA2yUEk',
         authDomain: 'lightningpaindiary.firebaseapp.com',
         databaseURL: "https://lightningpaindiary.firebaseio.com",
+        storageBucket: "lightningpaindiary.appspot.com",
         projectId: 'lightningpaindiary'
-      });
-      
+    });
+
     fbauth = firebase.auth();
     fbdatabase = firebase.database();
     fbstorage = firebase.storage();
@@ -127,16 +133,28 @@ function logOut() {
 };
 
 function onAuthStateChanged(user) {
-    if (user) { 
+    if (user) {
         let profilePicUrl = user.photoURL;
         let userName = user.displayName;
+        uid = user.uid;
+        account.email = user.email;
 
         $("#userpic").attr('src', profilePicUrl || '/images/body_image.png');
         $("#username").text(userName);
 
-        $("#usermenu").show();
         $("#login").hide();
-    } else { 
+        $("#usermenu").show();
+
+        var ref = firebase.database().ref("users/" + account.uid + '/Account');
+        ref.once("value")
+            .then(function (snapshot) {
+                if (snapshot.exists())
+                    doAccountRead(snapshot.val());
+                else
+                    doAccountWrite();
+            });
+    } else {
+        uid = null;
         $("#usermenu").hide();
         $("#login").show();
     }
@@ -151,33 +169,28 @@ function checkLoggedInWithMessage() {
         message: 'You must Login first',
         timeout: 2000
     };
-    
+
     this.signInSnackbar.MaterialSnackbar.showSnackbar(data);
     return false;
 };
 
-function doReqError(errstr) {
-    console.log("error loading account: " + errstr);
+function doAccountRead(val) {
+    account = val;
+
+    var ref = firebase.database().ref("users/" + account.uid + '/Trackers');
+    ref.once("value")
+        .then(function (snapshot) {
+            trackerlist = snapshot.val();
+            doDisplayUpdate();
+        });
 };
 
-function doAccountUpgrade(db) {
-    let store = db.createObjectStore("account", {
-        autoIncrement: true
-    });
+function doAccountWrite() {
+    firebase.database().ref('users/' + account.uid + '/Account').set(account);
+    firebase.database().ref('users/' + account.uid + '/Trackers').set(trackerlist);
+};
 
-    store.createIndex("by_position", "position", {
-        unique: true
-    });
-
-    store.createIndex("by_name", "name", {
-        unique: true
-    });
-
-    let account = {};
-    account.name = "Account";
-    account.type = "account";
-    account.position = 0;
-    account.lastposition = 0;
+function doAccountInit() {
     account.lastreport = "all on";
     account.ifdefault = true;
     account.city = "";
@@ -189,36 +202,31 @@ function doAccountUpgrade(db) {
     account.email = "";
     account.ifsms = false;
     account.phone = "";
-    account.notifylist = [];
 
-    for (let i = 0; i < trackerslist.length; ++i) {
-        let tracker = trackerslist[i];
-        tracker.position = ++account.lastposition;
+    for (let i = 0; i < demotrackerlist.length; ++i)
+        trackerlist.push(demotrackerlist[i]);
 
-        store.add(tracker);
-    }
-
-    store.add(account);
+    doDisplayUpdate();
 }
 
 function loadHtml(url, alturl, selector) {
     loadFile(url, alturl, function (data) {
-        let html = data.substring(data.indexOf("<body>")+6, data.indexOf("</body>"));
+        let html = data.substring(data.indexOf("<body>") + 6, data.indexOf("</body>"));
         $(selector).append(html);
 
         $("#login").click(function () {
             logIn();
         });
-    
+
         $("#logout").click(function () {
             logOut();
-        });    
+        });
     });
 }
 
 function loadFile(url, alturl, fctn) {
-   $.ajax({
-      url: url,
+    $.ajax({
+        url: url,
         method: 'GET',
         success: function (data) {
             fctn(data);
