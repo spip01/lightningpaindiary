@@ -1,10 +1,28 @@
 'use strict';
 
-var accountdb;
-var diarydb;
+var lpd;
 
-var account = {};
-var trackerlist = [];
+function startUp() {
+    $("#javascript").empty();
+    $("#jssite").show();
+    
+    lpd = new lightningPainDiary();
+
+    loadHtml("https://lightningpaindiary.firebaseapp.com/navbar.html", "http://raw.githubusercontent.com/spip01/lightningpaindiary/firebase/public/navbar.html", "#navbar");
+    loadHtml("https://lightningpaindiary.firebaseapp.com/footer.html", "http://raw.githubusercontent.com/spip01/lightningpaindiary/firebase/public/footer.html", "#footer");
+
+    lpd.doAccountInit();
+    lpd.initFirebase();
+};
+
+function lightningPainDiary() {
+    this.account = {};
+    this.trackerlist = [];
+
+    this.fbauth = null;
+    this.fbdatabase = null;
+    this.fbstorage = null;
+}
 
 const openweatherapikey = "36241d90d27162ebecabf6c334851f16";
 const stripid = /^.*?-(.*)/g;
@@ -13,8 +31,7 @@ const trackertypes = ["blood pressure", "date", "list", "number", "range", "text
     "time", "true false", "weather"
 ];
 
-const demotrackerlist = [ // sql, can't reuse names with stored data unless confirmed by user for deletion
-    // new user start pain level, start time, remedies, relief
+const demotrackerlist = [
     {
         name: "Date",
         type: "date",
@@ -41,7 +58,7 @@ const demotrackerlist = [ // sql, can't reuse names with stored data unless conf
     }, {
         name: "Pain Location",
         type: "list",
-        list: ["forehead", "temple", "eyes", "left", "right"],
+        list: ["forehead", "temple", "eyes", "left", "center", "right"],
     }, {
         name: "Pain Type",
         type: "list",
@@ -91,23 +108,8 @@ const demotrackerlist = [ // sql, can't reuse names with stored data unless conf
     }
 ];
 
-var fbauth;
-var fbdatabase;
-var fbstorage;
-
-$(document).ready(function () {
-    $("#javascript").empty();
-    $("#jssite").show();
-
-    loadHtml("https://lightningpaindiary.firebaseapp.com/navbar.html", "http://raw.githubusercontent.com/spip01/lightningpaindiary/firebase/public/navbar.html", "#navbar");
-    loadHtml("https://lightningpaindiary.firebaseapp.com/footer.html", "http://raw.githubusercontent.com/spip01/lightningpaindiary/firebase/public/footer.html", "#footer");
-
-    doAccountInit();
-    initFirebase();
-});
-
 // Sets up shortcuts to Firebase features and initiate firebase auth.
-function initFirebase() {
+lightningPainDiary.prototype.initFirebase = function () {
     firebase.initializeApp({
         apiKey: 'AIzaSyBb58wdzKURN8OipGiaOgmpF_UJgA2yUEk',
         authDomain: 'lightningpaindiary.firebaseapp.com',
@@ -116,28 +118,26 @@ function initFirebase() {
         projectId: 'lightningpaindiary'
     });
 
-    fbauth = firebase.auth();
-    fbdatabase = firebase.database();
-    fbstorage = firebase.storage();
+    this.fbauth = firebase.auth();
+    this.fbdatabase = firebase.database();
+    this.fbstorage = firebase.storage();
 
-    fbauth.onAuthStateChanged(onAuthStateChanged.bind(this));
+    this.fbauth.onAuthStateChanged(this.onAuthStateChanged.bind(this));
 };
 
-function logIn() {
+lightningPainDiary.prototype.logIn = function () {
     let provider = new firebase.auth.GoogleAuthProvider();
-    fbauth.signInWithPopup(provider);
+    this.fbauth.signInWithPopup(provider);
 };
 
-function logOut() {
-    fbauth.signOut();
+lightningPainDiary.prototype.logOut = function () {
+    this.fbauth.signOut();
 };
 
-function onAuthStateChanged(user) {
+lightningPainDiary.prototype.onAuthStateChanged = function (user) {
     if (user) {
         let profilePicUrl = user.photoURL;
         let userName = user.displayName;
-        uid = user.uid;
-        account.email = user.email;
 
         $("#userpic").attr('src', profilePicUrl || '/images/body_image.png');
         $("#username").text(userName);
@@ -145,23 +145,27 @@ function onAuthStateChanged(user) {
         $("#login").hide();
         $("#usermenu").show();
 
-        var ref = firebase.database().ref("users/" + account.uid + '/Account');
+        this.uid = user.uid;
+        this.account.email = user.email;
+
+        var ref = firebase.database().ref("users/" + this.uid + '/Account');
         ref.once("value")
             .then(function (snapshot) {
                 if (snapshot.exists())
-                    doAccountRead(snapshot.val());
+                    lpd.doAccountRead(snapshot.val());
                 else
-                    doAccountWrite();
+                    lpd.doAccountWrite();
             });
     } else {
-        uid = null;
+        this.uid = null;
+
         $("#usermenu").hide();
         $("#login").show();
     }
 };
 
-function checkLoggedInWithMessage() {
-    if (fbauth.currentUser) {
+lightningPainDiary.prototype.checkLoggedInWithMessage = function () {
+    if (this.fbauth.currentUser) {
         return true;
     }
 
@@ -170,43 +174,51 @@ function checkLoggedInWithMessage() {
         timeout: 2000
     };
 
-    this.signInSnackbar.MaterialSnackbar.showSnackbar(data);
+    signInSnackbar.MaterialSnackbar.showSnackbar(data);
     return false;
 };
 
-function doAccountRead(val) {
-    account = val;
+lightningPainDiary.prototype.doAccountRead = function (val) {
+    this.account = val;
 
-    var ref = firebase.database().ref("users/" + account.uid + '/Trackers');
+    // check/set local storage
+
+    var ref = firebase.database().ref("users/" + this.uid + '/Trackers');
     ref.once("value")
         .then(function (snapshot) {
-            trackerlist = snapshot.val();
-            doDisplayUpdate();
+            lpd.trackerlist = snapshot.val();
+            lpd.doDisplayUpdate(lpd.trackerlist);
         });
 };
 
-function doAccountWrite() {
-    firebase.database().ref('users/' + account.uid + '/Account').set(account);
-    firebase.database().ref('users/' + account.uid + '/Trackers').set(trackerlist);
+lightningPainDiary.prototype.doAccountWrite = function () {
+    // check/set local storage
+
+    firebase.database().ref('users/' + this.uid + '/Account').set(this.account);
+    firebase.database().ref('users/' + this.uid + '/Trackers').set(this.trackerlist);
 };
 
-function doAccountInit() {
-    account.city = "";
-    account.state = "";
-    account.country = "";
-    account.ifmetric = false;
-    account.ifnotify = false;
-    account.notifytime = "20:00:00";
-    account.ifemail = false;
-    account.email = "";
-    account.ifsms = false;
-    account.phone = "";
-    account.lastreport = "all on";
+lightningPainDiary.prototype.doAccountInit = function () {
+    this.account.city = "";
+    this.account.state = "";
+    this.account.country = "";
+    this.account.ifmetric = false;
+    this.account.ifnotify = false;
+    this.account.notifytime = "20:00:00";
+    this.account.ifemail = false;
+    this.account.email = "";
+    this.account.ifsms = false;
+    this.account.phone = "";
+
+    this.account.lastreport = "all on";
+    this.account.lastdiaryupdate = 0;
 
     for (let i = 0; i < demotrackerlist.length; ++i)
-        trackerlist.push(demotrackerlist[i]);
+        this.trackerlist.push(demotrackerlist[i]);
 
-    doDisplayUpdate();
+    // set local storage
+
+    this.doDisplayUpdate(this.trackerlist);
 }
 
 function loadHtml(url, alturl, selector) {
@@ -216,12 +228,12 @@ function loadHtml(url, alturl, selector) {
 
         $("#login").off();
         $("#login").click(function () {
-            logIn();
+            lpd.logIn();
         });
 
         $("#logout").off();
         $("#logout").click(function () {
-            logOut();
+            lpd.logOut();
         });
     });
 }

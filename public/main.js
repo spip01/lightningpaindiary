@@ -69,6 +69,10 @@ function updateEntry(diarydb, accountdb) {
     }
 }
 
+lightningPainDiary.prototype.doDisplayUpdate = function () {
+    
+}
+
 function setup(diarydb, accountdb) {
     $("#panels").empty();
 
