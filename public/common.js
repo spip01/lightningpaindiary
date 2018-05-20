@@ -217,8 +217,6 @@ lightningPainDiary.prototype.doAccountInit = function () {
         this.trackerlist.push(demotrackerlist[i]);
 
     // set local storage
-
-    this.doDisplayUpdate(this.trackerlist);
 }
 
 function loadHtml(url, alturl, selector) {

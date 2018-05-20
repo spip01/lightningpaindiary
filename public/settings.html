@@ -5,7 +5,7 @@
     <title>Lightning Pain Diary</title>
     <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
     <meta charset="utfoot-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
@@ -64,54 +64,27 @@
             <div id="pnl-Account" class="card card-body container-fluid" style="display: none">
                 <div class="row border-bottom">
                     <h4 class="card-title col-lg-4 col-md-4 col-sm-5 col-7 ">Account</h4>
-                    <!-- https://developers.google.com/drive/v3/web/savetodrive -->
-                    <!--div id="___savetodrive_0" class="col-lg-2 col-md-2">
-                        <iframe ng-non-bindable="" frameborder="0" hspace="0" marginheight="0" marginwidth="0" scrolling="no" style="position: static; top: 0px; width: 58px; margin: 0px; border-style: none; left: 0px; visibility: visible; height: 29px;"
-                            tabindex="0" vspace="0" width="100%" id="I0_1520998225533" name="I0_1520998225533" src="https://drive.google.com/savetodrivebutton?usegapi=1&amp;src=%2F%2Fcors-files.appspot.com%2FStray_Kitten.jpg&amp;filename=Save%20to%20Drive%20Stray_Kitten%20demo.jpg&amp;sitename=Google%20Developers&amp;origin=https%3A%2F%2Fgoogle-developers.appspot.com&amp;gsrc=3p&amp;ic=1&amp;jsh=m%3B%2F_%2Fscs%2Fapps-static%2F_%2Fjs%2Fk%3Doz.gapi.en.R_YwodJb5EM.O%2Fm%3D__features__%2Fam%3DAQI%2Frt%3Dj%2Fd%3D1%2Frs%3DAGLTcCNZfyttL0MPLeEvWVmInXtToxOp6Q#_methods=onPlusOne%2C_ready%2C_close%2C_open%2C_resizeMe%2C_renderstart%2Concircled%2Cdrefresh%2Cerefresh%2Csave%2Conload&amp;id=I0_1520998225533&amp;_gfid=I0_1520998225533&amp;parent=https%3A%2F%2Fgoogle-developers.appspot.com&amp;pfname=&amp;rpctoken=18697450"
-                            data-gapiattached="true"></iframe>
-                    </div-->
-                    <!--div id="___openfromdrive_0" class="col-lg-2 col-md-2">
-                        <iframe ng-non-bindable="" frameborder="0" hspace="0" marginheight="0" marginwidth="0" scrolling="no" style="position: static; top: 0px; width: 58px; margin: 0px; border-style: none; left: 0px; visibility: visible; height: 29px;"
-                            tabindex="0" vspace="0" width="100%" id="I0_1520998225533" name="I0_1520998225533" src="https://drive.google.com/savetodrivebutton?usegapi=1&amp;src=%2F%2Fcors-files.appspot.com%2FStray_Kitten.jpg&amp;filename=Save%20to%20Drive%20Stray_Kitten%20demo.jpg&amp;sitename=Google%20Developers&amp;origin=https%3A%2F%2Fgoogle-developers.appspot.com&amp;gsrc=3p&amp;ic=1&amp;jsh=m%3B%2F_%2Fscs%2Fapps-static%2F_%2Fjs%2Fk%3Doz.gapi.en.R_YwodJb5EM.O%2Fm%3D__features__%2Fam%3DAQI%2Frt%3Dj%2Fd%3D1%2Frs%3DAGLTcCNZfyttL0MPLeEvWVmInXtToxOp6Q#_methods=onPlusOne%2C_ready%2C_close%2C_open%2C_resizeMe%2C_renderstart%2Concircled%2Cdrefresh%2Cerefresh%2Csave%2Conload&amp;id=I0_1520998225533&amp;_gfid=I0_1520998225533&amp;parent=https%3A%2F%2Fgoogle-developers.appspot.com&amp;pfname=&amp;rpctoken=18697450"
-                            data-gapiattached="true"></iframe>
-                    </div-->
-                    <!--/div>
-
-                <div class="row"-->
-                    <h6 class="clr-dark-green">All information is kept with the local browser.</h6>
-                </div>
-
-                <div class="row">
-                    <input id="email" type="text" class="rounded col-lg-4 col-md-4 col-sm-5 col-7" placeholder="email address">&nbsp;
-                    <div class="col-lg-2 col-md-2 col-sm-3 col-3">email</div>
-
-                    <!--i id="everified" class="fa fa-check-circle clr-dark-green" style="display: none"></i>
-                    <i id="enotverified" class="fa fa-circle"></i-->
                 </div>
                 <br>
 
-                <!--div class="row border-top">
-                    <label>
-                        <input id="ifdefault" type="checkbox"> Always default entries to last value
-                    </label>
-                </div-->
-
-                <h6 class="row clr-dark-green border-top">Address is used for current weather conditions download.</h6>
+                <h6 class="row clr-dark-green">Address is used for current weather conditions download.</h6>
                 <!-- api.openweathermap.org/data/2.5/weather?q=London,uk -->
                 <div id="addressinp" class="row container">
-                    <input id="city" class="rounded col-lg-4 col-md-5 col-sm-7 col-8" type="text">
-                    <div class="col-lg-2 col-md-2 col-sm-5 col-4">city</div>
-                    <input id="state" class="rounded col-lg-1 col-md-1 col-sm-2 col-3" type="text">
-                    <div class="col-lg-2 col-md-2 col-sm-7 col-4">state</div>
-                    <input id="country" class="rounded col-lg-4 col-md-5 col-sm-7 col-8" type="text">
-                    <div class="col-lg-2 col-md-2 col-sm-3 col-4">country</div>
+                    <label>
+                        <input id="city" class="rounded col-6" type="text"> city
+                    </label>
+                    <label>
+                        <input id="state" class="rounded col-3" type="text"> state
+                    </label>
+                    <label>
+                        <input id="country" class="rounded col-4" type="text"> country
+                    </label>
                 </div>
 
                 <div class="row container border-bottom">
-                    <label class="radio-inline">
-                        <input id="ifimperial" type="radio" name="metric"> imperial</label>&nbsp;
-                    <label class="radio-inline">
-                        <input id="ifmetric" type="radio" name="metric"> metric</label>
+                    <label>
+                        <input id="ifmetric" type="checkbox"> display metric units
+                    </label>
                 </div>
 
                 <div class="row">
@@ -120,46 +93,34 @@
                     </label>
                 </div>
 
-                <div class="row">
-                    <label class="col-lg-2 col-md-2 col-sm-3 col-6">
-                        <input id="ifemail" type="checkbox"> email
-                    </label>
+                <div class="container">
+                    <div class="row">
+                        <label>
+                            <input id="notifytime" type="time" class="rounded"> Time to send notification
+                        </label>
+                    </div>
+
+                    <div class="row">
+                        <label>
+                            <input id="ifemail" type="checkbox"> by email
+                        </label>
+                    </div>
+
+                    <div class="row">
+                        <label>
+                            <input id="ifsms" type="checkbox"> by text (If you are still charged for text messages you should change carriers &#x1f609;)
+                        </label>
+                    </div>
+
+                    <div class="row container border-bottom pad-bottom">
+                        <label>
+                            <input id="phone" type="text" class="rounded" placeholder="phone number"> phone
+                        </label>
+                    </div>
                 </div>
 
-                <div class="row">
-                    <label class="col-lg-12 col-md-12 col-sm-12 col-12">
-                        <input id="ifsms" type="checkbox"> text (If you are still charged for text messages you should change carriers &#x1f609;)
-                    </label>
-                </div>
+                <button id="save-acct" type="button" class="btn row btn-sm btn-green">Save</button>
 
-                <div class="row container">
-                    <input id="phone" type="text" class="rounded col-lg-4 col-md-5 col-sm-7 col-8" placeholder="phone number">
-                    <div class="col-lg-2 col-md-2 col-sm-3 col-4">phone</div>
-                </div>
-
-                <!--div class="row container">Require a daily entry for these items</div-->
-
-                <!--div id="reminders" class="row container"></div-->
-
-                <button id="save-acct" type="button" class="btn border btn-sm btn-green">Save</button>
-                <br>
-
-                <!--div class="row border-top" style="font-size: 12px">
-                    To load medicines from Drugs.com enter the url found under "Med List", "Share" and hit "Load". Select which medicines you
-                    want to copy to the "Remedies" section. Then hit the "Add" button . The "Remedies" section will be created
-                    if necessary.
-                </div>
-                <br>
-
-                <div class="row">
-                    <input id="urldrugscom" type="text" value="https://drugs.com/mn/" class="rounded col-lg-5 col-md-5">&nbsp;
-                    <button id="loaddrugscom" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 disabled" disabled>Load</button>&nbsp;
-                    <button id="useselecteddrugs" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 disabled" disabled>Add</button>&nbsp;
-                    <button id="demoloaddrugs" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2">Demo wx7s49r</button>
-                </div>
-                <br>
-
-                <div id="druglist" class="row container"></div-->
             </div>
         </div>
     </div>
