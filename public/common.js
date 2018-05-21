@@ -5,15 +5,15 @@ var lpd;
 function startUp() {
     $("#javascript").empty();
     $("#jssite").show();
-    
+
     lpd = new lightningPainDiary();
 
     loadHtml("https://lightningpaindiary.firebaseapp.com/navbar.html", "http://raw.githubusercontent.com/spip01/lightningpaindiary/firebase/public/navbar.html", "#navbar");
     loadHtml("https://lightningpaindiary.firebaseapp.com/footer.html", "http://raw.githubusercontent.com/spip01/lightningpaindiary/firebase/public/footer.html", "#footer");
 
-    lpd.doAccountInit();
+    lpd.init();
     lpd.initFirebase();
-};
+}
 
 function lightningPainDiary() {
     this.account = {};
@@ -31,82 +31,80 @@ const trackertypes = ["blood pressure", "date", "list", "number", "range", "text
     "time", "true false", "weather"
 ];
 
-const demotrackerlist = [
-    {
-        name: "Date",
-        type: "date",
-        fixed: true,
-    }, {
-        name: "Time",
-        type: "time",
-        fixed: true,
-    }, {
-        name: "Pain Level",
-        type: "range",
-        start: "1",
-        end: "10",
-        fixed: true,
-    }, {
-        name: "Woke Up With",
-        type: "true false",
-    }, {
-        name: "Lasted All Day",
-        type: "true false",
-    }, {
-        name: "End Time",
-        type: "time",
-    }, {
-        name: "Pain Location",
-        type: "list",
-        list: ["forehead", "temple", "eyes", "left", "center", "right"],
-    }, {
-        name: "Pain Type",
-        type: "list",
-        list: ["throbbing", "burning", "pressure", "sharp"],
-    }, {
-        name: "Sensitivities",
-        type: "list",
-        list: ["light", "sound"],
-    }, {
-        name: "Remedies",
-        type: "list",
-        list: ["Kepra", "Relafin", "Haldol", "Cogentin", "Benadryl", "Compazine", "sleep"],
-    }, {
-        name: "Triggered By",
-        type: "list",
-        list: ["weather", "smell", "sleep", "light", "noise"],
-    }, {
-        name: "Warnings",
-        type: "list",
-        list: ["aura", "tunnel vision", "light sensitivity", "sound sensitivity",
-            "smell sensitivity"
-        ],
-    }, {
-        name: "Pain Relief",
-        type: "range",
-        start: "5",
-        end: "1",
-    }, {
-        name: "Mood Level",
-        type: "range",
-        start: "5",
-        end: "1",
-    }, {
-        name: "Blood Pressure",
-        type: "blood pressure",
-    }, {
-        name: "Weight",
-        type: "number",
-    }, {
-        name: "Weather",
-        type: "weather",
-        list: ["temp", "humidity", "pressure", "wind", "clouds", "description"],
-        // http://openweathermap.org/api
-    }, {
-        name: "Notes",
-        type: "text",
-    }
-];
+const demotrackerlist = [{
+    name: "Date",
+    type: "date",
+    fixed: true,
+}, {
+    name: "Time",
+    type: "time",
+    fixed: true,
+}, {
+    name: "Pain Level",
+    type: "range",
+    start: "1",
+    end: "10",
+    fixed: true,
+}, {
+    name: "Woke Up With",
+    type: "true false",
+}, {
+    name: "Lasted All Day",
+    type: "true false",
+}, {
+    name: "End Time",
+    type: "time",
+}, {
+    name: "Pain Location",
+    type: "list",
+    list: ["forehead", "temple", "eyes", "left", "center", "right"],
+}, {
+    name: "Pain Type",
+    type: "list",
+    list: ["throbbing", "burning", "pressure", "sharp"],
+}, {
+    name: "Sensitivities",
+    type: "list",
+    list: ["light", "sound"],
+}, {
+    name: "Remedies",
+    type: "list",
+    list: ["Kepra", "Relafin", "Haldol", "Cogentin", "Benadryl", "Compazine", "sleep"],
+}, {
+    name: "Triggered By",
+    type: "list",
+    list: ["weather", "smell", "sleep", "light", "noise"],
+}, {
+    name: "Warnings",
+    type: "list",
+    list: ["aura", "tunnel vision", "light sensitivity", "sound sensitivity",
+        "smell sensitivity"
+    ],
+}, {
+    name: "Pain Relief",
+    type: "range",
+    start: "5",
+    end: "1",
+}, {
+    name: "Mood Level",
+    type: "range",
+    start: "5",
+    end: "1",
+}, {
+    name: "Blood Pressure",
+    type: "blood pressure",
+}, {
+    name: "Weight",
+    type: "number",
+}, {
+    name: "Weather",
+    type: "weather",
+    list: ["temp", "humidity", "pressure", "wind", "clouds", "description"],
+    // http://openweathermap.org/api
+}, {
+    name: "Notes",
+    type: "text",
+}];
 
 // Sets up shortcuts to Firebase features and initiate firebase auth.
 lightningPainDiary.prototype.initFirebase = function () {
@@ -123,16 +121,16 @@ lightningPainDiary.prototype.initFirebase = function () {
     this.fbstorage = firebase.storage();
 
     this.fbauth.onAuthStateChanged(this.onAuthStateChanged.bind(this));
-};
+}
 
 lightningPainDiary.prototype.logIn = function () {
     let provider = new firebase.auth.GoogleAuthProvider();
     this.fbauth.signInWithPopup(provider);
-};
+}
 
 lightningPainDiary.prototype.logOut = function () {
     this.fbauth.signOut();
-};
+}
 
 lightningPainDiary.prototype.onAuthStateChanged = function (user) {
     if (user) {
@@ -144,6 +142,7 @@ lightningPainDiary.prototype.onAuthStateChanged = function (user) {
 
         $("#login").hide();
         $("#usermenu").show();
+        $("#report").show();
 
         this.uid = user.uid;
         this.account.email = user.email;
@@ -151,23 +150,33 @@ lightningPainDiary.prototype.onAuthStateChanged = function (user) {
         var ref = firebase.database().ref("users/" + this.uid + '/Account');
         ref.once("value")
             .then(function (snapshot) {
-                if (snapshot.exists())
-                    lpd.doAccountRead(snapshot.val());
-                else
+                if (snapshot.exists()) {
+                    if(lpd.doAccountUpdate)
+                        lpd.doAccountUpdate(snapshot.val());
+                    lpd.doTrackerlistRead();
+                } else {
                     lpd.doAccountWrite();
+                    lpd.doTrackerlistWrite();
+                }
             });
     } else {
         this.uid = null;
 
         $("#usermenu").hide();
         $("#login").show();
+        $("#report").hide();
+
+        if(this.doTrackerDisplay)
+            this.doTrackerDisplay();
+            
+        if(this.doccountDisplay)
+            this.doccountDisplay();
     }
-};
+}
 
 lightningPainDiary.prototype.checkLoggedInWithMessage = function () {
-    if (this.fbauth.currentUser) {
+    if (this.fbauth.currentUser)
         return true;
-    }
 
     var data = {
         message: 'You must Login first',
@@ -175,30 +184,59 @@ lightningPainDiary.prototype.checkLoggedInWithMessage = function () {
     };
 
     signInSnackbar.MaterialSnackbar.showSnackbar(data);
+
     return false;
-};
+}
 
-lightningPainDiary.prototype.doAccountRead = function (val) {
-    this.account = val;
-
-    // check/set local storage
-
+lightningPainDiary.prototype.doTrackerlistRead = function (val) {
     var ref = firebase.database().ref("users/" + this.uid + '/Trackers');
     ref.once("value")
         .then(function (snapshot) {
             lpd.trackerlist = snapshot.val();
-            lpd.doDisplayUpdate(lpd.trackerlist);
+            lpd.doTrackerDisplay();
         });
-};
+}
 
 lightningPainDiary.prototype.doAccountWrite = function () {
     // check/set local storage
 
-    firebase.database().ref('users/' + this.uid + '/Account').set(this.account);
-    firebase.database().ref('users/' + this.uid + '/Trackers').set(this.trackerlist);
-};
+    if (this.checkLoggedInWithMessage())
+        firebase.database().ref('users/' + this.uid + '/Account').set(this.account);
+}
 
-lightningPainDiary.prototype.doAccountInit = function () {
+lightningPainDiary.prototype.doTrackerlistWrite = function () {
+    if (this.checkLoggedInWithMessage())
+        firebase.database().ref('users/' + this.uid + '/Trackers/').set(this.trackerlist);
+}
+
+lightningPainDiary.prototype.doTrackerWrite = function (entry, idx) {
+    if (this.checkLoggedInWithMessage())
+        firebase.database().ref('users/' + this.uid + '/Trackers/' + idx).set(entry);
+}
+
+lightningPainDiary.prototype.doDiaryRead = function (datekey) {
+    var ref = firebase.database().ref("users/" + this.uid + '/Diary/' + datekey);
+    ref.once("value")
+        .then(function (snapshot) {
+            lpd.doDiaryDisplay(snapshot.val());
+        });
+}
+
+lightningPainDiary.prototype.doDiaryWrite = function (value) {
+    // check/set local storage
+
+    if (this.checkLoggedInWithMessage()) {
+        let datekey = new Date(value.Date + " " + value.Time).toJSON().replace(/(.*?).000Z/g, "$1");
+        firebase.database().ref('users/' + this.uid + '/Diary/' + datekey).set(value);
+    }
+}
+
+lightningPainDiary.prototype.init = function () {
+    for (let i = 0; i < demotrackerlist.length; ++i)
+        this.trackerlist.push(demotrackerlist[i]);
+
+    // set local storage
+
     this.account.city = "";
     this.account.state = "";
     this.account.country = "";
@@ -212,11 +250,6 @@ lightningPainDiary.prototype.doAccountInit = function () {
 
     this.account.lastreport = "all on";
     this.account.lastdiaryupdate = 0;
-
-    for (let i = 0; i < demotrackerlist.length; ++i)
-        this.trackerlist.push(demotrackerlist[i]);
-
-    // set local storage
 }
 
 function loadHtml(url, alturl, selector) {

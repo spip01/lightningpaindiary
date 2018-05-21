@@ -3,6 +3,7 @@
 $(document).ready(function () {
   startUp();
 
+  // none of these depend on tracker items being loaded
   let pnl = $("#pnl-Account");
   pnl.show();
 
@@ -22,7 +23,7 @@ $(document).ready(function () {
   });
 
   pnl.find("#save-acct").click(function () {
-    lpd.updateAccount(lpd.account);
+    lpd.extractAccount();
   });
 });
 
@@ -77,12 +78,12 @@ const panels_entry =
 </div>
 `;
 
-lightningPainDiary.prototype.doDisplayUpdate = function (trackerlist) {
-  this.generateTrackersPanel(trackerlist);
-  this.generateTabsAndPanels(trackerlist);
+lightningPainDiary.prototype.doTrackerDisplay = function () {
+  this.generateTrackersPanel();
+  this.generateTabsAndPanels();
 }
 
-lightningPainDiary.prototype.generateTrackersPanel = function (trackerlist) {
+lightningPainDiary.prototype.generateTrackersPanel = function () {
   const pnlid = "Trackers";
   const name = "Trackers";
 
@@ -94,8 +95,8 @@ lightningPainDiary.prototype.generateTrackersPanel = function (trackerlist) {
   $("#panels").append(panel);
   let pnl = $("#pnl-" + pnlid);
 
-  for (let i = 0; i < trackerlist.length; ++i) {
-    let item = trackerlist[i];
+  for (let i = 0; i < this.trackerlist.length; ++i) {
+    let item = this.trackerlist[i];
 
     let id = / /g [Symbol.replace](item.name, "-");
 
@@ -127,11 +128,11 @@ lightningPainDiary.prototype.generateTrackersPanel = function (trackerlist) {
   this.setPanelEvents(pnlid);
 }
 
-lightningPainDiary.prototype.generateTabsAndPanels = function (trackerlist) {
+lightningPainDiary.prototype.generateTabsAndPanels = function () {
   this.newTabBar();
 
-  for (let i = 0; i < trackerlist.length; ++i) {
-    let item = trackerlist[i];
+  for (let i = 0; i < this.trackerlist.length; ++i) {
+    let item = this.trackerlist[i];
 
     if (item.type === "list") {
       this.addTab(item);
@@ -176,54 +177,52 @@ lightningPainDiary.prototype.setPanelEvents = function (id) {
 
   pnl.find("[id|='editname']").keydown(function (event) {
     if (event.which === 0x0a || event.which === 0x0d)
-      lpd.doneEdit(lpd.trackerlist, this);
+      lpd.doneEdit(this);
   });
 
   pnl.find("[id|='edit']").click(function () {
-    lpd.panelEditBtn(lpd.trackerlist, this);
+    lpd.panelEditBtn(this);
   });
 
   pnl.find("[id|='del']").click(function () {
-    lpd.panelDeleteBtn(lpd.trackerlist, this);
+    lpd.panelDeleteBtn(this);
   });
 
   pnl.find("[id|='new']").keydown(function (event) {
     if (event.which === 0x0a || event.which === 0x0d)
-      lpd.panelAddBtn(lpd.trackerlist, this);
+      lpd.panelAddBtn(this);
     else
       lpd.enableAddBtns(this);
   });
 
   pnl.find("[id|='add']").click(function () {
-    lpd.panelAddBtn(lpd.trackerlist, this);
+    lpd.panelAddBtn(this);
   });
 
   if (id === "Trackers") {
     pnl.find("[id|='edtstart']").keydown(function (event) {
       if (event.which === 0x0a || event.which === 0x0d)
-        lpd.doneEdit(lpd.trackerlist, this);
+        lpd.doneEdit(this);
     });
 
     pnl.find("[id|='edtend']").keydown(function (event) {
       if (event.which === 0x0a || event.which === 0x0d)
-        lpd.doneEdit(lpd.trackerlist, this);
+        lpd.doneEdit(this);
     });
 
     pnl.find("[id|='newstart']").keydown(function (event) {
       if (event.which === 0x0a || event.which === 0x0d)
-        lpd.panelAddBtn(lpd.trackerlist, this);
+        lpd.panelAddBtn(this);
     });
 
     pnl.find("[id|='newend']").keydown(function (event) {
       if (event.which === 0x0a || event.which === 0x0d)
-        lpd.panelAddBtn(lpd.trackerlist, this);
+        lpd.panelAddBtn(this);
     });
 
     pnl.find("[id|='item']").click(function () {
       lpd.selectType(this);
     });
-
-    lpd.loadAccount(lpd.account);
   }
 
   pnl.find("[draggable|='true']").on({
@@ -239,6 +238,8 @@ lightningPainDiary.prototype.setPanelEvents = function (id) {
 }
 
 lightningPainDiary.prototype.newTabBar = function () {
+  $("#tablist").empty();
+
   this.addTab({
     name: "Account",
     borderbottom: true,
@@ -374,7 +375,7 @@ lightningPainDiary.prototype.selectType = function (evt) {
   }
 }
 
-lightningPainDiary.prototype.panelAddBtn = function (trackerlist, evt) {
+lightningPainDiary.prototype.panelAddBtn = function (evt) {
   let pnlid = $(evt).prop("id").replace(stripid, "$1");
   let pnlname = /-/g [Symbol.replace](pnlid, " ");
   let pnl = $("#pnl-" + pnlid);
@@ -387,7 +388,7 @@ lightningPainDiary.prototype.panelAddBtn = function (trackerlist, evt) {
       type: pnl.find("[id|='sel']").text(),
     };
 
-    let found = trackerlist.find(function (x) {
+    let found = this.trackerlist.find(function (x) {
       return (x.name === name);
     });
 
@@ -403,7 +404,7 @@ lightningPainDiary.prototype.panelAddBtn = function (trackerlist, evt) {
     }
 
     if (entry.type === "weather") {
-      entry.list = demotrackerlist.find(function (x) {
+      entry.list = demothis.trackerlist.find(function (x) {
         return (x.type === "weather");
       }).list;
     }
@@ -415,29 +416,29 @@ lightningPainDiary.prototype.panelAddBtn = function (trackerlist, evt) {
       this.addPanel(entry);
     }
 
-    trackerlist.push(entry);
+    this.trackerlist.push(entry);
 
-    this.generateTrackersPanel(trackerlist);
+    this.generateTrackersPanel();
     $("#pnl-" + pnlid).show();
 
-    firebase.database().ref('users/' + this.uid + '/Trackers').push(entry);
+    this.doTrackerWrite(entry, this.trackerlist.length-1);
   } else {
-    let i = trackerlist.findIndex(function (x) {
+    let i = this.trackerlist.findIndex(function (x) {
       return (x.name === pnlname);
     });
 
-    let entry = trackerlist[i];
+    let entry = this.trackerlist[i];
     if (!entry.list.includes(name))
       entry.list.push(name);
 
     this.addPanel(entry);
     $("#pnl-" + pnlid).show();
 
-    firebase.database().ref('users/' + this.uid + '/Trackers/' + i).set(entry);
+    this.doTrackerWrite(entry, i);
   }
 }
 
-lightningPainDiary.prototype.panelEditBtn = function (trackerlist, evt) {
+lightningPainDiary.prototype.panelEditBtn = function (evt) {
   let ent = $(evt).parent();
   let pnlid = ent.prop("id").replace(stripid, "$1");
 
@@ -456,11 +457,11 @@ lightningPainDiary.prototype.panelEditBtn = function (trackerlist, evt) {
   $(evt).text("Done");
   $(evt).off();
   $(evt).click(function () {
-    lpd.doneEdit(trackerlist, this);
+    lpd.doneEdit(this);
   });
 }
 
-lightningPainDiary.prototype.doneEdit = function (trackerlist, evt) {
+lightningPainDiary.prototype.doneEdit = function (evt) {
   let id = $(evt).prop("id").replace(stripid, "$1");
   let ent = $(evt).parent();
   let pnlid = ent.parent().prop("id").replace(stripid, "$1");
@@ -471,11 +472,11 @@ lightningPainDiary.prototype.doneEdit = function (trackerlist, evt) {
   let oldname = /-/g [Symbol.replace](id, " ");
 
   if (pnlname === "Trackers") {
-    let i = trackerlist.findIndex(function (x) {
+    let i = this.trackerlist.findIndex(function (x) {
       return (x.name === oldname);
     });
 
-    let entry = trackerlist[i];
+    let entry = this.trackerlist[i];
     entry.name = newname;
 
     if (entry.type === "range") {
@@ -484,15 +485,14 @@ lightningPainDiary.prototype.doneEdit = function (trackerlist, evt) {
     }
 
     if (entry.type === "list")
-      lpd.generateTabsAndPanels(trackerlist);
+      this.generateTabsAndPanels();
 
-    lpd.generateTrackersPanel(trackerlist);
+    this.generateTrackersPanel();
     $("#pnl-" + pnlid).show();
 
-    firebase.database().ref('users/' + this.uid + '/Trackers/' + i).set(entry);
-
+    this.doTrackerWrite(entry, i)
   } else {
-    let i = trackerlist.findIndes(function (x) {
+    let i = this.trackerlist.findIndex(function (x) {
       return (x.name === pnlname);
     });
 
@@ -504,41 +504,41 @@ lightningPainDiary.prototype.doneEdit = function (trackerlist, evt) {
     this.addPanel(entry);
     $("#pnl-" + pnlid).show();
 
-    firebase.database().ref('users/' + this.uid + '/Trackers/' + i).set(entry);
+    this.doTrackerWrite(entry, i)
   }
 }
 
-lightningPainDiary.prototype.panelDeleteBtn = function (trackerlist, evt) {
+lightningPainDiary.prototype.panelDeleteBtn = function (evt) {
   let id = $(evt).prop("id").replace(stripid, "$1");
   let pnlid = $(evt).parent().parent().prop("id").replace(stripid, "$1");
   let pnlname = /-/g [Symbol.replace](pnlid, " ");
   let name = /-/g [Symbol.replace](id, " ");
 
   if (pnlid === "Trackers") {
-    let i = trackerlist.findIndex(function (x) {
+    let i = this.trackerlist.findIndex(function (x) {
       return (x.name === name);
     });
 
-    trackerlist.splice(i, 1);
+    this.trackerlist.splice(i, 1);
 
     $("#pnl-" + pnlid + " #ent-" + id).remove();
     $("#panels #pnl-" + id).remove();
     $("#tablist #tab-" + id).remove();
 
-    firebase.database().ref('users/' + this.uid + '/Trackers/').set(trackerlist);
+    this.doTrackerlistWrite();
   } else {
-    let i = trackerlist.findIndex(function (x) {
+    let i = this.trackerlist.findIndex(function (x) {
       return (x.name === pnlname);
     });
 
-    let entry = trackerlist[i];
+    let entry = this.trackerlist[i];
 
     let j = entry.list.indexOf(name);
     entry.list.splice(j, 1);
 
     $("#pnl-" + pnlid + " #ent-" + id).remove();
 
-    firebase.database().ref('users/' + this.uid + '/Trackers/' + i).set(entry);
+    this.doTrackerWrite(entry, i)
   }
 }
 
@@ -556,33 +556,33 @@ function lookupWeather(evt) {
   });
 }
 
-lightningPainDiary.prototype.updateAccount = function (account) {
-  let pnl=$("#pnl-Account");
-  
-  account.city = pnl.find("#city").val();
-  account.state = pnl.find("#state").val();
-  account.country = pnl.find("#country").val();
-  account.ifmetric = pnl.find("#ifmetric").prop("checked");
-  account.ifnotify = pnl.find("#ifnotify").prop("checked");
-  account.notifytime = pnl.find("#notifytime").val();
-  account.ifemail = pnl.find("#ifemail").prop("checked");
-  account.ifsms = pnl.find("#ifsms").prop("checked");
-  account.phone = pnl.find("#phone").val();
-
-  firebase.database().ref('users/' + this.uid + '/Account').set(account);
-}
-
-lightningPainDiary.prototype.loadAccount = function (account) {
+lightningPainDiary.prototype.extractAccount = function () {
   let pnl = $("#pnl-Account");
 
-  pnl.find("#city").val(account.city);
-  pnl.find("#state").val(account.state);
-  pnl.find("#country").val(account.country);
-  pnl.find("#ifimperial").prop("checked", !account.ifmetric);
-  pnl.find("#ifmetric").prop("checked", account.ifmetric);
-  pnl.find("#ifnotify").prop("checked", account.ifnotify);
-  pnl.find("#notifytime").val(account.notifytime);
-  pnl.find("#ifemail").prop("checked", account.ifemail);
-  pnl.find("#ifsms").prop("checked", account.ifsms);
-  pnl.find("#phone").val(account.phone);
+  this.account.city = pnl.find("#city").val();
+  this.account.state = pnl.find("#state").val();
+  this.account.country = pnl.find("#country").val();
+  this.account.ifmetric = pnl.find("#ifmetric").prop("checked");
+  this.account.ifnotify = pnl.find("#ifnotify").prop("checked");
+  this.account.notifytime = pnl.find("#notifytime").val();
+  this.account.ifemail = pnl.find("#ifemail").prop("checked");
+  this.account.ifsms = pnl.find("#ifsms").prop("checked");
+  this.account.phone = pnl.find("#phone").val();
+
+  this.doAccountWrite();
+}
+
+lightningPainDiary.prototype.doAccountDisplay = function () {
+  let pnl = $("#pnl-Account");
+
+  pnl.find("#city").val(this.account.city);
+  pnl.find("#state").val(this.account.state);
+  pnl.find("#country").val(this.account.country);
+  pnl.find("#ifimperial").prop("checked", !this.account.ifmetric);
+  pnl.find("#ifmetric").prop("checked", this.account.ifmetric);
+  pnl.find("#ifnotify").prop("checked", this.account.ifnotify);
+  pnl.find("#notifytime").val(this.account.notifytime);
+  pnl.find("#ifemail").prop("checked", this.account.ifemail);
+  pnl.find("#ifsms").prop("checked", this.account.ifsms);
+  pnl.find("#phone").val(this.account.phone);
 }
