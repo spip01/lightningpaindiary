@@ -8,7 +8,7 @@ $(document).ready(function () {
     });
 
     $("#cancel").click(function () {
-        if(lpd.lastvalue)
+        if (lpd.lastvalue)
             lpd.doDiaryDisplay(lpd.lastvalue);
     });
 });
@@ -19,38 +19,38 @@ lightningPainDiary.prototype.updateEntry = function () {
     for (let i = 0; i < this.trackerlist.length; ++i) {
         let entry = this.trackerlist[i];
 
-            switch (entry.type) {
-                case "blood pressure":
+        switch (entry.type) {
+            case "blood pressure":
                 value[entry.name] = this.extractBPInput(entry);
-                    break;
-                case "date":
+                break;
+            case "date":
                 value[entry.name] = this.extractDateInput(entry);
-                    break;
-                case "list":
+                break;
+            case "list":
                 value[entry.name] = this.extractCheckboxList(entry);
-                    break;
-                case "number":
+                break;
+            case "number":
                 value[entry.name] = this.extractNumInput(entry);
-                    break;
-                case "range":
+                break;
+            case "range":
                 value[entry.name] = this.extractRange(entry);
-                    break;
-                case "text":
+                break;
+            case "text":
                 value[entry.name] = this.extractTextInput(entry);
-                    break;
-                case "time":
+                break;
+            case "time":
                 value[entry.name] = this.extractTimeInput(entry);
-                    break;
-                case "true false":
+                break;
+            case "true false":
                 value[entry.name] = this.extractBoolInput(entry);
-                    break;
-                case "weather":
+                break;
+            case "weather":
                 value[entry.name] = this.extractWeatherInput(entry);
-                    break;
-            }
+                break;
+        }
     }
 
-    this.doDiaryWrite(value);
+    this.doDiaryEntryWrite(value);
 }
 
 lightningPainDiary.prototype.doDiaryDisplay = function (value) {
@@ -97,43 +97,43 @@ lightningPainDiary.prototype.doTrackerDisplay = function () {
     for (let i = 0; i < this.trackerlist.length; ++i) {
         let entry = this.trackerlist[i];
 
-                    switch (entry.type) {
-                        case "blood pressure":
+        switch (entry.type) {
+            case "blood pressure":
                 this.buildBPInput(entry);
-                            break;
-                        case "date":
+                break;
+            case "date":
                 this.buildDateInput(entry);
-                            break;
-                        case "list":
+                break;
+            case "list":
                 this.buildCheckboxList(entry);
-                            break;
-                        case "number":
+                break;
+            case "number":
                 this.buildNumInput(entry);
-                            break;
-                        case "range":
+                break;
+            case "range":
                 this.buildRange(entry);
-                            break;
-                        case "text":
+                break;
+            case "text":
                 this.buildTextInput(entry);
-                            break;
-                        case "time":
+                break;
+            case "time":
                 this.buildTimeInput(entry);
-                            break;
-                        case "true false":
+                break;
+            case "true false":
                 this.buildBoolInput(entry);
-                            break;
-                        case "weather":
+                break;
+            case "weather":
                 this.buildWeatherInput(entry);
-                            break;
-                    }
-                    }
+                break;
+        }
+    }
 
-                    $("#panels").show();
+    $("#panels").show();
 
-                    $("#panels button").click(function () {
+    $("#panels button").click(function () {
         lpd.procRange(this);
-                    });
-                }
+    });
+}
 
 lightningPainDiary.prototype.buildRange = function (entry) {
     const panel =
@@ -208,7 +208,7 @@ lightningPainDiary.prototype.buildTextInput = function (entry) {
     container = /ttitle/g [Symbol.replace](container, entry.name);
 
     $("#panels").append(container);
-        }
+}
 
 lightningPainDiary.prototype.extractTextInput = function (entry) {
     let id = / /g [Symbol.replace](entry.name, "-");
@@ -263,7 +263,7 @@ lightningPainDiary.prototype.buildDateInput = function (entry, diary) {
     let container = /idname/g [Symbol.replace](panel, id);
     container = /ttitle/g [Symbol.replace](container, entry.name);
 
-        $("#panels").append(container);
+    $("#panels").append(container);
 }
 
 lightningPainDiary.prototype.extractDateInput = function (entry) {
@@ -291,7 +291,7 @@ lightningPainDiary.prototype.buildTimeInput = function (entry, diary) {
     let container = /idname/g [Symbol.replace](panel, id);
     container = /ttitle/g [Symbol.replace](container, entry.name);
 
-        $("#panels").append(container);
+    $("#panels").append(container);
 
     $("#pnl-" + id + " button").click(function () {
         let now = new Date();
@@ -470,6 +470,7 @@ lightningPainDiary.prototype.setWeatherInput = function (entry, val) {
     $("#pnl-" + id + " input").each(function () {
         $(this).val(val[$(this).parent().prop("id").replace(stripid, "$1")]);
     });
+    
     $("#pnl-" + id + " img").prop("src", val.icon);
 }
 
@@ -488,39 +489,33 @@ lightningPainDiary.prototype.loadWeather = function (entry) {
     let pnl = $("#pnl-" + id + " [id|='val']");
     pnl.empty();
 
-    let store = accountdb.transaction(["account"], "readwrite").objectStore("account");
-    let accountreq = store.index("by_name").get(IDBKeyRange.only("Account"));
-    accountreq.onsuccess = function (event) {
-        let account = accountreq.result;
+    let url = "https://api.openweathermap.org/data/2.5/weather?q=" + this.account.city + "," +
+        this.account.state + "," + this.account.country + "&units=" + (this.account.ifmetric ? "metric" : "imperial") +
+        "&appid=" + openweatherapikey;
 
-        let url = "https://api.openweathermap.org/data/2.5/weather?q=" + account.city + "," +
-            account.state + "," + account.country + "&units=" + (account.ifmetric ? "metric" : "imperial") +
-            "&appid=" + openweatherapikey;
+    loadFile(url, null, function (data) {
+        for (let i = 0; i < entry.list.length; ++i) {
+            let name = entry.list[i];
+            let value;
 
-        loadFile(url, null, function (data) {
-            for (let i = 0; i < entry.list.length; ++i) {
-                let name = entry.list[i];
-                let value;
+            let iid = / /g [Symbol.replace](name, "-");
+            let h = /idname/g [Symbol.replace](items, iid);
+            h = /ttitle/g [Symbol.replace](h, name);
+            let j = "";
 
-                let iid = / /g [Symbol.replace](name, "-");
-                let h = /idname/g [Symbol.replace](items, iid);
-                h = /ttitle/g [Symbol.replace](h, name);
-                let j = "";
-
-                pnl.append(h);
-
-                if (name === "description") {
-                    pnl.find("#in-description input").prop("class", "rounded col-lg-8 col-md-10 col-sm-10 col-10")
-                    pnl.find("#in-description input").after(j);
-                }
-            }
-
-            let h = /idname/g [Symbol.replace](button, id);
             pnl.append(h);
 
-            pnl.find("button").click(function () {
-                loadWeather(entry, null);
-            });
+            if (name === "description") {
+                pnl.find("#in-description input").prop("class", "rounded col-lg-8 col-md-10 col-sm-10 col-10")
+                pnl.find("#in-description input").after(j);
+            }
+        }
+
+        let h = /idname/g [Symbol.replace](button, id);
+        pnl.append(h);
+
+        pnl.find("button").click(function () {
+            lpd.loadWeather(entry);
         });
-    };
+    });
 }

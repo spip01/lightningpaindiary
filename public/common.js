@@ -18,6 +18,7 @@ function startUp() {
 function lightningPainDiary() {
     this.account = {};
     this.trackerlist = [];
+    this.report = [];
 
     this.fbauth = null;
     this.fbdatabase = null;
@@ -25,7 +26,9 @@ function lightningPainDiary() {
 }
 
 const openweatherapikey = "36241d90d27162ebecabf6c334851f16";
+const firebaseapikey = 'AIzaSyBb58wdzKURN8OipGiaOgmpF_UJgA2yUEk';
 const stripid = /^.*?-(.*)/g;
+const stripdatekey = /(.*?).000Z/g;
 
 const trackertypes = ["blood pressure", "date", "list", "number", "range", "text",
     "time", "true false", "weather"
@@ -109,7 +112,7 @@ const demotrackerlist = [{
 // Sets up shortcuts to Firebase features and initiate firebase auth.
 lightningPainDiary.prototype.initFirebase = function () {
     firebase.initializeApp({
-        apiKey: 'AIzaSyBb58wdzKURN8OipGiaOgmpF_UJgA2yUEk',
+        apiKey: firebaseapikey,
         authDomain: 'lightningpaindiary.firebaseapp.com',
         databaseURL: "https://lightningpaindiary.firebaseio.com",
         storageBucket: "lightningpaindiary.appspot.com",
@@ -148,17 +151,19 @@ lightningPainDiary.prototype.onAuthStateChanged = function (user) {
         this.account.email = user.email;
 
         var ref = firebase.database().ref("users/" + this.uid + '/Account');
-        ref.once("value")
-            .then(function (snapshot) {
-                if (snapshot.exists()) {
-                    if(lpd.doAccountUpdate)
-                        lpd.doAccountUpdate(snapshot.val());
-                    lpd.doTrackerlistRead();
-                } else {
-                    lpd.doAccountWrite();
-                    lpd.doTrackerlistWrite();
-                }
-            });
+        ref.once("value", function (snapshot) {
+            if (snapshot.exists()) {
+                lpd.account = snapshot.val();
+                if (lpd.doAccountUpdate)
+                    lpd.doAccountUpdate(snapshot.val());
+
+                lpd.doTrackerlistRead();
+                lpd.doReportRead(lpd.account.lastreport);
+            } else {
+                lpd.doAccountWrite();
+                lpd.doTrackerlistWrite();
+            }
+        });
     } else {
         this.uid = null;
 
@@ -166,11 +171,14 @@ lightningPainDiary.prototype.onAuthStateChanged = function (user) {
         $("#login").show();
         $("#report").hide();
 
-        if(this.doTrackerDisplay)
+        if (this.doTrackerDisplay)
             this.doTrackerDisplay();
-            
-        if(this.doccountDisplay)
-            this.doccountDisplay();
+
+        if (this.doAccountDisplay)
+            this.doAccountDisplay();
+
+        if (this.doReportDisplay)
+            this.doReportDisplay();
     }
 }
 
@@ -193,13 +201,12 @@ lightningPainDiary.prototype.doTrackerlistRead = function (val) {
     ref.once("value")
         .then(function (snapshot) {
             lpd.trackerlist = snapshot.val();
-            lpd.doTrackerDisplay();
+            if (lpd.doTrackerDisplay)
+                lpd.doTrackerDisplay();
         });
 }
 
 lightningPainDiary.prototype.doAccountWrite = function () {
-    // check/set local storage
-
     if (this.checkLoggedInWithMessage())
         firebase.database().ref('users/' + this.uid + '/Account').set(this.account);
 }
@@ -214,28 +221,94 @@ lightningPainDiary.prototype.doTrackerWrite = function (entry, idx) {
         firebase.database().ref('users/' + this.uid + '/Trackers/' + idx).set(entry);
 }
 
-lightningPainDiary.prototype.doDiaryRead = function (datekey) {
+lightningPainDiary.prototype.getDiaryKey = function (entry) {
+    let datekey = new Date(entry.Date + " " + entry.Time).toJSON();
+    datekey = /:/g [Symbol.replace](datekey, "");
+    datekey = /\./g [Symbol.replace](datekey, "");
+    datekey = /\//g [Symbol.replace](datekey, "");
+
+    return (datekey);
+}
+
+lightningPainDiary.prototype.doDiaryRead = function (entryfcn, finishfcn) {
+    var ref = firebase.database().ref("users/" + this.uid + '/Diary/');
+    ref.once("value", function (snapshot) {
+        snapshot.forEach(function (data) {
+            entryfcn(data.val());
+        });
+
+        finishfcn();
+    });
+}
+
+lightningPainDiary.prototype.doDiaryEntryRead = function (datekey) {
     var ref = firebase.database().ref("users/" + this.uid + '/Diary/' + datekey);
     ref.once("value")
         .then(function (snapshot) {
-            lpd.doDiaryDisplay(snapshot.val());
+            if (snapshot.exists()) {
+                lpd.doDiaryDisplay(snapshot.val());
+
+                lpd.account.lastdiaryupdate = datekey;
+                lpd.doAccountWrite();
+            }
         });
 }
 
-lightningPainDiary.prototype.doDiaryWrite = function (value) {
+lightningPainDiary.prototype.doDiaryEntryWrite = function (value) {
     // check/set local storage
 
     if (this.checkLoggedInWithMessage()) {
-        let datekey = new Date(value.Date + " " + value.Time).toJSON().replace(/(.*?).000Z/g, "$1");
+        let datekey = this.getDiaryKey(value);
         firebase.database().ref('users/' + this.uid + '/Diary/' + datekey).set(value);
+
+        this.account.lastdiaryupdate = datekey;
+        this.doAccountWrite();
+    }
+}
+
+lightningPainDiary.prototype.doDiaryEntryDelete = function (datekey) {
+    if (this.checkLoggedInWithMessage()) {
+        firebase.database().ref('users/' + this.uid + '/Diary/' + datekey).remove();
+
+        this.account.lastdiaryupdate = datekey;
+        this.doAccountWrite();
+    }
+}
+
+lightningPainDiary.prototype.doReportRead = function (namekey) {
+    var ref = firebase.database().ref("users/" + this.uid + '/Reports/' + namekey);
+    ref.once("value", function (snapshot) {
+        if (snapshot.exists()) {
+            lpd.report = snapshot.val();
+            lpd.account.lastreport = namekey;
+            lpd.doAccountWrite();
+        } else {
+            lpd.report = [];
+            for (let i = 0; i < lpd.trackerlist.length; ++i)
+                lpd.report.push(lpd.trackerlist[i]);
+        }
+
+        if(lpd.doReportSelectDisplay)
+            lpd.doReportSelectDisplay();
+        if(lpd.doReportDisplay)
+            lpd.doReportDisplay();
+    });
+}
+
+lightningPainDiary.prototype.doReportWrite = function (namekey) {
+    if (this.checkLoggedInWithMessage()) {
+        firebase.database().ref('users/' + this.uid + '/Reports/' + namekey).set(this.report);
+
+        this.account.lastreport = namekey;
+        this.doAccountWrite();
     }
 }
 
 lightningPainDiary.prototype.init = function () {
-    for (let i = 0; i < demotrackerlist.length; ++i)
+    for (let i = 0; i < demotrackerlist.length; ++i) {
         this.trackerlist.push(demotrackerlist[i]);
-
-    // set local storage
+        this.report.push(demotrackerlist[i]);
+    }
 
     this.account.city = "";
     this.account.state = "";
@@ -248,8 +321,8 @@ lightningPainDiary.prototype.init = function () {
     this.account.ifsms = false;
     this.account.phone = "";
 
-    this.account.lastreport = "all on";
-    this.account.lastdiaryupdate = 0;
+    this.account.lastreport = null;
+    this.account.lastdiaryupdate = null;
 }
 
 function loadHtml(url, alturl, selector) {
