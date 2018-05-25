@@ -148,9 +148,9 @@ lightningPainDiary.prototype.doSelectReportDisplay = function () {
 lightningPainDiary.prototype.editSel = function () {
     let sel = $("#panels :checked");
     let edit = sel.prop("id");
-    let datekey = edit.replace(stripdatekey, "$1");
+    let datekey = edit.replace(stripid, "$1");
 
-    this.lastdiaryupdate = datekey;
+    this.account.lastdiaryupdate = datekey;
     this.doAccountWrite();
 
     window.location.assign("index.html")
@@ -159,9 +159,9 @@ lightningPainDiary.prototype.editSel = function () {
 lightningPainDiary.prototype.deleteSel = function () {
     let sel = $("#panels :checked");
     let del = sel.prop("id");
-    let datekey = del.replace(stripdatekey, "$1");
+    let datekey = del.replace(stripid, "$1");
 
-    this.doDiaryDelete(datekey);
+    this.doDiaryEntryDelete(datekey);
     this.doReportDisplay();
 }
 

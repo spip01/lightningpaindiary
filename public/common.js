@@ -28,7 +28,6 @@ function lightningPainDiary() {
 const openweatherapikey = "36241d90d27162ebecabf6c334851f16";
 const firebaseapikey = 'AIzaSyBb58wdzKURN8OipGiaOgmpF_UJgA2yUEk';
 const stripid = /^.*?-(.*)/g;
-const stripdatekey = /(.*?).000Z/g;
 
 const trackertypes = ["blood pressure", "date", "list", "number", "range", "text",
     "time", "true false", "weather"
@@ -157,8 +156,12 @@ lightningPainDiary.prototype.onAuthStateChanged = function (user) {
                 if (lpd.doAccountUpdate)
                     lpd.doAccountUpdate(snapshot.val());
 
+                //lpd.doDiaryUpdate();
+                //lpd.doReportUpdate();
+
                 lpd.doTrackerlistRead();
                 lpd.doReportRead(lpd.account.lastreport);
+                lpd.doDiaryEntryRead(lpd.account.lastdiaryupdate);
             } else {
                 lpd.doAccountWrite();
                 lpd.doTrackerlistWrite();
@@ -179,6 +182,7 @@ lightningPainDiary.prototype.onAuthStateChanged = function (user) {
 
         if (this.doReportDisplay)
             this.doReportDisplay();
+
     }
 }
 
@@ -224,8 +228,8 @@ lightningPainDiary.prototype.doTrackerWrite = function (entry, idx) {
 lightningPainDiary.prototype.getDiaryKey = function (entry) {
     let datekey = new Date(entry.Date + " " + entry.Time).toJSON();
     datekey = /:/g [Symbol.replace](datekey, "");
-    datekey = /\./g [Symbol.replace](datekey, "");
-    datekey = /\//g [Symbol.replace](datekey, "");
+    datekey = /-/g [Symbol.replace](datekey, "");
+    datekey = datekey.replace(/(.*?)\..*/g, "$1");
 
     return (datekey);
 }
@@ -241,7 +245,28 @@ lightningPainDiary.prototype.doDiaryRead = function (entryfcn, finishfcn) {
     });
 }
 
+lightningPainDiary.prototype.doDiaryUpdate = function () {
+    var ref = firebase.database().ref("users/" + this.uid + '/Diary/');
+    ref.once("value", function (snapshot) {
+        snapshot.forEach(function(diary) {
+            let entry = diary.val();
+            for (let [name, val] of Object.entries(entry)) {
+                if (val.constructor === Array) {
+                    let i = val.indexOf("");
+                    if (1 !== -1)
+                        val.splice(val, 1);
+                }
+            }
+
+            let key = lpd.getDiaryKey(entry);
+            firebase.database().ref('users/' + lpd.uid + '/Diary/' + diary.key).remove();
+            firebase.database().ref('users/' + lpd.uid + '/Diary/' + key).set(entry);
+        });
+    });
+}
+
 lightningPainDiary.prototype.doDiaryEntryRead = function (datekey) {
+if(this.doDiaryDisplay){
     var ref = firebase.database().ref("users/" + this.uid + '/Diary/' + datekey);
     ref.once("value")
         .then(function (snapshot) {
@@ -252,6 +277,7 @@ lightningPainDiary.prototype.doDiaryEntryRead = function (datekey) {
                 lpd.doAccountWrite();
             }
         });
+}
 }
 
 lightningPainDiary.prototype.doDiaryEntryWrite = function (value) {
@@ -269,9 +295,6 @@ lightningPainDiary.prototype.doDiaryEntryWrite = function (value) {
 lightningPainDiary.prototype.doDiaryEntryDelete = function (datekey) {
     if (this.checkLoggedInWithMessage()) {
         firebase.database().ref('users/' + this.uid + '/Diary/' + datekey).remove();
-
-        this.account.lastdiaryupdate = datekey;
-        this.doAccountWrite();
     }
 }
 
@@ -288,9 +311,9 @@ lightningPainDiary.prototype.doReportRead = function (namekey) {
                 lpd.report.push(lpd.trackerlist[i]);
         }
 
-        if(lpd.doReportSelectDisplay)
+        if (lpd.doReportSelectDisplay)
             lpd.doReportSelectDisplay();
-        if(lpd.doReportDisplay)
+        if (lpd.doReportDisplay)
             lpd.doReportDisplay();
     });
 }

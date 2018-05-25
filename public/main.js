@@ -61,31 +61,31 @@ lightningPainDiary.prototype.doDiaryDisplay = function (value) {
 
         switch (entry.type) {
             case "blood pressure":
-                this.setBPInput(value[entry.name]);
+                this.setBPInput(entry.name, value[entry.name]);
                 break;
             case "date":
-                this.setDateInput(value[entry.name]);
+                this.setDateInput(entry.name, value[entry.name]);
                 break;
             case "list":
-                this.setCheckboxList(value[entry.name]);
+                this.setCheckboxList(entry.name, value[entry.name]);
                 break;
             case "number":
-                this.setNumInput(value[entry.name]);
+                this.setNumInput(entry.name, value[entry.name]);
                 break;
             case "range":
-                this.setRange(value[entry.name]);
+                this.setRange(entry.name, value[entry.name]);
                 break;
             case "text":
-                this.setTextInput(value[entry.name]);
+                this.setTextInput(entry.name, value[entry.name]);
                 break;
             case "time":
-                this.setTimeInput(value[entry.name]);
+                this.setTimeInput(entry.name, value[entry.name]);
                 break;
             case "true false":
-                this.setBoolInput(value[entry.name]);
+                this.setBoolInput(entry.name, value[entry.name]);
                 break;
             case "weather":
-                this.setWeatherInput(value[entry.name]);
+                this.setWeatherInput(entry.name, value[entry.name]);
                 break;
         }
     }
@@ -142,7 +142,6 @@ lightningPainDiary.prototype.buildRange = function (entry) {
             <div class="col-lg-3 col-md-3 col-sm-3 col-12 h6 clr-dark-green">ttitle</div>
             <div id="entry" class="row col-lg-9 col-md-9 col-sm-9 col-12"></div>
         </div>
-        <div id="l8r-idname" style="display: none"></div>
         `;
 
     const item = `<button id="btn-ttitle" type="button" class="btn btn-sm" style="background-color: colors; width:10%">ttitle</button>`;
@@ -171,7 +170,7 @@ lightningPainDiary.prototype.buildRange = function (entry) {
             let h = /ttitle/g [Symbol.replace](item, i);
             h = h.replace("colors", "hsl(" + c + ",100%,50%)");
 
-            let btn = pnl.find("#entry").append(h);
+            pnl.find("#entry").append(h);
         }
     }
 }
@@ -182,10 +181,10 @@ lightningPainDiary.prototype.extractRange = function (entry) {
     return (btn ? btn.replace(/btn-(\d+)/g, "$1") : "");
 }
 
-lightningPainDiary.prototype.setRange = function (entry, val) {
-    let id = / /g [Symbol.replace](entry.name, "-");
-    let btn = $("#pnl-" + id).removeClass("btn-green");
-    let btn = $("#pnl-" + id + " #btn-" + val).addclass("btn-green");
+lightningPainDiary.prototype.setRange = function (name, val) {
+    let id = / /g [Symbol.replace](name, "-");
+    $("#pnl-" + id).removeClass("btn-green");
+    $("#pnl-" + id + " #btn-" + val).addClass("btn-green");
 }
 
 lightningPainDiary.prototype.procRange = function (evt) {
@@ -215,8 +214,8 @@ lightningPainDiary.prototype.extractTextInput = function (entry) {
     return ($("#pnl-" + id + " #txt").val());
 }
 
-lightningPainDiary.prototype.setTextInput = function (entry, val) {
-    let id = / /g [Symbol.replace](entry.name, "-");
+lightningPainDiary.prototype.setTextInput = function (name, val) {
+    let id = / /g [Symbol.replace](name, "-");
     $("#pnl-" + id + " #txt").val(val);
 }
 
@@ -244,8 +243,8 @@ lightningPainDiary.prototype.extractNumInput = function (entry) {
     return (Number($("#pnl-" + id + " #num").val()));
 }
 
-lightningPainDiary.prototype.setNumInput = function (entry, val) {
-    let id = / /g [Symbol.replace](entry.name, "-");
+lightningPainDiary.prototype.setNumInput = function (name, val) {
+    let id = / /g [Symbol.replace](name, "-");
     $("#pnl-" + id + " #num").val(val);
 }
 
@@ -271,8 +270,8 @@ lightningPainDiary.prototype.extractDateInput = function (entry) {
     return ($("#pnl-" + id + " #date").val());
 }
 
-lightningPainDiary.prototype.setDateInput = function (entry, val) {
-    let id = / /g [Symbol.replace](entry.name, "-");
+lightningPainDiary.prototype.setDateInput = function (name, val) {
+    let id = / /g [Symbol.replace](name, "-");
     $("#pnl-" + id + " #date").val(val);
 }
 
@@ -305,8 +304,8 @@ lightningPainDiary.prototype.extractTimeInput = function (entry) {
     return ($("#pnl-" + id + " #time").val());
 }
 
-lightningPainDiary.prototype.setTimeInput = function (entry, val) {
-    let id = / /g [Symbol.replace](entry.name, "-");
+lightningPainDiary.prototype.setTimeInput = function (name, val) {
+    let id = / /g [Symbol.replace](name, "-");
     $("#pnl-" + id + " #time").val(val);
 }
 
@@ -333,8 +332,8 @@ lightningPainDiary.prototype.extractBoolInput = function (entry) {
     return ($("#pnl-" + id + " :checked").prop("id") === "yes");
 }
 
-lightningPainDiary.prototype.setBoolInput = function (entry, val) {
-    let id = / /g [Symbol.replace](entry.name, "-");
+lightningPainDiary.prototype.setBoolInput = function (name, val) {
+    let id = / /g [Symbol.replace](name, "-");
     $("#pnl-" + id).removeAttr("checked");
     $("#pnl-" + id + val === "yes" ? " yes" : " no").prop("checked", true);
 }
@@ -373,8 +372,8 @@ lightningPainDiary.prototype.extractBPInput = function (entry) {
     return (value);
 }
 
-lightningPainDiary.prototype.setBPInput = function (entry, val) {
-    let id = / /g [Symbol.replace](entry.name, "-");
+lightningPainDiary.prototype.setBPInput = function (name, val) {
+    let id = / /g [Symbol.replace](name, "-");
     $("#pnl-" + id + " #high").val(val.high);
     $("#pnl-" + id + " #low").val(val.low);
     $("#pnl-" + id + " #pulse").val(val.pulse);
@@ -429,10 +428,26 @@ lightningPainDiary.prototype.extractCheckboxList = function (entry) {
     });
 
     let t = $("#pnl-" + id + " [id|='add']").val();
-    if (t !== "add item")
+    if (t !== "")
         set.push(t);
 
     return (set);
+}
+
+lightningPainDiary.prototype.setCheckboxList = function (name, val) {
+    let id = / /g [Symbol.replace](name, "-");
+    $("#pnl-" + id).removeAttr("checked");
+
+    for (let i = 0; val && i < val.length; ++i) {
+        if (val[i] !== "") {
+            let iid = / /g [Symbol.replace](val[i], "-");
+            let ent = $("#pnl-" + id + " #" + iid);
+            if (ent)
+                ent.prop("checked", true);
+            else
+                $("#pnl-" + id + " [id|='add']").val(val[i]);
+        }
+    }
 }
 
 lightningPainDiary.prototype.buildWeatherInput = function (entry) {
@@ -470,7 +485,7 @@ lightningPainDiary.prototype.setWeatherInput = function (entry, val) {
     $("#pnl-" + id + " input").each(function () {
         $(this).val(val[$(this).parent().prop("id").replace(stripid, "$1")]);
     });
-    
+
     $("#pnl-" + id + " img").prop("src", val.icon);
 }
 
