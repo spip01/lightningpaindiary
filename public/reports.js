@@ -39,9 +39,9 @@ lightningPainDiary.prototype.doReportHeaderDisplay = function () {
                 if (item.name === "Time")
                     break;
             default:
-            let h = /dvalue/g [Symbol.replace](entry, name);
-            h = /idname/g [Symbol.replace](h, id);
-            header.find("#cont").append(h);
+                let h = /dvalue/g [Symbol.replace](entry, name);
+                h = /idname/g [Symbol.replace](h, id);
+                header.find("#cont").append(h);
         }
     }
 }
@@ -139,9 +139,9 @@ lightningPainDiary.prototype.doReportEntryDisplay = function (diary) {
 lightningPainDiary.prototype.doSelectReportDisplay = function () {
     $("#panels [id|='ent']").hide();
     $("#panels [id|='list']").hide();
-    
-    $("#fields :checked").each(function(){
-        $("#panels #"+$(this).prop("id")).show();
+
+    $("#fields :checked").each(function () {
+        $("#panels #" + $(this).prop("id")).show();
     })
 }
 
@@ -259,17 +259,17 @@ lightningPainDiary.prototype.doReportSelectDisplay = function () {
 
                         sel.find("#sub-" + iid).prop("checked", true);
                     }
-                    
+
                     sel.find("#sub-all-others").prop("checked", true);
                 }
         }
     }
 
     $("#selectfields :checkbox").click(function () {
-        if($(this).prop("checked"))
-            $("#panels #"+$(this).prop("id")).show();
+        if ($(this).prop("checked"))
+            $("#panels #" + $(this).prop("id")).show();
         else
-            $("#panels #"+$(this).prop("id")).hide();
+            $("#panels #" + $(this).prop("id")).hide();
     });
 }
 
@@ -295,17 +295,41 @@ $(document).ready(function () {
         lpd.deleteSel();
     });
 
-    $("#selectfields #show").click(function () {
-        if ($(this).prop("checked")) {
-            $("#fields").show();
-            $("#savereport").show();
-        } else {
-            $("#fields").hide();
-            $("#savereport").hide();
-        }
+    $("#show-search").click(function () {
+        if ($(this).prop("checked"))
+            $("#search").show();
+        else
+            $("#search").hide();
     });
 
-    $("#search").click(function (event) {
+    $("#show-select").click(function () {
+        if ($(this).prop("checked"))
+            $("#select").show();
+        else
+            $("#select").hide();
+
+    });
+
+    $("#search-btn").click(function (event) {
         lpd.doReportDisplay();
     });
+
+    window.onscroll = function () {
+        myFunction()
+    };
+
+    navbar = $("#stickyedit");
+    sticky = navbar.offset();
 });
+
+
+var navbar;
+var sticky;
+
+function myFunction() {
+    if (window.pageYOffset >= sticky.top) {
+        navbar.addClass("sticky");
+    } else {
+        navbar.removeClass("sticky");
+    }
+}

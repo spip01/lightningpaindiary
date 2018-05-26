@@ -13,10 +13,10 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
-    
+
     <script src="https://www.gstatic.com/firebasejs/4.13.0/firebase.js"></script>
     <script src="https://www.gstatic.com/firebasejs/4.13.0/firebase-firestore.js"></script>
-    
+
     <script src="common.js"></script>
     <script src="reports.js"></script>
 
@@ -45,30 +45,34 @@
         </nav>
 
         <div id="javascript" class="" style="color: rgb(0, 78, 0);">
-            Unfortunately, this page cannot function without javasript. Please add this site to your "allowed" sites. For chrome it's
+            Unfortunately, this page cannot function without javasript. Please add this site to your"allowed" sites. For chrome it's
             located at chrome://settings/content/javascript
         </div>
         <br>
     </div>
 
     <div id="jssite" style="display: none">
-        <div class="card card-body bkg-light-green pad-bottom">
+        <div class="card card-body bkg-light-green">
             <div class="card card-body pad-bottom">
                 <div class="row border-bottom">
-                    <h2 class="clr-dark-green col-lg-4 col-md-4 col-sm-4 col-6">Report Generator</h2>
+                    <h2 class="clr-dark-green col-lg-4 col-md-4 col-sm-5 col-12">Report Generator</h2>
+
+                    <label class="col-sm-4 col-6">
+                        <input id="show-select" type="checkbox"> Open Selectors
+                    </label>
+
+                    <label class="col-sm-4 col-5">
+                        <input id="show-search" type="checkbox"> Open Search
+                    </label>
 
                     <!--button id="save" type="button" class="btn border btn-sm btn-green">Save</button-->&nbsp;
                     <!--button id="modify" type="button" class="btn border btn-sm btn-green">Modify</button-->
                 </div>
-                <br>
 
-                <div id="selectfields" class="card card-body border pad-bottom">
-                    <div class="row border-bottom">
+                <div id="select" class="card card-body" style="display: none">
+                    <div class=" row">
                         <h5 class="clr-dark-green col-lg-6 col-md-6 col-sm-6 col-12">Select Fields for Report</h5>
 
-                        <label class="col-lg-2 col-md-2 col-sm-3 col-6">
-                            <input id="show" type="checkbox">Show
-                        </label>
 
                         <div id="selectmenu" class="col-lg-2 col-md-2 col-sm-3 col-6 dropdown" iftrackers>
                             <button id="report" class="btn border btn-sm btn-green dropdown-toggle" type="button" data-toggle="dropdown">
@@ -78,37 +82,56 @@
                         </div>
                     </div>
 
-                    <div id="fields" style="display: none"></div>
+                    <div id="fields"></div>
 
-                    <div id="savereport" class="row" style="display: none">
-                        <input id="name" class="rounded col-lg-3 col-md-3 col-sm-4 col-6" type="text" placeholder="save as report">&nbsp;
+                    <div id="savereport" class="row">
+                        <input id="name" class="rounded col-lg-3 col-md-3 col-sm-4 col-6" type="text" placeholder="report name">&nbsp;
                         <button id="save" type="button" class="btn border btn-sm btn-green">Save</button>&nbsp;
                         <button id="cancel" type="button" class="btn border btn-sm btn-green">cancel</button>
                     </div>
                 </div>
-                <br>
 
-                <div class="card card-body border pad-bottom">
-                    <div class="row" style="border-bottom: 1px solid #008000">
-                        <div class="col-lg-3 col-md-3 col-sm-3 col-12">
-                            <button id="edit" type="button" class="btn border btn-sm btn-green disabled col-5" disabled>Edit</button>&nbsp;
-                            <button id="delete" type="button" class="btn border btn-sm btn-green disabled col-5" disabled>Delete</button>&nbsp;
-                        </div>
-                        <div class="col-lg-7 col-md-9 col-sm-9 col-12">
-                            <label>
-                                <input id="date" type="date" class="rounded col-lg-8 col-md-8 col-sm-8 col-8">&nbsp;Start Date&nbsp;</label>
-                                <input id="pain-level" type="text" class="rounded col-2">&nbsp;Min Pain Level&nbsp;</label>
-                                <button id="seach" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 col-sm-2 col-3">search</button>
-                        </div>
+                <div id="search" class="card card-body" style="display: none">
+                    <div class="row">
+                        <label>
+                            <input id="date" type="date" class="rounded col-8"> Start Date&nbsp;
+                        </label>
+                        <label>
+                            <input id="pain-level" type="text" class="rounded col-2"> Min Pain Level&nbsp;
+                        </label>
+                        <label>
+                            <input id="remedies-list" type="text" class="rounded col-8"> remedies&nbsp;
+                        </label>
                     </div>
 
-                    <div id="panels"></div>
+                    <div class="row" style="border-bottom: 1px solid #008000;">
+                        <button id="seach-btn" type="button" class="btn border btn-sm btn-green col-4">search</button>
+                    </div>
                 </div>
+
+                <div id="stickyedit" class="row">
+                    <button id="edit" type="button" class="btn border btn-sm btn-green disabled col-2" disabled>Edit</button>&nbsp;
+                    <button id="delete" type="button" class="btn border btn-sm btn-green disabled col-2" disabled>Delete</button>&nbsp;
+                </div>
+
+                <br>
+                <div id="panels" class="border-top"></div>
             </div>
         </div>
     </div>
+    </div>
 
     <div id="footer"></div>
+
+    <style>
+        .sticky {
+            position: fixed;
+            top: 60px;
+            width: 100%;
+            z-index: 1;
+            background-color: white;
+        }
+    </style>
 </body>
 
 </html>
