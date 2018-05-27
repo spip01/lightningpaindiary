@@ -58,37 +58,38 @@ lightningPainDiary.prototype.doDiaryDisplay = function (value) {
 
     for (let i = 0; i < this.trackerlist.length; ++i) {
         let entry = this.trackerlist[i];
-        
-        if(value[entry.name]){
-        switch (entry.type) {
-            case "blood pressure":
-                this.setBPInput(entry.name, value[entry.name]);
-                break;
-            case "date":
-                this.setDateInput(entry.name, value[entry.name]);
-                break;
-            case "list":
-                this.setCheckboxList(entry.name, value[entry.name]);
-                break;
-            case "number":
-                this.setNumInput(entry.name, value[entry.name]);
-                break;
-            case "range":
-                this.setRange(entry.name, value[entry.name]);
-                break;
-            case "text":
-                this.setTextInput(entry.name, value[entry.name]);
-                break;
-            case "time":
-                this.setTimeInput(entry.name, value[entry.name]);
-                break;
-            case "true false":
-                this.setBoolInput(entry.name, value[entry.name]);
-                break;
-            case "weather":
-                this.setWeatherInput(entry.name, value[entry.name]);
-                break;
-        }}
+
+        if (value[entry.name]) {
+            switch (entry.type) {
+                case "blood pressure":
+                    this.setBPInput(entry.name, value[entry.name]);
+                    break;
+                case "date":
+                    this.setDateInput(entry.name, value[entry.name]);
+                    break;
+                case "list":
+                    this.setCheckboxList(entry.name, value[entry.name]);
+                    break;
+                case "number":
+                    this.setNumInput(entry.name, value[entry.name]);
+                    break;
+                case "range":
+                    this.setRange(entry.name, value[entry.name]);
+                    break;
+                case "text":
+                    this.setTextInput(entry.name, value[entry.name]);
+                    break;
+                case "time":
+                    this.setTimeInput(entry.name, value[entry.name]);
+                    break;
+                case "true false":
+                    this.setBoolInput(entry.name, value[entry.name]);
+                    break;
+                case "weather":
+                    this.setWeatherInput(entry.name, value[entry.name]);
+                    break;
+            }
+        }
     }
 }
 
