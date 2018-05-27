@@ -8,11 +8,13 @@ lightningPainDiary.prototype.doReportDisplay = function () {
 
 lightningPainDiary.prototype.doReportHeaderDisplay = function () {
     const row =
-        `<div id="row-idname" class="row" style="font-size: 15px; border-bottom: 1px solid #008000;">
-            <div class="col-md-2 col-sm-2 col-3 border-right">
+        `<div id="row-idname" class="row" style="border-bottom: 1px solid #008000;">
+            <div class="col-md-2 col-sm-2 col-3 border-right border-bottom">
                 Date & Time
             </div>
-            <div id="cont" class="container row col-md-10 col-sm-10 col-9"></div>
+            <div class="container col-md-10 col-sm-10 col-9">
+                <div id="cont" class="row"></div>
+            </div>
         </div>
         `;
     const entry = `<div id="ent-idname" class="col-md-2 col-sm-4 col-6 border-right border-bottom">dvalue</div>`;
@@ -48,13 +50,15 @@ lightningPainDiary.prototype.doReportHeaderDisplay = function () {
 
 lightningPainDiary.prototype.doReportEntryDisplay = function (diary) {
     const row =
-        `<div id="row-idname" class="row" style="font-size: 15px; border-bottom: 1px solid #008000;">
-            <div class="col-md-2 col-sm-2 col-3 border-right">
+        `<div id="row-idname" class="row" style="border-bottom: 1px solid #008000;">
+            <div class="col-md-2 col-sm-2 col-3 border-right border-bottom">
                 <div id="date"></div>
                 <div id="time"></div>
-                <input id="sel-idname" class="radio-inline" type="radio" name="selected">
+                <input id="sel-idname" class="radio-inline noprint" type="radio" name="selected">
             </div>
-            <div id="cont" class="container row col-md-10 col-sm-10 col-9"></div>
+            <div class="container col-md-10 col-sm-10 col-9">
+                <div id="cont" class="row"></div>
+            </div>
         </div>
         `;
     const entry = `<div id="ent-idname" class="col-md-2 col-sm-4 col-6 border-right border-bottom">dvalue</div>`;
@@ -167,14 +171,14 @@ lightningPainDiary.prototype.deleteSel = function () {
 
 lightningPainDiary.prototype.doReportSelectDisplay = function () {
     const row = `<div id="row-idname" class="row border-bottom"></div>`;
-    const cont = `<div id="cont" class="col-lg-10 col-md-9 col-sm-9 col-6 container"></div>`;
+    const cont = `<div id="cont" class="col-lg-10 col-md-8 col-sm-7 col-6 container"></div>`;
     const entry =
-        `<label class="col-lg-2 col-md-3 col-sm-3 col-6">
+        `<label class="col-lg-2 col-md-4 col-sm-5 col-6">
             <input id="ent-idname" type="checkbox"> ttitle
         </label>
         `;
     const sub =
-        `<label class="col-lg-2 col-md-3 col-sm-5 col-12">
+        `<label class="col-lg-2 col-md-4 col-sm-4 col-12">
             <input id="sub-subname" type="checkbox"> ttitle
         </label>
         `;
@@ -307,7 +311,6 @@ $(document).ready(function () {
             $("#select").show();
         else
             $("#select").hide();
-
     });
 
     $("#search-btn").click(function (event) {
@@ -315,21 +318,21 @@ $(document).ready(function () {
     });
 
     window.onscroll = function () {
-        myFunction()
-    };
+        let navbarheight = $("#imported-navbar").outerHeight(true);
+        let reporthdrheight = $("#report-header").outerHeight(true);
+        let searchheight = $("#search").is(":visible") ? $("#search").outerHeight(true) : 0;
+        let selectheight = $("#select").is(":visible") ? $("#select").outerHeight(true) : 0;
+        let editbarheight = $("#stickyedit").outerHeight(true);
 
-    navbar = $("#stickyedit");
-    sticky = navbar.offset();
-});
+        if (window.pageYOffset >= navbarheight + reporthdrheight + searchheight + selectheight) {
+            $("#stickyedit").addClass("sticky");
+            $("#row-header").addClass("sticky");
 
-
-var navbar;
-var sticky;
-
-function myFunction() {
-    if (window.pageYOffset >= sticky.top) {
-        navbar.addClass("sticky");
-    } else {
-        navbar.removeClass("sticky");
+            $("#stickyedit").css("top", navbarheight + "px");
+            $("#row-header").css("top", (navbarheight + editbarheight) + "px");
+        } else {
+            $("#stickyedit").removeClass("sticky");
+            $("#row-header").removeClass("sticky");
+        }
     }
-}
+});

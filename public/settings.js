@@ -404,9 +404,10 @@ lightningPainDiary.prototype.panelAddBtn = function (evt) {
     }
 
     if (entry.type === "weather") {
-      entry.list = demothis.trackerlist.find(function (x) {
+      let i = demotrackerlist.findIndex(function (x) {
         return (x.type === "weather");
-      }).list;
+      });
+      entry.list = demotrackerlist[i].list;
     }
 
     if (entry.type === "list") {

@@ -58,7 +58,8 @@ lightningPainDiary.prototype.doDiaryDisplay = function (value) {
 
     for (let i = 0; i < this.trackerlist.length; ++i) {
         let entry = this.trackerlist[i];
-
+        
+        if(value[entry.name]){
         switch (entry.type) {
             case "blood pressure":
                 this.setBPInput(entry.name, value[entry.name]);
@@ -87,7 +88,7 @@ lightningPainDiary.prototype.doDiaryDisplay = function (value) {
             case "weather":
                 this.setWeatherInput(entry.name, value[entry.name]);
                 break;
-        }
+        }}
     }
 }
 
@@ -139,8 +140,8 @@ lightningPainDiary.prototype.buildRange = function (entry) {
     const panel =
         `
         <div id="pnl-idname" class="row border-bottom">
-            <div class="col-lg-3 col-md-3 col-sm-3 col-12 h6 clr-dark-green">ttitle</div>
-            <div id="entry" class="row col-lg-9 col-md-9 col-sm-9 col-12"></div>
+            <div class="col-lg-2 col-md-2 col-sm-2 col-12 h6 clr-dark-green">ttitle</div>
+            <div id="entry" class="row col-lg-10 col-md-10 col-sm-10 col-12"></div>
         </div>
         `;
 
@@ -196,8 +197,8 @@ lightningPainDiary.prototype.buildTextInput = function (entry) {
     const panel =
         `
         <div id="pnl-idname" class="row border-bottom">
-            <div class="col-lg-3 col-md-3 col-sm-3 col-12 h6 clr-dark-green">ttitle</div>
-            <textarea id="txt" rows="2" class="rounded col-lg-8 col-md-8 col-sm-8 col-12"></textarea>
+            <div class="col-lg-2 col-md-2 col-sm-2 col-12 h6 clr-dark-green">ttitle</div>
+            <textarea id="txt" rows="2" class="rounded col-lg-10 col-md-10 col-sm-10 col-12"></textarea>
             </div>
         `;
 
@@ -223,8 +224,8 @@ lightningPainDiary.prototype.buildNumInput = function (entry) {
     const panel =
         `
         <div id="pnl-idname" class="row border-bottom">
-            <div class="col-lg-3 col-md-3 col-sm-3 col-6 h6 clr-dark-green">ttitle</div>
-            <div id="entry" class="row col-lg-9 col-md-9 col-sm-8 col-6">
+            <div class="col-lg-2 col-md-2 col-sm-2 col-6 h6 clr-dark-green">ttitle</div>
+            <div id="entry" class="row col-lg-10 col-md-10 col-sm-10 col-6">
                 <input id="num" type="text" class="rounded col-lg-1 col-md-2 col-sm-2 col-7">
             </div>
         </div>
@@ -252,7 +253,7 @@ lightningPainDiary.prototype.buildDateInput = function (entry, diary) {
     const panel =
         `
         <div id="pnl-idname" class="row border-bottom">
-            <div class="col-lg-3 col-md-3 col-sm-3 col-6 h6 clr-dark-green">ttitle</div>
+            <div class="col-lg-2 col-md-2 col-sm-2 col-6 h6 clr-dark-green">ttitle</div>
             <input id="date" type="date" class="rounded col-lg-3 col-md-3 col-sm-3 col-6">
         </div>
         `;
@@ -279,7 +280,7 @@ lightningPainDiary.prototype.buildTimeInput = function (entry, diary) {
     const panel =
         `
         <div id="pnl-idname" class="row border-bottom">
-            <div class="col-lg-3 col-md-3 col-sm-3 col-6 h6 clr-dark-green">ttitle</div>
+            <div class="col-lg-2 col-md-2 col-sm-2 col-6 h6 clr-dark-green">ttitle</div>
             <input id="time" type="time" class="rounded col-lg-3 col-md-3 col-sm-3 col-6">&nbsp;
             <button type="button" class="btn border btn-sm btn-green">Now</button>&nbsp;
         </div>
@@ -313,7 +314,7 @@ lightningPainDiary.prototype.buildBoolInput = function (entry, diary) {
     const panel =
         `
         <div id="pnl-idname" class="row border-bottom">
-            <div class="col-lg-3 col-md-3 col-sm-3 col-6 h6 clr-dark-green">ttitle</div>
+            <div class="col-lg-2 col-md-2 col-sm-2 col-6 h6 clr-dark-green">ttitle</div>
             <label class="radio-inline"><input id="yes" type="radio" name="idname">&nbsp;Yes</label>&nbsp;
             <label class="radio-inline"><input id="no" type="radio" name="idname">&nbsp;No</label>
         </div>
@@ -342,8 +343,8 @@ lightningPainDiary.prototype.buildBPInput = function (entry) {
     const panel =
         `
         <div id="pnl-idname" class="row border-bottom">
-            <div class="col-lg-3 col-md-3 col-sm-3 col-6 h6 clr-dark-green">ttitle</div>
-            <div id="entry" class="row col-lg-9 col-md-9 col-sm-9 col-6">
+            <div class="col-lg-2 col-md-2 col-sm-2 col-6 h6 clr-dark-green">ttitle</div>
+            <div id="entry" class="row col-lg-10 col-md-10 col-sm-10 col-6">
                 <input id="high" class="rounded col-lg-1 col-md-2 col-sm-2 col-7" type="text">
                 <div class="col-lg-1 col-md-1 col-sm-1 col-3 text-center">/</div>
                 <input id="low" class="rounded col-lg-1 col-md-2 col-sm-2 col-7" type="text">
@@ -383,8 +384,8 @@ lightningPainDiary.prototype.buildCheckboxList = function (entry) {
     const panel =
         `
         <div id="pnl-idname" class="row border-bottom">
-            <div class="col-lg-3 col-md-3 col-sm-3 col-12 h6 clr-dark-green">ttitle</div>
-            <div id="entry" class="row col-lg-9 col-md-9 col-sm-9 col-12"></div>
+            <div class="col-lg-2 col-md-2 col-sm-2 col-12 h6 clr-dark-green">ttitle</div>
+            <div id="entry" class="row col-lg-10 col-md-10 col-sm-10 col-12"></div>
         </div>
         `;
 
@@ -454,10 +455,26 @@ lightningPainDiary.prototype.buildWeatherInput = function (entry) {
     const panel =
         `
         <div id="pnl-idname" class="row border-bottom">
-            <div class="col-lg-3 col-md-3 col-sm-3 col-12 h6 clr-dark-green">ttitle</div>
-            <div id="val-idname" class="row col-lg-9 col-md-9 col-sm-9 col-12 "></div>
+            <div class="col-lg-2 col-md-2 col-sm-2 col-12 h6 clr-dark-green">ttitle</div>
+            <div id="entry" class="row col-lg-10 col-md-10 col-sm-10 col-12"></div>
         </div>
         `;
+    const items =
+        `
+        <label class="col-lg-4 col-md-4 col-sm-6 col-12">
+            <input id="ent-idname" class="rounded col-lg-4 col-md-5 col-sm-6 col-6" type="text">
+            &nbsp;ttitle
+        </label>
+        `;
+    const description =
+        `
+        <label class="col-lg-6 col-md-9 col-sm-9 col-12">
+            <input id="ent-idname" class="rounded col-lg-8 col-md-8 col-sm-8 col-10" type="text">
+            &nbsp;ttitle
+            <img class="col-1" src="https://openweathermap.org/img/w/iicon.png">&nbsp;
+        </label>
+        `;
+    const button = `<button type="button" class="btn border btn-sm btn-green col-lg-1 col-md-1 col-sm-1 col-2">Now</button>&nbsp;`;
 
     let id = / /g [Symbol.replace](entry.name, "-");
 
@@ -465,6 +482,24 @@ lightningPainDiary.prototype.buildWeatherInput = function (entry) {
     container = /ttitle/g [Symbol.replace](container, entry.name);
 
     $("#panels").append(container);
+    let pnl = $("#pnl-" + id + " #entry");
+
+    for (let i = 0; i < entry.list.length; ++i) {
+        let name = entry.list[i];
+
+        let iid = / /g [Symbol.replace](name, "-");
+        let h = /idname/g [Symbol.replace](name === "description" ? description : items, iid);
+        h = /ttitle/g [Symbol.replace](h, name);
+
+        pnl.append(h);
+    }
+
+    let h = /idname/g [Symbol.replace](button, id);
+    pnl.append(h);
+
+    pnl.find("button").click(function () {
+        lpd.loadWeather(entry);
+    });
 }
 
 lightningPainDiary.prototype.extractWeatherInput = function (entry) {
@@ -472,65 +507,55 @@ lightningPainDiary.prototype.extractWeatherInput = function (entry) {
     let value = {};
 
     $("#pnl-" + id + " input").each(function () {
-        value[$(this).parent().prop("id").replace(stripid, "$1")] = $(this).val();
+        value[$(this).prop("id").replace(stripid, "$1")] = $(this).val();
     });
+
     value.icon = $("#pnl-" + id + " img").prop("src").replace(/^.*\/(.+?).png/g, "$1");
 
     return (value);
 }
 
-lightningPainDiary.prototype.setWeatherInput = function (entry, val) {
-    let id = / /g [Symbol.replace](entry.name, "-");
+lightningPainDiary.prototype.setWeatherInput = function (name, val) {
+    let id = / /g [Symbol.replace](name, "-");
+    let icon = "https://openweathermap.org/img/w/iicon.png";
 
     $("#pnl-" + id + " input").each(function () {
-        $(this).val(val[$(this).parent().prop("id").replace(stripid, "$1")]);
+        let name = $(this).prop("id").replace(stripid, "$1");
+        $(this).val(val[name]);
     });
 
-    $("#pnl-" + id + " img").prop("src", val.icon);
+    let f = /iicon/g [Symbol.replace](icon, val.icon)
+    $("#pnl-" + id + " img").prop("src", f);
 }
 
 lightningPainDiary.prototype.loadWeather = function (entry) {
-    const items =
-        `
-            <div id="in-idname" class="col-lg-4 col-md-4 col-sm-6 col-12">
-                <input class="rounded col-lg-4 col-md-5 col-sm-6 col-6" type="text">
-                &nbsp;ttitle
-            </div>
-            `;
-    const icon = `<img src="https://openweathermap.org/img/w/iicon.png">`;
-    const button = `<button type="button" class="btn border btn-sm btn-green">Now</button>&nbsp;`;
-
-    let id = / /g [Symbol.replace](entry.name, "-");
-    let pnl = $("#pnl-" + id + " [id|='val']");
-    pnl.empty();
-
+    let icon = "https://openweathermap.org/img/w/iicon.png";
     let url = "https://api.openweathermap.org/data/2.5/weather?q=" + this.account.city + "," +
         this.account.state + "," + this.account.country + "&units=" + (this.account.ifmetric ? "metric" : "imperial") +
         "&appid=" + openweatherapikey;
 
     loadFile(url, null, function (data) {
-        for (let i = 0; i < entry.list.length; ++i) {
-            let name = entry.list[i];
-            let value;
+        let id = / /g [Symbol.replace](entry.name, "-");
 
-            let iid = / /g [Symbol.replace](name, "-");
-            let h = /idname/g [Symbol.replace](items, iid);
-            h = /ttitle/g [Symbol.replace](h, name);
-            let j = "";
+        $("#pnl-" + id + " input").each(function () {
+            let name = $(this).prop("id").replace(stripid, "$1");
 
-            pnl.append(h);
-
-            if (name === "description") {
-                pnl.find("#in-description input").prop("class", "rounded col-lg-8 col-md-10 col-sm-10 col-10")
-                pnl.find("#in-description input").after(j);
+            switch (name) {
+                case "wind":
+                    $(this).val(data.wind.speed);
+                    break;
+                case "clouds":
+                    $(this).val(data.clouds.all);
+                    break;
+                case "description":
+                    $(this).val(data.weather[0].description);
+                    break;
+                default:
+                    $(this).val(data.main[name]);
             }
-        }
-
-        let h = /idname/g [Symbol.replace](button, id);
-        pnl.append(h);
-
-        pnl.find("button").click(function () {
-            lpd.loadWeather(entry);
         });
+
+        let f = /iicon/g [Symbol.replace](icon, data.weather[0].icon)
+        $("#pnl-" + id + " img").prop("src", f);
     });
 }

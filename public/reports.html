@@ -44,7 +44,7 @@
             </ul>
         </nav>
 
-        <div id="javascript" class="" style="color: rgb(0, 78, 0);">
+        <div style="color: rgb(0, 78, 0);">
             Unfortunately, this page cannot function without javasript. Please add this site to your"allowed" sites. For chrome it's
             located at chrome://settings/content/javascript
         </div>
@@ -53,8 +53,8 @@
 
     <div id="jssite" style="display: none">
         <div class="card card-body bkg-light-green">
-            <div class="card card-body pad-bottom">
-                <div class="row border-bottom">
+            <div class="card card-body pad-bottom ">
+                <div id="report-header" class="row border-bottom noprint">
                     <h2 class="clr-dark-green col-lg-4 col-md-4 col-sm-5 col-12">Report Generator</h2>
 
                     <label class="col-sm-4 col-6">
@@ -69,7 +69,7 @@
                     <!--button id="modify" type="button" class="btn border btn-sm btn-green">Modify</button-->
                 </div>
 
-                <div id="select" class="card card-body" style="display: none">
+                <div id="select" class="card card-body noprint" style="display: none">
                     <div class=" row">
                         <h5 class="clr-dark-green col-lg-6 col-md-6 col-sm-6 col-12">Select Fields for Report</h5>
 
@@ -84,14 +84,14 @@
 
                     <div id="fields"></div>
 
-                    <div id="savereport" class="row">
+                    <div class="row">
                         <input id="name" class="rounded col-lg-3 col-md-3 col-sm-4 col-6" type="text" placeholder="report name">&nbsp;
                         <button id="save" type="button" class="btn border btn-sm btn-green">Save</button>&nbsp;
                         <button id="cancel" type="button" class="btn border btn-sm btn-green">cancel</button>
                     </div>
                 </div>
 
-                <div id="search" class="card card-body" style="display: none">
+                <div id="search" class="card card-body noprint" style="display: none">
                     <div class="row">
                         <label>
                             <input id="date" type="date" class="rounded col-8"> Start Date&nbsp;
@@ -109,7 +109,7 @@
                     </div>
                 </div>
 
-                <div id="stickyedit" class="row">
+                <div id="stickyedit" class="row noprint">
                     <button id="edit" type="button" class="btn border btn-sm btn-green disabled col-2" disabled>Edit</button>&nbsp;
                     <button id="delete" type="button" class="btn border btn-sm btn-green disabled col-2" disabled>Delete</button>&nbsp;
                 </div>
@@ -122,16 +122,6 @@
     </div>
 
     <div id="footer"></div>
-
-    <style>
-        .sticky {
-            position: fixed;
-            top: 60px;
-            width: 100%;
-            z-index: 1;
-            background-color: white;
-        }
-    </style>
 </body>
 
 </html>

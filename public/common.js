@@ -6,10 +6,10 @@ function startUp() {
     $("#javascript").empty();
     $("#jssite").show();
 
-    lpd = new lightningPainDiary();
-
     loadHtml("https://lightningpaindiary.firebaseapp.com/navbar.html", "http://raw.githubusercontent.com/spip01/lightningpaindiary/firebase/public/navbar.html", "#navbar");
     loadHtml("https://lightningpaindiary.firebaseapp.com/footer.html", "http://raw.githubusercontent.com/spip01/lightningpaindiary/firebase/public/footer.html", "#footer");
+
+    lpd = new lightningPainDiary();
 
     lpd.init();
     lpd.initFirebase();
@@ -248,7 +248,7 @@ lightningPainDiary.prototype.doDiaryRead = function (entryfcn, finishfcn) {
 lightningPainDiary.prototype.doDiaryUpdate = function () {
     var ref = firebase.database().ref("users/" + this.uid + '/Diary/');
     ref.once("value", function (snapshot) {
-        snapshot.forEach(function(diary) {
+        snapshot.forEach(function (diary) {
             let entry = diary.val();
             for (let [name, val] of Object.entries(entry)) {
                 if (val.constructor === Array) {
@@ -266,18 +266,18 @@ lightningPainDiary.prototype.doDiaryUpdate = function () {
 }
 
 lightningPainDiary.prototype.doDiaryEntryRead = function (datekey) {
-if(this.doDiaryDisplay){
-    var ref = firebase.database().ref("users/" + this.uid + '/Diary/' + datekey);
-    ref.once("value")
-        .then(function (snapshot) {
-            if (snapshot.exists()) {
-                lpd.doDiaryDisplay(snapshot.val());
+    if (this.doDiaryDisplay) {
+        var ref = firebase.database().ref("users/" + this.uid + '/Diary/' + datekey);
+        ref.once("value")
+            .then(function (snapshot) {
+                if (snapshot.exists()) {
+                    lpd.doDiaryDisplay(snapshot.val());
 
-                lpd.account.lastdiaryupdate = datekey;
-                lpd.doAccountWrite();
-            }
-        });
-}
+                    lpd.account.lastdiaryupdate = datekey;
+                    lpd.doAccountWrite();
+                }
+            });
+    }
 }
 
 lightningPainDiary.prototype.doDiaryEntryWrite = function (value) {
@@ -353,15 +353,18 @@ function loadHtml(url, alturl, selector) {
         let html = data.substring(data.indexOf("<body>") + 6, data.indexOf("</body>"));
         $(selector).append(html);
 
-        $("#login").off();
-        $("#login").click(function () {
-            lpd.logIn();
-        });
+        if (selector === "#navbar") {
+            let navbarheight = $("#imported-navbar").outerHeight(true);
+            $("#jssite").css("margin-top", navbarheight + "px");
 
-        $("#logout").off();
-        $("#logout").click(function () {
-            lpd.logOut();
-        });
+            $("#login").click(function () {
+                lpd.logIn();
+            });
+
+            $("#logout").click(function () {
+                lpd.logOut();
+            });
+        }
     });
 }
 
