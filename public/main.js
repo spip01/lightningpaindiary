@@ -472,9 +472,9 @@ lightningPainDiary.prototype.buildWeatherInput = function (entry) {
         <label class="col-lg-6 col-md-9 col-sm-9 col-12">
             <input id="ent-idname" class="rounded col-lg-8 col-md-8 col-sm-8 col-10" type="text">
             &nbsp;ttitle
-            <img class="col-1" src="https://openweathermap.org/img/w/iicon.png">&nbsp;
         </label>
         `;
+    const img = '<img id="ent-idname" src="https://openweathermap.org/img/w/iicon.png">';
     const button = `<button type="button" class="btn border btn-sm btn-green col-lg-1 col-md-1 col-sm-1 col-2">Now</button>&nbsp;`;
 
     let id = / /g [Symbol.replace](entry.name, "-");
@@ -489,10 +489,24 @@ lightningPainDiary.prototype.buildWeatherInput = function (entry) {
         let name = entry.list[i];
 
         let iid = / /g [Symbol.replace](name, "-");
-        let h = /idname/g [Symbol.replace](name === "description" ? description : items, iid);
-        h = /ttitle/g [Symbol.replace](h, name);
+        let h;
 
-        pnl.append(h);
+        switch (name) {
+            case "description":
+                h = /idname/g [Symbol.replace](description, iid);
+                h = /ttitle/g [Symbol.replace](h, name);
+                pnl.append(h);
+                break;
+            case "icon":
+                h = /idname/g [Symbol.replace](img, iid);
+                h = /ttitle/g [Symbol.replace](h, name);
+                pnl.find("#ent-description").parent().append(h);
+                break;
+            default:
+                h = /idname/g [Symbol.replace](items, iid);
+                h = /ttitle/g [Symbol.replace](h, name);
+                pnl.append(h);
+        }
     }
 
     let h = /idname/g [Symbol.replace](button, id);

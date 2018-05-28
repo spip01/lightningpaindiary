@@ -101,7 +101,7 @@ const demotrackerlist = [{
 }, {
     name: "Weather",
     type: "weather",
-    list: ["temp", "humidity", "pressure", "wind", "clouds", "description"],
+    list: ["temp", "humidity", "pressure", "wind", "clouds", "description", "icon"],
     // http://openweathermap.org/api
 }, {
     name: "Notes",

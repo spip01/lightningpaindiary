@@ -63,6 +63,7 @@ lightningPainDiary.prototype.doReportEntryDisplay = function (diary) {
         `;
     const entry = `<div id="ent-idname" class="col-md-2 col-sm-4 col-6 border-right border-bottom">dvalue</div>`;
     const mult = `<div id="sub-idname">dvalue</div>`;
+    const img = '<img id="sub-idname" src="https://openweathermap.org/img/w/iicon.png" height="15" width="15">';
 
     let id = lpd.getDiaryKey(diary);
 
@@ -83,15 +84,22 @@ lightningPainDiary.prototype.doReportEntryDisplay = function (diary) {
                 h = /idname/g [Symbol.replace](h, iid);
                 ent.find("#cont").append(h);
 
-                for (let i = 0; txt && i < diary[item.name].length; ++i) {
-                    let name = item.list[i];
-                    let lid = / /g [Symbol.replace](name, "-");
+                if (diary[item.name]) {
+                    for (let name in diary[item.name]) {
+                        let lid = / /g [Symbol.replace](name, "-");
 
-                    let txt = name + ": " + diary[item.name][name];
+                        if (name === "icon") {
+                            h = /iicon/g [Symbol.replace](img, diary[item.name][name]);
+                            h = /idname/g [Symbol.replace](h, lid);
+                            ent.find("#cont #sub-description").append(h);
+                        } else {
+                            let txt = name + ": " + diary[item.name][name];
 
-                    h = /dvalue/g [Symbol.replace](mult, txt);
-                    h = /idname/g [Symbol.replace](h, lid);
-                    ent.find("#cont #ent-" + item.id).append(h);
+                            h = /dvalue/g [Symbol.replace](mult, txt);
+                            h = /idname/g [Symbol.replace](h, lid);
+                            ent.find("#cont #ent-" + iid).append(h);
+                        }
+                    }
                 }
                 break;
 
@@ -100,19 +108,21 @@ lightningPainDiary.prototype.doReportEntryDisplay = function (diary) {
                 h = /idname/g [Symbol.replace](h, iid);
                 ent.find("#cont").append(h);
 
-                for (let i = 0; txt && i < diary[item.name].length; ++i) {
-                    let name = diary[item.name][i];
-                    let lid = / /g [Symbol.replace](name, "-");;
+                if (diary[item.name]) {
+                    for (let i = 0; i < diary[item.name].length; ++i) {
+                        let name = diary[item.name][i];
+                        let lid = / /g [Symbol.replace](name, "-");
 
-                    h = /dvalue/g [Symbol.replace](mult, name);
-                    h = /idname/g [Symbol.replace](h, lid);
-                    ent.find("#cont #ent-" + iid).append(h);
+                        h = /dvalue/g [Symbol.replace](mult, name);
+                        h = /idname/g [Symbol.replace](h, lid);
+                        ent.find("#cont #ent-" + iid).append(h);
+                    }
                 }
                 break;
 
             case "blood pressure":
-                txt = typeof txt === undefined || diary[item.name].high === 0 ?
-                    "" : diary[item.name].high + " / " + diary[item.name].low + " " + diary[item.name].pulse;
+                txt = !diary[item.name] || diary[item.name].high === 0 ? "" :
+                    diary[item.name].high + " / " + diary[item.name].low + " " + diary[item.name].pulse;
 
             case "date":
                 if (item.name === "Date") {
@@ -257,19 +267,21 @@ lightningPainDiary.prototype.doReportSelectDisplay = function () {
                 sel.find("#ent-" + id).prop("checked", true);
 
                 if (item.type === "weather" || item.type === "list") {
-
                     for (let i = 0; i < item.list.length; ++i) {
                         let iid = / /g [Symbol.replace](item.list[i], "-");
 
                         sel.find("#sub-" + iid).prop("checked", true);
                     }
+                }
 
+                if (
+                    item.type === "list") {
                     sel.find("#sub-all-others").prop("checked", true);
                 }
         }
     }
 
-    $("#selectfields :checkbox").click(function () {
+    $("#fields :checkbox").click(function () {
         if ($(this).prop("checked"))
             $("#panels #" + $(this).prop("id")).show();
         else
