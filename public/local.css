@@ -29,6 +29,9 @@
     h6 {
         font-size: 0.75rem
     }
+    .sticky {
+        width: 87%;
+    }
 }
 
 @media only screen and (min-width: 768px) {
@@ -56,11 +59,22 @@
     h6 {
         font-size: 0.75rem
     }
+    .sticky {
+        width: 93%;
+    }
 }
 
-@media only screen and (min-width: 992px) {}
+@media only screen and (min-width: 992px) {
+    .sticky {
+        width: 94.5%;
+    }
+}
 
-@media only screen and (min-width: 1200px) {}
+@media only screen and (min-width: 1200px) {
+    .sticky {
+        width: 95.5%;
+    }
+}
 
 @media print {
     .noprint {
@@ -81,7 +95,6 @@ body {
 .sticky {
     position: fixed;
     z-index: 1;
-    width: 100%;
     background-color: white;
 }
 

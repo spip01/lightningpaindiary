@@ -26,15 +26,15 @@ lightningPainDiary.prototype.doReportUpdate = function () {
 lightningPainDiary.prototype.headerDisplay = function () {
     const row =
         `<div id="row-idname" class="row" style="border-bottom: 1px solid #008000;">
-            <div class="col-md-2 col-sm-2 col-3 border-right border-bottom">
+            <div class="col-print-2 col-lg-2 col-md-2 col-sm-2 col-3 border-right border-bottom">
                 Date & Time
             </div>
-            <div class="container col-md-10 col-sm-10 col-9">
+            <div class="container col-print-12 col-lg-12 col-md-12 col-sm-12 col-11">
                 <div id="cont" class="row"></div>
             </div>
         </div>
         `;
-    const entry = `<div id="ent-idname" class="col-md-2 col-sm-4 col-6 border-right border-bottom">dvalue</div>`;
+    const entry = `<div id="ent-idname" class="col-print-2 col-lg-2 col-md-2 col-sm-2 col-7 border-right border-bottom">dvalue</div>`;
 
     let pnl = $("#panels");
     pnl.empty();
@@ -68,17 +68,17 @@ lightningPainDiary.prototype.headerDisplay = function () {
 lightningPainDiary.prototype.diaryEntryDisplay = function (diary) {
     const row =
         `<div id="row-idname" class="row" style="border-bottom: 1px solid #008000;">
-            <div class="col-md-2 col-sm-2 col-3 border-right border-bottom">
+            <div class="col-print-2 col-lg-2 col-md-2 col-sm-2 col-3 border-right border-bottom">
                 <div id="date"></div>
                 <div id="time"></div>
                 <input id="sel-idname" class="radio-inline noprint" type="radio" name="selected">
             </div>
-            <div class="container col-md-10 col-sm-10 col-9">
+            <div class="container col-print-12 col-lg-12 col-md-12 col-sm-12 col-11">
                 <div id="cont" class="row"></div>
             </div>
         </div>
         `;
-    const entry = `<div id="ent-idname" class="col-md-2 col-sm-4 col-6 border-right border-bottom">dvalue</div>`;
+    const entry = `<div id="ent-idname" class="col-print-2 col-lg-2 col-md-2 col-sm-2 col-7 border-right border-bottom">dvalue</div>`;
     const mult = `<div id="sub-idname">dvalue</div>`;
     const img = '<img id="sub-idname" src="https://openweathermap.org/img/w/iicon.png" height="15" width="15">';
 
@@ -169,14 +169,14 @@ lightningPainDiary.prototype.diaryEntryDisplay = function (diary) {
 
 lightningPainDiary.prototype.selectDisplay = function () {
     const row = `<div id="row-idname" class="row border-bottom"></div>`;
-    const cont = `<div id="cont" class="col-lg-10 col-md-8 col-sm-7 col-6 container"></div>`;
+    const cont = `<div id="cont" class="col-lg-12 col-md-12 col-sm-10 col-8 container"></div>`;
     const entry =
-        `<label class="col-lg-2 col-md-4 col-sm-5 col-6">
+        `<label class="col-lg-2 col-md-2 col-sm-4 col-6">
             <input id="ent-idname" type="checkbox"> ttitle
         </label>
         `;
     const sub =
-        `<label class="col-lg-2 col-md-4 col-sm-4 col-12">
+        `<label class="col-lg-2 col-md-3 col-sm-4 col-14">
             <input id="sub-sname" type="checkbox"> ttitle
         </label>
         `;

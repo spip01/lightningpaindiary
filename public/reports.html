@@ -20,6 +20,7 @@
     <script src="common.js"></script>
     <script src="reports.js"></script>
 
+    <link rel="stylesheet" type="text/css" href="bootstrap-14.css">
     <link rel="stylesheet" type="text/css" href="local.css">
 </head>
 
@@ -53,7 +54,7 @@
 
     <div id="jssite" style="display: none">
         <div class="card card-body bkg-light-green">
-            <div class="card card-body pad-bottom ">
+            <div id="reportcard" class="card card-body pad-bottom ">
                 <div id="report-header" class="row border-bottom noprint">
                     <h2 class="clr-dark-green col-lg-4 col-md-4 col-sm-5 col-12">Report Generator</h2>
 
@@ -93,13 +94,13 @@
                 <div id="search" class="card card-body noprint" style="display: none">
                     <div class="row">
                         <label>
-                            <input id="date" type="date" class="rounded col-8"> Start Date&nbsp;
+                            <input id="date" type="date" class="rounded col-9"> Start Date&nbsp;
                         </label>
                         <label>
                             <input id="pain-level" type="text" class="rounded col-2"> Min Pain Level&nbsp;
                         </label>
                         <label>
-                            <input id="remedies-list" type="text" class="rounded col-8"> remedies&nbsp;
+                            <input id="remedies-list" type="text" class="rounded col-8"> Remedy&nbsp;
                         </label>
                     </div>
 
