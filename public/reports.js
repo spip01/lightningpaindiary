@@ -1,12 +1,29 @@
 'use strict';
 
-lightningPainDiary.prototype.doReportDisplay = function () {
-    this.doReportHeaderDisplay();
-
-    this.doDiaryRead(this.doReportEntryDisplay, this.doSelectReportDisplay);
+lightningPainDiary.prototype.doLoggedout = function () {
+    $("#select #fields").empty();
+    $("#panels").empty();
+    $("#select").hide();
+    $("#search").hide();
 }
 
-lightningPainDiary.prototype.doReportHeaderDisplay = function () {
+lightningPainDiary.prototype.doTrackerDisplay = function () {
+    lpd.doReportlistRead(lpd.doReportMenuDisplay);
+    lpd.doReportDisplay();
+}
+
+lightningPainDiary.prototype.doReportDisplay = function () {
+    lpd.selectDisplay();
+    lpd.headerDisplay();
+    lpd.doDiaryRead(lpd.diaryEntryDisplay, lpd.doReportUpdate);
+}
+
+lightningPainDiary.prototype.doReportUpdate = function () {
+    lpd.setSelect();
+    lpd.diarySelectDisplay();
+}
+
+lightningPainDiary.prototype.headerDisplay = function () {
     const row =
         `<div id="row-idname" class="row" style="border-bottom: 1px solid #008000;">
             <div class="col-md-2 col-sm-2 col-3 border-right border-bottom">
@@ -26,8 +43,8 @@ lightningPainDiary.prototype.doReportHeaderDisplay = function () {
     pnl.append(h);
     let header = pnl.find("#row-header");
 
-    for (let i = 0; i < this.trackerlist.length; ++i) {
-        let item = this.trackerlist[i];
+    for (let i = 0; i < lpd.trackerlist.length; ++i) {
+        let item = lpd.trackerlist[i];
         let name = item.name;
         let id = / /g [Symbol.replace](name, "-");
 
@@ -48,7 +65,7 @@ lightningPainDiary.prototype.doReportHeaderDisplay = function () {
     }
 }
 
-lightningPainDiary.prototype.doReportEntryDisplay = function (diary) {
+lightningPainDiary.prototype.diaryEntryDisplay = function (diary) {
     const row =
         `<div id="row-idname" class="row" style="border-bottom: 1px solid #008000;">
             <div class="col-md-2 col-sm-2 col-3 border-right border-bottom">
@@ -84,7 +101,7 @@ lightningPainDiary.prototype.doReportEntryDisplay = function (diary) {
                 h = /idname/g [Symbol.replace](h, iid);
                 ent.find("#cont").append(h);
 
-                if (diary[item.name]) {
+                if (diary[item.name] && diary[item.name].description !=="") {
                     for (let name in diary[item.name]) {
                         let lid = / /g [Symbol.replace](name, "-");
 
@@ -150,36 +167,7 @@ lightningPainDiary.prototype.doReportEntryDisplay = function (diary) {
     });
 }
 
-lightningPainDiary.prototype.doSelectReportDisplay = function () {
-    $("#panels [id|='ent']").hide();
-    $("#panels [id|='list']").hide();
-
-    $("#fields :checked").each(function () {
-        $("#panels #" + $(this).prop("id")).show();
-    })
-}
-
-lightningPainDiary.prototype.editSel = function () {
-    let sel = $("#panels :checked");
-    let edit = sel.prop("id");
-    let datekey = edit.replace(stripid, "$1");
-
-    this.account.lastdiaryupdate = datekey;
-    this.doAccountWrite();
-
-    window.location.assign("index.html")
-}
-
-lightningPainDiary.prototype.deleteSel = function () {
-    let sel = $("#panels :checked");
-    let del = sel.prop("id");
-    let datekey = del.replace(stripid, "$1");
-
-    this.doDiaryEntryDelete(datekey);
-    this.doReportDisplay();
-}
-
-lightningPainDiary.prototype.doReportSelectDisplay = function () {
+lightningPainDiary.prototype.selectDisplay = function () {
     const row = `<div id="row-idname" class="row border-bottom"></div>`;
     const cont = `<div id="cont" class="col-lg-10 col-md-8 col-sm-7 col-6 container"></div>`;
     const entry =
@@ -189,21 +177,15 @@ lightningPainDiary.prototype.doReportSelectDisplay = function () {
         `;
     const sub =
         `<label class="col-lg-2 col-md-4 col-sm-4 col-12">
-            <input id="sub-subname" type="checkbox"> ttitle
+            <input id="sub-sname" type="checkbox"> ttitle
         </label>
         `;
-    //const menu = `<button id="item" class="dropdown-item" type="button" style="cursor: pointer">ttype</button>`;
-
-    //$("#selectmenu [id|='list']").empty();
-    //$("#selectmenu #report").text(reportname);
-    //let mnu = /ttype/g [Symbol.replace](menu, "all on");
-    //$("#selectmenu [id|='list']").append(mnu);
 
     let fld = $("#fields");
     fld.empty();
 
-    for (let i = 0; i < this.trackerlist.length; ++i) {
-        let item = this.trackerlist[i];
+    for (let i = 0; i < lpd.trackerlist.length; ++i) {
+        let item = lpd.trackerlist[i];
         let name = item.name;
 
         switch (item.type) {
@@ -226,57 +208,24 @@ lightningPainDiary.prototype.doReportSelectDisplay = function () {
                 sel.append(h);
 
                 if (item.type === "weather" || item.type === "list") {
-                    h = /idname/g [Symbol.replace](cont, id);
-                    sel.append(h);
+                    sel.append(cont);
 
                     for (let i = 0; i < item.list.length; ++i) {
                         let iname = item.list[i];
                         let iid = / /g [Symbol.replace](iname, "-");
 
-                        h = /subname/g [Symbol.replace](sub, iid);
+                        h = /sname/g [Symbol.replace](sub, iid);
                         h = /ttitle/g [Symbol.replace](h, iname);
 
                         sel.find("#cont").append(h);
                     }
 
                     if (item.type === "list") {
-                        h = /subname/g [Symbol.replace](sub, "all-others");
+                        h = /sname/g [Symbol.replace](sub, "all-others");
                         h = /ttitle/g [Symbol.replace](h, "all others");
 
                         sel.find("#cont").append(h);
                     }
-                }
-        }
-    }
-
-    for (let i = 0; i < this.report.length; ++i) {
-        let item = this.report[i];
-        let name = item.name;
-        let id = / /g [Symbol.replace](name, "-");
-        let sel = fld.find("#row-" + id);
-
-        switch (item.type) {
-            case "date":
-                if (name === "Date")
-                    break;
-            case "time":
-                if (name === "Time")
-                    break;
-            default:
-
-                sel.find("#ent-" + id).prop("checked", true);
-
-                if (item.type === "weather" || item.type === "list") {
-                    for (let i = 0; i < item.list.length; ++i) {
-                        let iid = / /g [Symbol.replace](item.list[i], "-");
-
-                        sel.find("#sub-" + iid).prop("checked", true);
-                    }
-                }
-
-                if (
-                    item.type === "list") {
-                    sel.find("#sub-all-others").prop("checked", true);
                 }
         }
     }
@@ -289,18 +238,154 @@ lightningPainDiary.prototype.doReportSelectDisplay = function () {
     });
 }
 
+lightningPainDiary.prototype.setSelect = function () {
+   $("#select :checkbox").prop("checked", false);
+
+    for (let i = 0; i < lpd.report.length; ++i) {
+        let item = lpd.report[i];
+        let name = item.name;
+        let id = / /g [Symbol.replace](name, "-");
+        let sel = $("#select #row-" + id);
+
+        switch (item.type) {
+            case "date":
+                if (name === "Date")
+                    break;
+            case "time":
+                if (name === "Time")
+                    break;
+            default:
+                sel.find("#ent-" + id).prop("checked", true);
+
+                if (item.list)
+                    for (let i = 0; i < item.list.length; ++i) {
+                        let iid = / /g [Symbol.replace](item.list[i], "-");
+
+                        sel.find("#sub-" + iid).prop("checked", true);
+                    }
+        }
+    }
+}
+
+lightningPainDiary.prototype.extractSelect = function () {
+    let report = [];
+
+    for (let i = 0; i < lpd.trackerlist.length; ++i) {
+        let list = lpd.trackerlist[i];
+        let name = list.name;
+
+        switch (list.type) {
+            case "date":
+                if (name === "Date")
+                    break;
+            case "time":
+                if (name === "Time")
+                    break;
+            default:
+                let id = / /g [Symbol.replace](name, "-");
+
+                let row = $("#select #row-" + id);
+                let sel = row.find("#ent-" + id).prop("checked");
+
+                if (sel) {
+                    let item = {};
+                    item.name = name;
+
+                    if (list.type === "weather" || list.type === "list") {
+                        item.list = [];
+
+                        for (let i = 0; i < list.list.length; ++i) {
+                            let iname = list.list[i];
+                            let iid = / /g [Symbol.replace](iname, "-");
+
+                            if (row.find("#sub-" + iid).prop("checked"))
+                                item.list.push(iid);
+                        }
+
+                        if (list.type === "list" && row.find("#sub-all-others").prop("checked"))
+                            item.list.push("all-others");
+                    }
+
+                    report.push(item);
+                }
+        }
+    }
+
+    return (report);
+}
+
+lightningPainDiary.prototype.diarySelectDisplay = function () {
+    $("#panels [id|='ent']").hide();
+    $("#panels [id|='list']").hide();
+
+    $("#fields :checked").each(function () {
+        $("#panels #" + $(this).prop("id")).show();
+    })
+}
+
+lightningPainDiary.prototype.doReportMenuDisplay = function () {
+    const menu = `<button id="item" class="dropdown-item" type="button" style="cursor: pointer">ttype</button>`;
+
+    let list =  $("#selectmenu #list");
+    list.empty();
+    $("#selectmenu #report").text("all on");
+
+    let mnu = /ttype/g [Symbol.replace](menu, "all on");
+    list.append(mnu);
+
+    for (let i = 0; i < lpd.reportlist.length; ++i) {
+        let mnu = /ttype/g [Symbol.replace](menu, lpd.reportlist[i]);
+        list.append(mnu);
+    }
+
+    list.find("button").click(function () {
+        let name = $(this).text();
+        $("#selectmenu #report").text(name);
+
+        lpd.doReportRead(name, lpd.doReportUpdate);
+    });
+}
+
+lightningPainDiary.prototype.editSel = function () {
+    let sel = $("#panels :checked");
+    let edit = sel.prop("id");
+    let datekey = edit.replace(stripid, "$1");
+
+    lpd.account.lastdiaryupdate = datekey;
+    lpd.doAccountWrite();
+
+    window.location.assign("index.html")
+}
+
+lightningPainDiary.prototype.deleteSel = function () {
+    let sel = $("#panels :checked");
+    let del = sel.prop("id");
+    let datekey = del.replace(stripid, "$1");
+
+    lpd.doDiaryEntryDelete(datekey);
+    lpd.doReportDisplay();
+}
+
 /*********************************** */
 
 $(document).ready(function () {
     startUp();
 
-    $("#selectfields #save").click(function () {
-        lpd.extractReport();
-        lpd.doReportWrite($("#savereport #name").val());
+    $("#select #save").click(function () {
+        let name = $("#select #name").val();
+        $("#selectmenu #report").text(name);
+
+        const menu = `<button id="item" class="dropdown-item" type="button" style="cursor: pointer">ttype</button>`;
+
+        let mnu = /ttype/g [Symbol.replace](menu, name);
+        $("#selectmenu [id|='list']").append(mnu);
+
+        lpd.report = lpd.extractSelect();
+        lpd.doReportWrite(name);
     });
 
-    $("#selectfields #cancel").click(function () {
-        lpd.doReportRead(lpd.account.lastreport);
+    $("#select #cancel").click(function () {
+        lpd.doReportRead($("#selectmenu #report").text(), lpd.doReportUpdate);
     });
 
     $("#edit").click(function () {

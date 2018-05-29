@@ -9,14 +9,14 @@
 
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
-    
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
-    
+
     <script src="https://www.gstatic.com/firebasejs/4.13.0/firebase.js"></script>
     <script src="https://www.gstatic.com/firebasejs/4.13.0/firebase-firestore.js"></script>
-    
+
     <script src="common.js"></script>
     <script src="main.js"></script>
 
@@ -54,13 +54,21 @@
     <div id="jssite" style="display: none">
         <div class="card card-body bkg-light-green pad-bottom">
             <div class="card card-body pad-bottom">
+                <div id="loggedout" class="row clr-dark-green bkg-light-green">
+                    <h4>All inputs are demoed for migraine headaches with an large number of inputs and can be easilychanged under
+                        <a href="settings.html">
+                            Settings
+                        </a>
+                        Trackers
+                    </h4>
+                </div>
 
                 <div id="panels" style="display: none"></div>
                 <br>
 
                 <div id="entrybuttons" class="row">
-                    <button id="save" type="button" class="btn border btn-sm btn-green">Save</button>&nbsp;
-                    <button id="cancel" type="button" class="btn border btn-sm btn-green">Cancel</button>
+                    <button id="save" type="button" class="btn border btn-sm btn-green disabled", disabled>Save</button>&nbsp;
+                    <button id="cancel" type="button" class="btn border btn-sm btn-green disabled", disabled>>Cancel</button>
                 </div>
             </div>
         </div>

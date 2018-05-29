@@ -13,80 +13,85 @@ $(document).ready(function () {
     });
 });
 
+lightningPainDiary.prototype.doLoggedout=function(){
+    lpd.doTrackerDisplay();
+}
+  
 lightningPainDiary.prototype.updateEntry = function () {
     let value = {};
 
-    for (let i = 0; i < this.trackerlist.length; ++i) {
-        let entry = this.trackerlist[i];
+    for (let i = 0; i < lpd.trackerlist.length; ++i) {
+        let entry = lpd.trackerlist[i];
 
         switch (entry.type) {
             case "blood pressure":
-                value[entry.name] = this.extractBPInput(entry);
+                value[entry.name] = lpd.extractBPInput(entry);
                 break;
             case "date":
-                value[entry.name] = this.extractDateInput(entry);
+                value[entry.name] = lpd.extractDateInput(entry);
                 break;
             case "list":
-                value[entry.name] = this.extractCheckboxList(entry);
+                value[entry.name] = lpd.extractCheckboxList(entry);
                 break;
             case "number":
-                value[entry.name] = this.extractNumInput(entry);
+                value[entry.name] = lpd.extractNumInput(entry);
                 break;
             case "range":
-                value[entry.name] = this.extractRange(entry);
+                value[entry.name] = lpd.extractRange(entry);
                 break;
             case "text":
-                value[entry.name] = this.extractTextInput(entry);
+                value[entry.name] = lpd.extractTextInput(entry);
                 break;
             case "time":
-                value[entry.name] = this.extractTimeInput(entry);
+                value[entry.name] = lpd.extractTimeInput(entry);
                 break;
             case "true false":
-                value[entry.name] = this.extractBoolInput(entry);
+                value[entry.name] = lpd.extractBoolInput(entry);
                 break;
             case "weather":
-                value[entry.name] = this.extractWeatherInput(entry);
+                value[entry.name] = lpd.extractWeatherInput(entry);
                 break;
         }
     }
 
-    this.doDiaryEntryWrite(value);
+    lpd.lastvalue = value;
+    lpd.doDiaryEntryWrite(value);
 }
 
 lightningPainDiary.prototype.doDiaryDisplay = function (value) {
-    this.lastvalue = value;
+    lpd.lastvalue = value;
 
-    for (let i = 0; i < this.trackerlist.length; ++i) {
-        let entry = this.trackerlist[i];
+    for (let i = 0; i < lpd.trackerlist.length; ++i) {
+        let entry = lpd.trackerlist[i];
 
         if (value[entry.name]) {
             switch (entry.type) {
                 case "blood pressure":
-                    this.setBPInput(entry.name, value[entry.name]);
+                    lpd.setBPInput(entry.name, value[entry.name]);
                     break;
                 case "date":
-                    this.setDateInput(entry.name, value[entry.name]);
+                    lpd.setDateInput(entry.name, value[entry.name]);
                     break;
                 case "list":
-                    this.setCheckboxList(entry.name, value[entry.name]);
+                    lpd.setCheckboxList(entry.name, value[entry.name]);
                     break;
                 case "number":
-                    this.setNumInput(entry.name, value[entry.name]);
+                    lpd.setNumInput(entry.name, value[entry.name]);
                     break;
                 case "range":
-                    this.setRange(entry.name, value[entry.name]);
+                    lpd.setRange(entry.name, value[entry.name]);
                     break;
                 case "text":
-                    this.setTextInput(entry.name, value[entry.name]);
+                    lpd.setTextInput(entry.name, value[entry.name]);
                     break;
                 case "time":
-                    this.setTimeInput(entry.name, value[entry.name]);
+                    lpd.setTimeInput(entry.name, value[entry.name]);
                     break;
                 case "true false":
-                    this.setBoolInput(entry.name, value[entry.name]);
+                    lpd.setBoolInput(entry.name, value[entry.name]);
                     break;
                 case "weather":
-                    this.setWeatherInput(entry.name, value[entry.name]);
+                    lpd.setWeatherInput(entry.name, value[entry.name]);
                     break;
             }
         }
@@ -96,36 +101,36 @@ lightningPainDiary.prototype.doDiaryDisplay = function (value) {
 lightningPainDiary.prototype.doTrackerDisplay = function () {
     $("#panels").empty();
 
-    for (let i = 0; i < this.trackerlist.length; ++i) {
-        let entry = this.trackerlist[i];
+    for (let i = 0; i < lpd.trackerlist.length; ++i) {
+        let entry = lpd.trackerlist[i];
 
         switch (entry.type) {
             case "blood pressure":
-                this.buildBPInput(entry);
+                lpd.buildBPInput(entry);
                 break;
             case "date":
-                this.buildDateInput(entry);
+                lpd.buildDateInput(entry);
                 break;
             case "list":
-                this.buildCheckboxList(entry);
+                lpd.buildCheckboxList(entry);
                 break;
             case "number":
-                this.buildNumInput(entry);
+                lpd.buildNumInput(entry);
                 break;
             case "range":
-                this.buildRange(entry);
+                lpd.buildRange(entry);
                 break;
             case "text":
-                this.buildTextInput(entry);
+                lpd.buildTextInput(entry);
                 break;
             case "time":
-                this.buildTimeInput(entry);
+                lpd.buildTimeInput(entry);
                 break;
             case "true false":
-                this.buildBoolInput(entry);
+                lpd.buildBoolInput(entry);
                 break;
             case "weather":
-                this.buildWeatherInput(entry);
+                lpd.buildWeatherInput(entry);
                 break;
         }
     }
@@ -135,6 +140,8 @@ lightningPainDiary.prototype.doTrackerDisplay = function () {
     $("#panels button").click(function () {
         lpd.procRange(this);
     });
+
+    lpd.doDiaryEntryRead(lpd.account.lastdiaryupdate, lpd.doDiaryDisplay);
 }
 
 lightningPainDiary.prototype.buildRange = function (entry) {
@@ -336,7 +343,7 @@ lightningPainDiary.prototype.extractBoolInput = function (entry) {
 
 lightningPainDiary.prototype.setBoolInput = function (name, val) {
     let id = / /g [Symbol.replace](name, "-");
-    $("#pnl-" + id).removeAttr("checked");
+    $("#pnl-" + id).prop("checked", false);
     $("#pnl-" + id + val === "yes" ? " yes" : " no").prop("checked", true);
 }
 
@@ -438,17 +445,15 @@ lightningPainDiary.prototype.extractCheckboxList = function (entry) {
 
 lightningPainDiary.prototype.setCheckboxList = function (name, val) {
     let id = / /g [Symbol.replace](name, "-");
-    $("#pnl-" + id).removeAttr("checked");
+    $("#pnl-" + id).prop("checked", false);
 
     for (let i = 0; val && i < val.length; ++i) {
-        if (val[i] !== "") {
-            let iid = / /g [Symbol.replace](val[i], "-");
-            let ent = $("#pnl-" + id + " #" + iid);
-            if (ent)
-                ent.prop("checked", true);
-            else
-                $("#pnl-" + id + " [id|='add']").val(val[i]);
-        }
+        let iid = / /g [Symbol.replace](val[i], "-");
+        let ent = $("#pnl-" + id + " #" + iid);
+        if (ent)
+            ent.prop("checked", true);
+        else
+            $("#pnl-" + id + " [id|='add']").val(val[i]);
     }
 }
 
@@ -469,13 +474,13 @@ lightningPainDiary.prototype.buildWeatherInput = function (entry) {
         `;
     const description =
         `
-        <label class="col-lg-6 col-md-9 col-sm-9 col-12">
-            <input id="ent-idname" class="rounded col-lg-8 col-md-8 col-sm-8 col-10" type="text">
+        <label class="col-lg-8 col-md-8 col-sm-8 col-12">
+            <input id="ent-idname" class="rounded col-6" type="text">
             &nbsp;ttitle
         </label>
         `;
-    const img = '<img id="ent-idname" src="https://openweathermap.org/img/w/iicon.png">';
-    const button = `<button type="button" class="btn border btn-sm btn-green col-lg-1 col-md-1 col-sm-1 col-2">Now</button>&nbsp;`;
+    const img = '<img id="ent-idname">';
+    const button = `<button type="button" class="btn border btn-sm btn-green col-lg-1 col-md-1 col-sm-1 col-2" style="height: 32px;">Now</button>&nbsp;`;
 
     let id = / /g [Symbol.replace](entry.name, "-");
 
@@ -545,8 +550,8 @@ lightningPainDiary.prototype.setWeatherInput = function (name, val) {
 
 lightningPainDiary.prototype.loadWeather = function (entry) {
     let icon = "https://openweathermap.org/img/w/iicon.png";
-    let url = "https://api.openweathermap.org/data/2.5/weather?q=" + this.account.city + "," +
-        this.account.state + "," + this.account.country + "&units=" + (this.account.ifmetric ? "metric" : "imperial") +
+    let url = "https://api.openweathermap.org/data/2.5/weather?q=" + lpd.account.city + "," +
+        lpd.account.state + "," + lpd.account.country + "&units=" + (lpd.account.ifmetric ? "metric" : "imperial") +
         "&appid=" + openweatherapikey;
 
     loadFile(url, null, function (data) {
