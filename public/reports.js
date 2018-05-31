@@ -14,8 +14,9 @@ lightningPainDiary.prototype.doTrackerDisplay = function () {
 
 lightningPainDiary.prototype.doReportDisplay = function () {
     lpd.selectDisplay();
+    lpd.searchDisplay();
     lpd.headerDisplay();
-    lpd.doDiaryRead(lpd.diaryEntryDisplay, lpd.doReportUpdate);
+    lpd.doDiaryRead(null, lpd.diaryEntryDisplay, lpd.doReportUpdate);
 }
 
 lightningPainDiary.prototype.doReportUpdate = function () {
@@ -101,7 +102,7 @@ lightningPainDiary.prototype.diaryEntryDisplay = function (diary) {
                 h = /idname/g [Symbol.replace](h, iid);
                 ent.find("#cont").append(h);
 
-                if (diary[item.name] && diary[item.name].description !=="") {
+                if (diary[item.name] && diary[item.name].description !== "") {
                     for (let name in diary[item.name]) {
                         let lid = / /g [Symbol.replace](name, "-");
 
@@ -169,12 +170,12 @@ lightningPainDiary.prototype.diaryEntryDisplay = function (diary) {
 
 lightningPainDiary.prototype.selectDisplay = function () {
     const row = `<div id="row-idname" class="row border-bottom"></div>`;
-    const cont = `<div id="cont" class="col-lg-12 col-md-12 col-sm-10 col-8 container"></div>`;
     const entry =
-        `<label class="col-lg-2 col-md-2 col-sm-4 col-6">
+        `<label class="col-lg-2 col-md-3 col-sm-4 col-6">
             <input id="ent-idname" type="checkbox"> ttitle
         </label>
         `;
+    const cont = `<div id="cont" class="col-lg-12 col-md-11 col-sm-10 col-8 container"></div>`;
     const sub =
         `<label class="col-lg-2 col-md-3 col-sm-4 col-14">
             <input id="sub-sname" type="checkbox"> ttitle
@@ -239,7 +240,7 @@ lightningPainDiary.prototype.selectDisplay = function () {
 }
 
 lightningPainDiary.prototype.setSelect = function () {
-   $("#select :checkbox").prop("checked", false);
+    $("#select :checkbox").prop("checked", false);
 
     for (let i = 0; i < lpd.report.length; ++i) {
         let item = lpd.report[i];
@@ -316,7 +317,7 @@ lightningPainDiary.prototype.extractSelect = function () {
 
 lightningPainDiary.prototype.diarySelectDisplay = function () {
     $("#panels [id|='ent']").hide();
-    $("#panels [id|='list']").hide();
+    $("#panels [id|='sub']").hide();
 
     $("#fields :checked").each(function () {
         $("#panels #" + $(this).prop("id")).show();
@@ -326,7 +327,7 @@ lightningPainDiary.prototype.diarySelectDisplay = function () {
 lightningPainDiary.prototype.doReportMenuDisplay = function () {
     const menu = `<button id="item" class="dropdown-item" type="button" style="cursor: pointer">ttype</button>`;
 
-    let list =  $("#selectmenu #list");
+    let list = $("#selectmenu #list");
     list.empty();
     $("#selectmenu #report").text("all on");
 
@@ -366,6 +367,77 @@ lightningPainDiary.prototype.deleteSel = function () {
     lpd.doReportDisplay();
 }
 
+lightningPainDiary.prototype.searchDisplay = function () {
+    const row =
+        `<div class="col-lg-2 col-md-2 col-sm-4 col-6">ttitle</div>
+         <div id="cont" class="col-lg-12 col-md-12 col-sm-10 col-8 container"></div>`;
+    const sub =
+        `<label class="col-lg-2 col-md-3 col-sm-4 col-14">
+            <input id="sub-sname" type="checkbox"> ttitle
+        </label>`;
+
+    let fld = $("#search #Remedies");
+    fld.empty();
+
+    for (let i = 0; i < lpd.trackerlist.length; ++i) {
+        let item = lpd.trackerlist[i];
+        let name = item.name;
+
+        switch (item.name) {
+            case "Remedies":
+                let h = /ttitle/g [Symbol.replace](row, name);
+
+                fld.append(h);
+
+                for (let i = 0; i < item.list.length; ++i) {
+                    let iname = item.list[i];
+                    let iid = / /g [Symbol.replace](iname, "-");
+
+                    h = /sname/g [Symbol.replace](sub, iid);
+                    h = /ttitle/g [Symbol.replace](h, iname);
+
+                    fld.find("#cont").append(h);
+                }
+        }
+    }
+
+    $("#fields :checkbox").click(function () {
+        if ($(this).prop("checked"))
+            $("#panels #" + $(this).prop("id")).show();
+        else
+            $("#panels #" + $(this).prop("id")).hide();
+    });
+}
+
+lightningPainDiary.prototype.doSearch = function () {
+    $("#panels").empty();
+    lpd.headerDisplay();
+    lpd.search = {};
+    let search=$("#search");
+    lpd.search.startdate = /-/g[Symbol.replace](search.find("#Start-Date").val(),"");
+    lpd.search.enddate = /-/g[Symbol.replace](search.find("#End-Date").val(),"");
+    lpd.search.painlevel = search.find("#Pain-Level").val();
+    lpd.search.remedies = [];
+    search.find("#Remedies").find(":checked").each(function () {
+        let name = $(this).prop("id").replace(stripid, "$1");
+        lpd.search.remedies.push(name);
+    });
+
+    lpd.doDiaryRead(lpd.search, lpd.diaryEntryDisplay, lpd.diarySelectDisplay);
+}
+
+lightningPainDiary.prototype.doClearSearch = function () {
+    $("#panels").empty();
+    lpd.headerDisplay();
+
+    lpd.search = [];
+    $("#search #date").val("");
+    $("#search #pain-level").val("");
+    $("#search #remedies-list").prop("checked", false);
+
+    lpd.doDiaryRead(null, lpd.diaryEntryDisplay, lpd.diarySelectDisplay);
+}
+
 /*********************************** */
 
 $(document).ready(function () {
@@ -388,11 +460,17 @@ $(document).ready(function () {
         lpd.doReportRead($("#selectmenu #report").text(), lpd.doReportUpdate);
     });
 
-    $("#edit").click(function () {
+    $("#select #delete").click(function () {
+        let name = $("#select #name").val();
+        lpd.doReportDelete(name);
+        $("#selectmenu #list").find(":contains("+name+")").remove();
+    });
+
+    $("#stickyedit #edit").click(function () {
         lpd.editSel();
     });
 
-    $("#delete").click(function () {
+    $("#stickyedit #delete").click(function () {
         lpd.deleteSel();
     });
 
@@ -411,7 +489,11 @@ $(document).ready(function () {
     });
 
     $("#search-btn").click(function (event) {
-        lpd.doReportDisplay();
+        lpd.doSearch();
+    });
+
+    $("#clear-btn").click(function (event) {
+        lpd.doClearSearch();
     });
 
     window.onscroll = function () {

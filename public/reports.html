@@ -86,32 +86,38 @@
 
                     <div class="row">
                         <input id="name" class="rounded col-lg-3 col-md-3 col-sm-4 col-6" type="text" placeholder="report name">&nbsp;
-                        <button id="save" type="button" class="btn border btn-sm btn-green">Save</button>&nbsp;
-                        <button id="cancel" type="button" class="btn border btn-sm btn-green">cancel</button>
+                        <button id="save" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 col-sm-2 col-3">Save</button>&nbsp;
+                        <button id="cancel" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 col-sm-2 col-3">cancel</button>&nbsp;
+                        <button id="delete" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 col-sm-2 col-3">delete</button>
                     </div>
                 </div>
 
-                <div id="search" class="card card-body noprint" style="display: none">
+                <div id="search" class="card card-body noprint pad-bottom" style="display: none">
                     <div class="row">
-                        <label>
-                            <input id="date" type="date" class="rounded col-9"> Start Date&nbsp;
+                        <label class="col-lg-5 col-md-5 col-sm-7 col-14">
+                            <input id="Start-Date" type="date" class="rounded col-9">&nbsp;Start Date&nbsp;
                         </label>
-                        <label>
-                            <input id="pain-level" type="text" class="rounded col-2"> Min Pain Level&nbsp;
-                        </label>
-                        <label>
-                            <input id="remedies-list" type="text" class="rounded col-8"> Remedy&nbsp;
+
+                        <label class="col-lg-5 col-md-5 col-sm-7 col-14">
+                            <input id="End-Date" type="date" class="rounded col-9">&nbsp;End Date&nbsp;
                         </label>
                     </div>
 
-                    <div class="row" style="border-bottom: 1px solid #008000;">
-                        <button id="seach-btn" type="button" class="btn border btn-sm btn-green col-4">search</button>
+                    <label class="row container">
+                        <input id="Pain-Level" type="text" class="rounded col-1">&nbsp;Min Pain Level
+                    </label>
+
+                    <div id="Remedies" class="row"></div>
+
+                    <div class="row">
+                        <button id="search-btn" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 col-sm-2 col-3">Search</button>&nbsp;
+                        <button id="clear-btn" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 col-sm-2 col-3">Clear</button>&nbsp;
                     </div>
                 </div>
 
                 <div id="stickyedit" class="row noprint">
-                    <button id="edit" type="button" class="btn border btn-sm btn-green disabled col-2" disabled>Edit</button>&nbsp;
-                    <button id="delete" type="button" class="btn border btn-sm btn-green disabled col-2" disabled>Delete</button>&nbsp;
+                    <button id="edit" type="button" class="btn border btn-sm btn-green disabled col-lg-2 col-md-2 col-sm-2 col-3" disabled>Edit</button>&nbsp;
+                    <button id="delete" type="button" class="btn border btn-sm btn-green disabled col-lg-2 col-md-2 col-sm-2 col-3" disabled>Delete</button>&nbsp;
                 </div>
 
                 <br>

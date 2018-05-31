@@ -72,6 +72,7 @@ const demotrackerlist = [{
     name: "Remedies",
     type: "list",
     list: ["Kepra", "Relafin", "Haldol", "Cogentin", "Benadryl", "Compazine", "sleep"],
+    fixed: true,
 }, {
     name: "Triggered By",
     type: "list",
@@ -168,7 +169,7 @@ lightningPainDiary.prototype.onAuthStateChanged = function (user) {
                 lpd.doTrackerlistWrite();
             }
 
-            if(lpd.doAccountDisplay)
+            if (lpd.doAccountDisplay)
                 lpd.doAccountDisplay();
         });
     } else {
@@ -185,7 +186,7 @@ lightningPainDiary.prototype.onAuthStateChanged = function (user) {
 
         lpd.init();
 
-        if(lpd.doLoggedout)
+        if (lpd.doLoggedout)
             lpd.doLoggedout()
     }
 }
@@ -215,9 +216,13 @@ lightningPainDiary.prototype.doTrackerlistRead = function (finishfcn) {
         });
 }
 
-lightningPainDiary.prototype.doAccountWrite = function () {
-    if (lpd.checkLoggedInWithMessage())
-        firebase.database().ref('users/' + lpd.uid + '/Account').set(lpd.account);
+lightningPainDiary.prototype.doAccountWrite = function (key) {
+    if (lpd.checkLoggedInWithMessage()) {
+        if (key)
+            firebase.database().ref('users/' + lpd.uid + '/Account/' + key).set(lpd.account[key]);
+        else
+            firebase.database().ref('users/' + lpd.uid + '/Account').set(lpd.account);
+    }
 }
 
 lightningPainDiary.prototype.doTrackerlistWrite = function () {
@@ -239,12 +244,37 @@ lightningPainDiary.prototype.getDiaryKey = function (entry) {
     return (datekey);
 }
 
-lightningPainDiary.prototype.doDiaryRead = function (entryfcn, finishfcn) {
+lightningPainDiary.prototype.doDiaryRead = function (search, entryfcn, finishfcn) {
     var ref = firebase.database().ref("users/" + lpd.uid + '/Diary/');
     ref.once("value", function (snapshot) {
         snapshot.forEach(function (data) {
-            entryfcn(data.val());
+            let ok = true;
+            let entry = data.val();
+            if (search) {
+                if (search.painlevel && entry["Pain Level"] < search.painlevel)
+                    ok = false;
+                if (ok && search.remedies) {
+                    ok = false;
+                    if(entry.Remedies)
+                    for(let i =0;i<search.remedies.length && !ok;++i) {
+                        let s = search.remedies[i];
+                        ok = entry.Remedies.find(function (x) {
+                                return (x === s);
+                        });
+                    };
+                }
+                if (search.startdate && data.key < search.startdate)
+                    ok = false;
+                if (search.enddate && data.key > search.enddate + '\uf8ff')
+                    ok = false;
+            }
+
+            if (ok)
+                entryfcn(entry);
         });
+
+        lpd.account.lastsearch = search;
+        lpd.doAccountWrite("lastsearch");
 
         finishfcn();
     });
@@ -281,7 +311,7 @@ lightningPainDiary.prototype.doDiaryEntryRead = function (datekey, finishfcn) {
 
         if (lpd.account.lastdiaryupdate !== datekey) {
             lpd.account.lastdiaryupdate = datekey;
-            lpd.doAccountWrite();
+            lpd.doAccountWrite("lastdiaryupdate");
         }
     }
 }
@@ -293,7 +323,7 @@ lightningPainDiary.prototype.doDiaryEntryWrite = function (value) {
 
         if (lpd.account.lastdiaryupdate !== datekey) {
             lpd.account.lastdiaryupdate = datekey;
-            lpd.doAccountWrite();
+            lpd.doAccountWrite("lastdiaryupdate");
         }
     }
 }
@@ -317,9 +347,9 @@ lightningPainDiary.prototype.doReportlistRead = function (finishfcn) {
     });
 }
 
-lightningPainDiary.prototype.doReportRead = function (name, finishfcn) {
+lightningPainDiary.prototype.doReportRead = function (namekey, finishfcn) {
     if (lpd.checkLoggedInWithMessage()) {
-        var ref = firebase.database().ref("users/" + lpd.uid + '/Reports/' + name);
+        var ref = firebase.database().ref("users/" + lpd.uid + '/Reports/' + namekey);
         ref.once("value", function (snapshot) {
             if (snapshot.exists()) {
                 lpd.report = snapshot.val();
@@ -335,9 +365,9 @@ lightningPainDiary.prototype.doReportRead = function (name, finishfcn) {
             finishfcn();
         });
 
-        if (lpd.account.lastreport !== name) {
-            lpd.account.lastreport = name;
-            lpd.doAccountWrite();
+        if (lpd.account.lastreport !== namekey) {
+            lpd.account.lastreport = namekey;
+            lpd.doAccountWrite("lastreport");
         }
     }
 }
@@ -348,15 +378,21 @@ lightningPainDiary.prototype.doReportWrite = function (namekey) {
 
         if (lpd.account.lastreport !== namekey) {
             lpd.account.lastreport = namekey;
-            lpd.doAccountWrite();
+            lpd.doAccountWrite("lastreport");
         }
+    }
+}
+
+lightningPainDiary.prototype.doReportDelete = function (namekey) {
+    if (lpd.checkLoggedInWithMessage()) {
+        firebase.database().ref('users/' + lpd.uid + '/Reports/' + namekey).remove();
     }
 }
 
 lightningPainDiary.prototype.init = function () {
     lpd.trackerlist = [];
     lpd.report = [];
-    
+
     for (let i = 0; i < demotrackerlist.length; ++i) {
         lpd.trackerlist.push(demotrackerlist[i]);
         lpd.report.push(demotrackerlist[i]);
