@@ -376,8 +376,7 @@ lightningPainDiary.prototype.searchDisplay = function () {
             <input id="sub-sname" type="checkbox"> ttitle
         </label>`;
 
-    let fld = $("#search #Remedies");
-    fld.empty();
+    let fld = $("#search");
 
     for (let i = 0; i < lpd.trackerlist.length; ++i) {
         let item = lpd.trackerlist[i];
@@ -385,9 +384,13 @@ lightningPainDiary.prototype.searchDisplay = function () {
 
         switch (item.name) {
             case "Remedies":
-                let h = /ttitle/g [Symbol.replace](row, name);
+            case "Triggered By":
+            let id = / /g[Symbol.replace](item.name, "-");
+            let h = /ttitle/g [Symbol.replace](row, name);
 
-                fld.append(h);
+                let rem = fld.find("#"+id)
+                rem.empty();
+                rem.append(h);
 
                 for (let i = 0; i < item.list.length; ++i) {
                     let iname = item.list[i];
@@ -396,7 +399,7 @@ lightningPainDiary.prototype.searchDisplay = function () {
                     h = /sname/g [Symbol.replace](sub, iid);
                     h = /ttitle/g [Symbol.replace](h, iname);
 
-                    fld.find("#cont").append(h);
+                    rem.find("#cont").append(h);
                 }
         }
     }
@@ -421,6 +424,11 @@ lightningPainDiary.prototype.doSearch = function () {
     search.find("#Remedies").find(":checked").each(function () {
         let name = $(this).prop("id").replace(stripid, "$1");
         lpd.search.remedies.push(name);
+    });
+    lpd.search.triggeredby = [];
+    search.find("#Triggered-By").find(":checked").each(function () {
+        let name = $(this).prop("id").replace(stripid, "$1");
+        lpd.search.triggeredby.push(name);
     });
 
     lpd.doDiaryRead(lpd.search, lpd.diaryEntryDisplay, lpd.diarySelectDisplay);

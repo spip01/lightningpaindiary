@@ -253,15 +253,25 @@ lightningPainDiary.prototype.doDiaryRead = function (search, entryfcn, finishfcn
             if (search) {
                 if (search.painlevel && entry["Pain Level"] < search.painlevel)
                     ok = false;
-                if (ok && search.remedies) {
+                if (ok && search.remedies && search.remedies.length > 0) {
                     ok = false;
-                    if(entry.Remedies)
-                    for(let i =0;i<search.remedies.length && !ok;++i) {
-                        let s = search.remedies[i];
-                        ok = entry.Remedies.find(function (x) {
+                    if (entry.Remedies)
+                        for (let i = 0; i < search.remedies.length && !ok; ++i) {
+                            let s = search.remedies[i];
+                            ok = entry.Remedies.find(function (x) {
                                 return (x === s);
-                        });
-                    };
+                            });
+                        };
+                }
+                if (ok && search.triggeredby && search.triggeredby.length > 0) {
+                    ok = false;
+                    if (entry["Triggered By"])
+                        for (let i = 0; i < search.triggeredby.length && !ok; ++i) {
+                            let s = search.triggeredby[i];
+                            ok = entry["Triggered By"].find(function (x) {
+                                return (x === s);
+                            });
+                        };
                 }
                 if (search.startdate && data.key < search.startdate)
                     ok = false;
