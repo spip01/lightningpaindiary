@@ -62,63 +62,43 @@
                         <input id="show-select" type="checkbox"> Open Selectors
                     </label>
 
-                    <label class="col-sm-4 col-5">
-                        <input id="show-search" type="checkbox"> Open Search
+                    <label class="col-sm-4 col-6">
+                        <input id="show-filter" type="checkbox"> Open Filters
                     </label>
-
-                    <!--button id="save" type="button" class="btn border btn-sm btn-green">Save</button-->&nbsp;
-                    <!--button id="modify" type="button" class="btn border btn-sm btn-green">Modify</button-->
                 </div>
 
                 <div id="select" class="card card-body noprint" style="display: none">
-                    <div class=" row">
-                        <h5 class="clr-dark-green col-lg-6 col-md-6 col-sm-6 col-12">Select Fields for Report</h5>
+                        <h5 class="clr-dark-green">Show selected fields</h5>
 
-                        <div id="selectmenu" class="col-lg-2 col-md-2 col-sm-3 col-6 dropdown" iftrackers>
-                            <button id="report" class="btn border btn-sm btn-green dropdown-toggle" type="button" data-toggle="dropdown">
+                    <div id="fields"></div>
+                </div>
+
+                <div id="filter" class="card card-body noprint pad-bottom" style="display: none">
+                        <h5 class="clr-dark-green">Show entries with matching selections</h5>
+
+                    <div id="fields"></div>
+                </div>
+
+                <div id="report-save" class="card card-body noprint pad-bottom" style="display: none">
+                    <div class=" row">
+                        <div id="menu" class="col-lg-3 col-md-3 col-sm-3 col-6 dropdown" iftrackers>
+                            <button id="report-btn" class="btn border btn-sm btn-green dropdown-toggle" type="button" data-toggle="dropdown">
                                 all on
                             </button>
                             <div id="list" class="dropdown-menu"></div>
                         </div>
-                    </div>
 
-                    <div id="fields"></div>
-
-                    <div class="row">
-                        <input id="name" class="rounded col-lg-3 col-md-3 col-sm-4 col-6" type="text" placeholder="report name">&nbsp;
-                        <button id="save" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 col-sm-2 col-3">Save</button>&nbsp;
-                        <button id="cancel" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 col-sm-2 col-3">cancel</button>&nbsp;
-                        <button id="delete" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 col-sm-2 col-3">delete</button>
+                        <input id="name" class="rounded col-lg-3 col-md-3 col-sm-4 col-6" type="text" placeholder="filter name">&nbsp;
+                        <button id="save-btn" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 col-sm-2 col-3">Save</button>&nbsp;
+                        <button id="cancel-btn" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 col-sm-2 col-3">Cancel</button>&nbsp;
+                        <button id="delete-btn" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 col-sm-2 col-3">Delete</button>
                     </div>
                 </div>
+                <br>
 
-                <div id="search" class="card card-body noprint pad-bottom" style="display: none">
-                    <div class="row border-bottom">
-                        <label class="col-lg-5 col-md-5 col-sm-7 col-14">
-                            <input id="Start-Date" type="date" class="rounded col-9">&nbsp;Start Date&nbsp;
-                        </label>
-
-                        <label class="col-lg-5 col-md-5 col-sm-7 col-14">
-                            <input id="End-Date" type="date" class="rounded col-9">&nbsp;End Date&nbsp;
-                        </label>
-                    </div>
-
-                    <label class="row container">
-                        <input id="Pain-Level" type="text" class="rounded col-1 border-bottom">&nbsp;Min Pain Level
-                    </label>
-
-                    <div id="Remedies" class="row border-bottom"></div>
-                    <div id="Triggered-By" class="row border-bottom"></div>
-
-                    <div class="row">
-                        <button id="search-btn" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 col-sm-2 col-3">Search</button>&nbsp;
-                        <button id="clear-btn" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 col-sm-2 col-3">Clear</button>&nbsp;
-                    </div>
-                </div>
-
-                <div id="stickyedit" class="row noprint">
-                    <button id="edit" type="button" class="btn border btn-sm btn-green disabled col-lg-2 col-md-2 col-sm-2 col-3" disabled>Edit</button>&nbsp;
-                    <button id="delete" type="button" class="btn border btn-sm btn-green disabled col-lg-2 col-md-2 col-sm-2 col-3" disabled>Delete</button>&nbsp;
+                <div id="edit-row" class="row noprint">
+                    <button id="edit-btn" type="button" class="btn border btn-sm btn-green disabled col-lg-2 col-md-2 col-sm-2 col-3" disabled>Edit</button>&nbsp;
+                    <button id="delete-btn" type="button" class="btn border btn-sm btn-green disabled col-lg-2 col-md-2 col-sm-2 col-3" disabled>Delete</button>&nbsp;
                 </div>
 
                 <br>

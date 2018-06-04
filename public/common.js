@@ -235,56 +235,22 @@ lightningPainDiary.prototype.doTrackerWrite = function (entry, idx) {
         firebase.database().ref('users/' + lpd.uid + '/Trackers/' + idx).set(entry);
 }
 
-lightningPainDiary.prototype.getDiaryKey = function (entry) {
-    let datekey = new Date(entry.Date + " " + entry.Time).toJSON();
+lightningPainDiary.prototype.getDiaryKey = function (date, time) {
+    let datekey = date;
+    if (time)
+        datekey += "T" + time;
     datekey = /:/g [Symbol.replace](datekey, "");
     datekey = /-/g [Symbol.replace](datekey, "");
-    datekey = datekey.replace(/(.*?)\..*/g, "$1");
 
     return (datekey);
 }
 
-lightningPainDiary.prototype.doDiaryRead = function (search, entryfcn, finishfcn) {
+lightningPainDiary.prototype.doDiaryRead = function (entryfcn, finishfcn) {
     var ref = firebase.database().ref("users/" + lpd.uid + '/Diary/');
     ref.once("value", function (snapshot) {
         snapshot.forEach(function (data) {
-            let ok = true;
-            let entry = data.val();
-            if (search) {
-                if (search.painlevel && entry["Pain Level"] < search.painlevel)
-                    ok = false;
-                if (ok && search.remedies && search.remedies.length > 0) {
-                    ok = false;
-                    if (entry.Remedies)
-                        for (let i = 0; i < search.remedies.length && !ok; ++i) {
-                            let s = search.remedies[i];
-                            ok = entry.Remedies.find(function (x) {
-                                return (x === s);
-                            });
-                        };
-                }
-                if (ok && search.triggeredby && search.triggeredby.length > 0) {
-                    ok = false;
-                    if (entry["Triggered By"])
-                        for (let i = 0; i < search.triggeredby.length && !ok; ++i) {
-                            let s = search.triggeredby[i];
-                            ok = entry["Triggered By"].find(function (x) {
-                                return (x === s);
-                            });
-                        };
-                }
-                if (search.startdate && data.key < search.startdate)
-                    ok = false;
-                if (search.enddate && data.key > search.enddate + '\uf8ff')
-                    ok = false;
-            }
-
-            if (ok)
-                entryfcn(entry);
+            entryfcn(data.val());
         });
-
-        lpd.account.lastsearch = search;
-        lpd.doAccountWrite("lastsearch");
 
         finishfcn();
     });
@@ -303,7 +269,7 @@ lightningPainDiary.prototype.doDiaryUpdate = function () {
                 }
             }
 
-            let key = lpd.getDiaryKey(entry);
+            let key = lpd.getDiaryKey(entry.Date, entry.Time);
             firebase.database().ref('users/' + lpd.uid + '/Diary/' + diary.key).remove();
             firebase.database().ref('users/' + lpd.uid + '/Diary/' + key).set(entry);
         });
@@ -328,7 +294,7 @@ lightningPainDiary.prototype.doDiaryEntryRead = function (datekey, finishfcn) {
 
 lightningPainDiary.prototype.doDiaryEntryWrite = function (value) {
     if (lpd.checkLoggedInWithMessage()) {
-        let datekey = lpd.getDiaryKey(value);
+        let datekey = lpd.getDiaryKey(value.Date, value.Time);
         firebase.database().ref('users/' + lpd.uid + '/Diary/' + datekey).set(value);
 
         if (lpd.account.lastdiaryupdate !== datekey) {
@@ -361,16 +327,10 @@ lightningPainDiary.prototype.doReportRead = function (namekey, finishfcn) {
     if (lpd.checkLoggedInWithMessage()) {
         var ref = firebase.database().ref("users/" + lpd.uid + '/Reports/' + namekey);
         ref.once("value", function (snapshot) {
-            if (snapshot.exists()) {
+            if (snapshot.exists())
                 lpd.report = snapshot.val();
-            } else {
-                lpd.report = [];
-                for (let i = 0; i < lpd.trackerlist.length; ++i) {
-                    lpd.report.push(lpd.trackerlist[i]);
-                    if (lpd.report[i].type === "list")
-                        lpd.report[i].list.push("all others");
-                }
-            }
+            else if (lpd.initReport)
+                lpd.initReport();
 
             finishfcn();
         });
@@ -401,15 +361,12 @@ lightningPainDiary.prototype.doReportDelete = function (namekey) {
 
 lightningPainDiary.prototype.init = function () {
     lpd.trackerlist = [];
-    lpd.report = [];
 
-    for (let i = 0; i < demotrackerlist.length; ++i) {
+    for (let i = 0; i < demotrackerlist.length; ++i)
         lpd.trackerlist.push(demotrackerlist[i]);
-        lpd.report.push(demotrackerlist[i]);
 
-        if (lpd.report[i].type === "list")
-            lpd.report[i].list.push("all others");
-    }
+    if (lpd.initReport)
+        lpd.initReport();
 
     lpd.account.city = "";
     lpd.account.state = "";
