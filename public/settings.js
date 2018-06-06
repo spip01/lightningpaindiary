@@ -27,7 +27,7 @@ $(document).ready(function () {
   });
 });
 
-lightningPainDiary.prototype.doLoggedout=function(){
+lightningPainDiary.prototype.doLoggedout = function () {
   lpd.doAccountDisplay();
   lpd.doTrackerDisplay();
 
@@ -46,7 +46,7 @@ lightningPainDiary.prototype.doLoggedout=function(){
   $("#panels #pnl-Account").show();
 }
 
-lightningPainDiary.prototype.doLoggedin=function(){
+lightningPainDiary.prototype.doLoggedin = function () {
   $("[id|='edit").removeClass("disabled");
   $("[id|='edit").removeAttr("disabled");
   $("[id|='en").removeClass("disabled");
@@ -69,9 +69,10 @@ const panels =
         </label>
     </div>
 
-    <div class = "row border-bottom" style="font-size: 12px">
-        Controls data displayed and saved on the entry page. Drag to rearrange which changes the order on the entry page.
-        Deleting items doesn't delete any saved data just the controls. Enter the name and hit add to restore it to the display.
+    <div class = "border-bottom" style="font-size: 12px">
+        Controls data displayed and saved on the entry page. Deleting items doesn't delete 
+        any saved data just the display. Re-add it to restore it to the display. 
+        <span class="hide-sm"">Drag to rearrange which changes the order on the entry page.</span>
     </div>
     <br>
         
@@ -95,8 +96,8 @@ const panels =
 
 const panels_entry =
   `
-<div id="ent-idname" class="row border-bottom">
-    <div id="pos-000" class="col-lg-3 col-md-3 col-sm-3 col-6" draggable="true">ttitle</div>
+<div id="ent-idname" class="row border-bottom" draggable="true">
+    <div class="col-lg-3 col-md-3 col-sm-3 col-6">ttitle</div>
     <input id="editname-idname" class="rounded col-lg-3 col-md-3 col-sm-3 col-6" value="ttitle" style="display: none">
     <div id="type" class="col-lg-2 col-md-2 col-sm-3 col-6" iftrackers>ttype</div>
     <div id="show-idname" class="col-lg-2 col-md-2 col-sm-2 col-6" iftrackers>
@@ -117,6 +118,9 @@ lightningPainDiary.prototype.doTrackerDisplay = function () {
 lightningPainDiary.prototype.generateTrackersPanel = function () {
   const pnlid = "Trackers";
   const name = "Trackers";
+  let hundred = function (i) {
+    return i < 10 ? '00' + i : i < 100 ? '0' + i : i;
+  };
 
   let panel = /idname/g [Symbol.replace](panels, pnlid);
   panel = /ttitle/g [Symbol.replace](panel, name);
@@ -135,7 +139,7 @@ lightningPainDiary.prototype.generateTrackersPanel = function () {
     entry = /ttitle/g [Symbol.replace](entry, item.name);
     entry = /ttype/g [Symbol.replace](entry, item.type);
     entry = /iftrackers/g [Symbol.replace](entry, "");
-    entry = /000/g [Symbol.replace](entry, item.position);
+    entry = /000/g [Symbol.replace](entry, hundred(i));
 
     if (item.type === "range") {
       entry = /ifrange/g [Symbol.replace](entry, "");
@@ -316,45 +320,72 @@ lightningPainDiary.prototype.dragover = function (evt) {
 }
 
 lightningPainDiary.prototype.dragstart = function (evt) {
-  evt.preventDefault();
-  evt.originalEvent.dataTransfer.setData("text/html", $(this).parent().prop("id"));
+  evt.originalEvent.dataTransfer.setData("text", evt.target.id);
 }
 
 lightningPainDiary.prototype.drop = function (evt) {
   evt.preventDefault();
-  let src = evt.originalEvent.dataTransfer.getData("text/html");
-  let dst = $(evt).prop("id");
-  let pnlid = $(evt).parent().parent().prop("id").replace(stripid, "$1");
+  let srcid = evt.originalEvent.dataTransfer.getData("text");
+  let dstid = evt.currentTarget.id;
 
-  let list = [];
-  let found = 0;
-  $("#pnl-" + pnlid).children().each(function () {
-    let id = $(this).prop("id");
+  let parentid = evt.currentTarget.parentElement.id;
+  let parent = $("#" + parentid);
+  let src = parent.find("#" + srcid);
+  let dst = parent.find("#" + dstid);
 
-    switch (id) {
-      case dst: // move up
-        if (found == 0) {
-          list.push($("#" + pt + " #" + src).detach());
-          list.push($("#" + pt + " #" + dst).detach());
-          found = 2;
-        } else if (found == 1) {
-          list.push($("#" + pt + " #" + dst).detach());
-          list.push($("#" + pt + " #" + src).detach());
-          found = 2;
-        }
-        break;
-      case src: // move down
-        if (found == 0)
-          found = 1;
-        break;
-      default: //$("#diag").append("add id " + id + "");
-        list.push($(this).detach());
-    }
+  let up = src.position().top > dst.position().top;
+
+  if (up)
+    dst.before(src[0].outerHTML);
+  else
+    dst.after(src[0].outerHTML);
+  src.detach();
+
+  parent.find("#" + srcid).on({
+    "drop": $.proxy(lpd.drop),
+    "dragover": $.proxy(lpd.dragover),
+    "dragstart": $.proxy(lpd.dragstart),
   });
 
-  for (let i = 0; i < list.length; ++i) {
-    $("#" + pt).append(list[i]);
+  parentid = /-/g [Symbol.replace](parentid.replace(stripid, "$1"), " ");
+
+  if (parentid === "Trackers") {
+    let list = [];
+
+    parent.children().each(function () {
+      let id = /-/g [Symbol.replace]($(this).prop("id").replace(stripid, "$1"), " ");
+
+      let i = lpd.trackerlist.findIndex(function (x) {
+        return (x.name === id);
+      });
+
+      list.push(lpd.trackerlist[i]);
+    });
+
+    lpd.trackerlist = list;
+  } else {
+    let list = [];
+
+    let index = lpd.trackerlist.findIndex(function (x) {
+      return (x.name === parentid);
+    });
+
+    let searched = lpd.trackerlist[index].list;
+
+    parent.children().each(function () {
+      let id = /-/g [Symbol.replace]($(this).prop("id").replace(stripid, "$1"), " ");
+
+      let i = searched.findIndex(function (x) {
+        return (x === id);
+      });
+
+      list.push(searched[i]);
+    });
+
+    lpd.trackerlist[index].list = list;
   }
+
+  lpd.doTrackerlistWrite();
 }
 
 lightningPainDiary.prototype.enableDeleteBtns = function (evt) {
@@ -453,7 +484,7 @@ lightningPainDiary.prototype.panelAddBtn = function (evt) {
     lpd.generateTrackersPanel();
     $("#pnl-" + pnlid).show();
 
-    lpd.doTrackerWrite(entry, lpd.trackerlist.length-1);
+    lpd.doTrackerWrite(entry, lpd.trackerlist.length - 1);
   } else {
     let i = lpd.trackerlist.findIndex(function (x) {
       return (x.name === pnlname);

@@ -72,7 +72,6 @@ const demotrackerlist = [{
     name: "Remedies",
     type: "list",
     list: ["Kepra", "Relafin", "Haldol", "Cogentin", "Benadryl", "Compazine", "sleep"],
-    fixed: true,
 }, {
     name: "Triggered By",
     type: "list",
