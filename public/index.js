@@ -552,7 +552,7 @@ lightningPainDiary.prototype.loadWeather = function (entry) {
     let icon = "https://openweathermap.org/img/w/iicon.png";
     let url = "https://api.openweathermap.org/data/2.5/weather?q=" + lpd.account.city + "," +
         lpd.account.state + "," + lpd.account.country + "&units=" + (lpd.account.ifmetric ? "metric" : "imperial") +
-        "&appid=" + openweatherapikey;
+        "&appid=" + OPENWEATHER_API;
 
     loadFile(url, null, function (data) {
         let id = / /g [Symbol.replace](entry.name, "-");

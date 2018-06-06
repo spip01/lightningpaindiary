@@ -25,8 +25,6 @@ function lightningPainDiary() {
     this.fbstorage = null;
 }
 
-const openweatherapikey = "36241d90d27162ebecabf6c334851f16";
-const firebaseapikey = 'AIzaSyBb58wdzKURN8OipGiaOgmpF_UJgA2yUEk';
 const stripid = /^.*?-(.*)/g;
 
 const trackertypes = ["blood pressure", "date", "list", "number", "range", "text",
@@ -111,11 +109,12 @@ const demotrackerlist = [{
 // Sets up shortcuts to Firebase features and initiate firebase auth.
 lightningPainDiary.prototype.initFirebase = function () {
     firebase.initializeApp({
-        apiKey: firebaseapikey,
+        apiKey: FIREBASE_API,
         authDomain: 'lightningpaindiary.firebaseapp.com',
         databaseURL: "https://lightningpaindiary.firebaseio.com",
         storageBucket: "lightningpaindiary.appspot.com",
-        projectId: 'lightningpaindiary'
+        projectId: 'lightningpaindiary',
+        messagingSenderId: MESSAGING_ID
     });
 
     lpd.fbauth = firebase.auth();

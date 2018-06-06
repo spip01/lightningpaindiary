@@ -611,7 +611,7 @@ function lookupWeather(evt) {
   let country = $("#country").val();
   let tmpFormat = $("[name='temp'] :checked").text();
 
-  let url = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "," + state + "," + country + "&units=" + tmpFormat + "&appid=" + openweatherapikey;
+  let url = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "," + state + "," + country + "&units=" + tmpFormat + "&appid=" + OPENWEATHER_API;
 
   loadFile(url, null, function (data) {
     let h = "<div class='row container'>Lon: " + data.coord.lon + " Lat: " + data.coord.lat + "</div>";
