@@ -318,6 +318,7 @@ lightningPainDiary.prototype.doReportlistRead = function (finishfcn) {
             lpd.reportlist.push(data.key);
         });
 
+        if(finishfcn)
         finishfcn();
     });
 }
