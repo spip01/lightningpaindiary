@@ -1,7 +1,8 @@
 'use strict';
 
 lightningPainDiary.prototype.doLoggedout = function () {
-    $("#panels").empty();
+    $("#table").empty();
+    $("#calendar").empty();
     $("#select").hide();
     $("#select #fields").empty();
     $("#filter").hide();
@@ -17,15 +18,29 @@ lightningPainDiary.prototype.doReportDisplay = function () {
     lpd.selectDisplay();
     lpd.filterDisplay();
     lpd.headerDisplay();
-    lpd.doDiaryRead(lpd.diaryEntryDisplay, lpd.doReportUpdate);
+    lpd.doDiaryRead(lpd.diaryDisplay, lpd.doReportUpdate);
 }
+
+lightningPainDiary.prototype.diaryDisplay = function (diary) {
+    lpd.tableDisplay(diary);
+    lpd.calendarDisplay(diary);
+}
+
 
 lightningPainDiary.prototype.doReportUpdate = function () {
     lpd.setSelect();
     lpd.setFilter();
     lpd.diarySelectDisplay();
     lpd.diaryFilterDisplay();
-    lpd.doReportMenuDisplay();
+    lpd.reportMenu();
+
+    $("#table, #calendar, #graph [name='selected']").click(function () {
+        $("#edit").removeClass("disabled");
+        $("#edit").removeAttr("disabled");
+        $("#delete").removeClass("disabled");
+        $("#delete").removeAttr("disabled");
+    });
+
 }
 
 const row = `<div id="row-idname" class="row" style="border-bottom: 1px solid #008000;">
@@ -34,17 +49,18 @@ const row = `<div id="row-idname" class="row" style="border-bottom: 1px solid #0
             <div id="time"></div>
             <input id="sel-idname" class="radio-inline noprint" type="radio" name="selected">
         </div> 
-        <div id="data" class="container row col-print-12 col-lg-12 col-md-12 col-sm-12 col-11"></div>
+        <div id="data" class="row col-print-12 col-lg-12 col-md-12 col-sm-12 col-11"></div>
     </div>`;
 
 const entry = `<div id="ent-idname" class="col-print-2 col-lg-2 col-md-2 col-sm-2 col-7 border-right border-bottom">dvalue</div>`;
+const sub = `<div id="sub-idname">dvalue</div>`;
+const img = '<img id="sub-idname" src="https://openweathermap.org/img/w/iicon.png" height="15" width="15">';
 
 lightningPainDiary.prototype.headerDisplay = function () {
-
-    let pnl = $("#panels");
+    let pnl = $("#table");
     pnl.empty();
 
-    let h = /idname/g [Symbol.replace](row, "header");
+    let h = row.symbolReplace(/idname/g, "header");
     pnl.append(h);
     pnl.find("#sel-header").hide();
     pnl = pnl.find("#row-header #data");
@@ -52,51 +68,48 @@ lightningPainDiary.prototype.headerDisplay = function () {
     for (let i = 0; i < lpd.trackerlist.length; ++i) {
         let item = lpd.trackerlist[i];
         let name = item.name;
-        let id = / /g [Symbol.replace](name, "-");
+        let id = name.spaceToDash();
 
         switch (item.type) {
             case "blood pressure":
                 name = "Blood Pressure & Pulse";
             case "date":
-                if (item.name === "Date") {
+                if (name === "Date") {
                     $("#row-header #date").text("Date & Time");
                     break;
                 }
             case "time":
-                if (item.name === "Time")
+                if (name === "Time")
                     break;
             default:
-                let h = /dvalue/g [Symbol.replace](entry, name);
-                h = /idname/g [Symbol.replace](h, id);
+                let h = entry.symbolReplace(/dvalue/g, name);
+                h = h.symbolReplace(/idname/g, id);
                 pnl.append(h);
         }
     }
 }
 
-lightningPainDiary.prototype.diaryEntryDisplay = function (diary) {
-    const mult = `<div id="sub-idname">dvalue</div>`;
-    const img = '<img id="sub-idname" src="https://openweathermap.org/img/w/iicon.png" height="15" width="15">';
-
+lightningPainDiary.prototype.tableDisplay = function (diary) {
     let id = lpd.getDiaryKey(diary.Date, diary.Time);
 
-    let h = /idname/g [Symbol.replace](row, id);
-    let pnl = $("#panels");
+    let h = row.symbolReplace(/idname/g, id);
+    let pnl = $("#table");
     pnl.append(h);
     pnl = pnl.find("#row-" + id + " #data");
 
     for (let i = 0; i < lpd.trackerlist.length; ++i) {
         let item = lpd.trackerlist[i];
         let name = item.name;
-        let iid = / /g [Symbol.replace](name, "-");
-        let txt = diary[item.name];
+        let iid = name.spaceToDash();
+        let txt = diary[name];
 
         switch (item.type) {
             case "blood pressure":
-                txt = !diary[item.name] || diary[item.name].high === 0 ? "" : diary[item.name].high + " / " + diary[item.name].low + " " + diary[item.name].pulse;
+                txt = !diary[name] || diary[name].high === 0 ? "" : diary[name].high + "/" + diary[name].low + " " + diary[name].pulse;
                 break;
 
             case "date":
-                if (item.name === "Date") {
+                if (name === "Date") {
                     $("#row-" + id + " #date").text(diary.Date);
                     $("#row-" + id + " #time").text(diary.Time);
                     txt = "";
@@ -104,7 +117,7 @@ lightningPainDiary.prototype.diaryEntryDisplay = function (diary) {
                 break;
 
             case "time":
-                if (item.name === "Time")
+                if (name === "Time")
                     txt = "";
                 break;
 
@@ -114,28 +127,28 @@ lightningPainDiary.prototype.diaryEntryDisplay = function (diary) {
                 break;
         }
 
-        h = /dvalue/g [Symbol.replace](entry, !txt ? "" : txt);
-        h = /idname/g [Symbol.replace](h, iid);
+        h = entry.symbolReplace(/dvalue/g, !txt ? "" : txt);
+        h = h.symbolReplace(/idname/g, iid);
         pnl.append(h);
 
         let ent = pnl.find("#ent-" + iid);
 
-        if (diary[item.name])
+        if (diary[name])
             switch (item.type) {
                 case "weather":
-                    for (let [name, val] of Object.entries(diary[item.name])) {
+                    for (let [dname, val] of Object.entries(diary[name])) {
                         if (val !== "") {
-                            let lid = / /g [Symbol.replace](name, "-");
+                            let lid = dname.spaceToDash();
 
-                            if (name === "icon") {
-                                h = /iicon/g [Symbol.replace](img, val);
-                                h = /idname/g [Symbol.replace](h, lid);
+                            if (dname === "icon") {
+                                h = img.symbolReplace(/iicon/g, val);
+                                h = h.symbolReplace(/idname/g, lid);
                                 ent.append(h);
                             } else {
-                                let txt = name + ": " + val;
+                                let txt = dname + ": " + val;
 
-                                h = /dvalue/g [Symbol.replace](mult, txt);
-                                h = /idname/g [Symbol.replace](h, lid);
+                                h = sub.symbolReplace(/dvalue/g, txt);
+                                h = h.symbolReplace(/idname/g, lid);
                                 ent.append(h);
                             }
                         }
@@ -143,37 +156,30 @@ lightningPainDiary.prototype.diaryEntryDisplay = function (diary) {
                     break;
 
                 case "list":
-                    for (let i = 0; i < diary[item.name].length; ++i) {
-                        let name = diary[item.name][i];
-                        let lid = / /g [Symbol.replace](name, "-");
+                    for (let i = 0; i < diary[name].length; ++i) {
+                        let dname = diary[name][i];
+                        let lid = dname.spaceToDash();
 
-                        h = /dvalue/g [Symbol.replace](mult, name);
-                        h = /idname/g [Symbol.replace](h, lid);
+                        h = sub.symbolReplace(/dvalue/g, dname);
+                        h = h.symbolReplace(/idname/g, lid);
                         ent.append(h);
                     }
                     break;
             }
     }
-
-    $("#panels [name='selected']").click(function () {
-        $("#edit").removeClass("disabled");
-        $("#edit").removeAttr("disabled");
-        $("#delete").removeClass("disabled");
-        $("#delete").removeAttr("disabled");
-    });
 }
 
 lightningPainDiary.prototype.selectDisplay = function () {
     const row = `<div id="row-idname" class="row border-bottom"></div>`;
-    const entry = `<label class="col-lg-2 col-md-3 col-sm-4 col-6">
+    const entry =
+        `<label class="col-lg-2 col-md-3 col-sm-4 col-6">
             <input id="ent-idname" type="checkbox"> ttitle
-        </label>
-        `;
+        </label>`;
     const cntnr = `<div id="cont-idname" class="col-lg-12 col-md-11 col-sm-10 col-8 container"></div>`;
-    const sub = `<label class="col-lg-2 col-md-3 col-sm-4 col-14">
+    const sub =
+        `<label class="col-lg-2 col-md-3 col-sm-4 col-14">
             <input id="sub-sname" type="checkbox"> ttitle
-        </label>
-        `;
+        </label>`;
 
     let fld = $("#select #fields");
     fld.empty();
@@ -190,35 +196,35 @@ lightningPainDiary.prototype.selectDisplay = function () {
                 if (name === "Time")
                     break;
             default:
-                let id = / /g [Symbol.replace](name, "-");
-                let h = /idname/g [Symbol.replace](row, id);
+                let id = name.spaceToDash();
+                let h = row.symbolReplace(/idname/g, id);
 
                 fld.append(h);
 
-                h = /idname/g [Symbol.replace](entry, id);
-                h = /ttitle/g [Symbol.replace](h, name);
+                h = entry.symbolReplace(/idname/g, id);
+                h = h.symbolReplace(/ttitle/g, name);
 
                 let sel = fld.find("#row-" + id);
                 sel.append(h);
 
                 if (item.type === "weather" || item.type === "list") {
-                    h = /idname/g [Symbol.replace](cntnr, id);
+                    h = cntnr.symbolReplace(/idname/g, id);
                     sel.append(h);
                     let cont = sel.find("#cont-" + id);
 
                     for (let i = 0; i < item.list.length; ++i) {
                         let iname = item.list[i];
-                        let iid = / /g [Symbol.replace](iname, "-");
+                        let iid = iname.spaceToDash();
 
-                        h = /sname/g [Symbol.replace](sub, iid);
-                        h = /ttitle/g [Symbol.replace](h, iname);
+                        h = sub.symbolReplace(/sname/g, iid);
+                        h = h.symbolReplace(/ttitle/g, iname);
 
                         cont.append(h);
                     }
 
                     if (item.type === "list") {
-                        h = /sname/g [Symbol.replace](sub, "all-others");
-                        h = /ttitle/g [Symbol.replace](h, "all others");
+                        h = sub.symbolReplace(/sname/g, "all-others");
+                        h = h.symbolReplace(/ttitle/g, "all others");
 
                         cont.append(h);
                     }
@@ -228,9 +234,9 @@ lightningPainDiary.prototype.selectDisplay = function () {
 
     fld.find(":checkbox").click(function () {
         if ($(this).prop("checked"))
-            $("#panels #" + $(this).prop("id")).show();
+            $("#table #" + $(this).prop("id")).show();
         else
-            $("#panels #" + $(this).prop("id")).hide();
+            $("#table #" + $(this).prop("id")).hide();
     });
 }
 
@@ -240,7 +246,7 @@ lightningPainDiary.prototype.setSelect = function () {
     for (let i = 0; i < lpd.report.select.length; ++i) {
         let item = lpd.report.select[i];
         let name = item.name;
-        let id = / /g [Symbol.replace](name, "-");
+        let id = name.spaceToDash();
         let sel = $("#select #row-" + id);
 
         switch (item.type) {
@@ -255,7 +261,7 @@ lightningPainDiary.prototype.setSelect = function () {
 
                 if (item.list)
                     for (let i = 0; i < item.list.length; ++i) {
-                        let iid = / /g [Symbol.replace](item.list[i], "-");
+                        let iid = item.list[i].spaceToDash();
 
                         sel.find("#cont-" + id + " #sub-" + iid).prop("checked", true);
                     }
@@ -278,7 +284,7 @@ lightningPainDiary.prototype.extractSelect = function () {
                 if (name === "Time")
                     break;
             default:
-                let id = / /g [Symbol.replace](name, "-");
+                let id = name.spaceToDash();
 
                 let row = $("#select #row-" + id);
                 let sel = row.find("#ent-" + id).prop("checked");
@@ -293,7 +299,7 @@ lightningPainDiary.prototype.extractSelect = function () {
 
                         for (let i = 0; i < list.list.length; ++i) {
                             let iname = list.list[i];
-                            let iid = / /g [Symbol.replace](iname, "-");
+                            let iid = iname.spaceToDash();
 
                             if (cont.find("#sub-" + iid).prop("checked"))
                                 item.list.push(iid);
@@ -312,26 +318,32 @@ lightningPainDiary.prototype.extractSelect = function () {
 }
 
 lightningPainDiary.prototype.diarySelectDisplay = function () {
-    $("#panels [id|='ent']").hide();
-    $("#panels [id|='sub']").hide();
+    let table=$("#table");
+    let calendar=$("#calendar");
+
+    table.find("[id|='ent']").hide();
+    table.find("[id|='sub']").hide();
+    calendar.find("[id|='ent']").hide();
+    calendar.find("[id|='sub']").hide();
 
     $("#fields :checked").each(function () {
-        $("#panels #" + $(this).prop("id")).show();
+        table.find("#" + $(this).prop("id")).show();
+        calendar.find("#" + $(this).prop("id")).show();
     })
 }
 
-lightningPainDiary.prototype.doReportMenuDisplay = function () {
+lightningPainDiary.prototype.reportMenu = function () {
     const menu = `<button id="item" class="dropdown-item" type="button" style="cursor: pointer">ttype</button>`;
 
     let list = $("#menu #list");
     list.empty();
     $("#report-save #report-btn").text(lpd.account.lastreport);
 
-    let mnu = /ttype/g [Symbol.replace](menu, "all on");
+    let mnu = menu.symbolReplace(/ttype/g, "all on");
     list.append(mnu);
 
     for (let i = 0; i < lpd.reportlist.length; ++i) {
-        let mnu = /ttype/g [Symbol.replace](menu, lpd.reportlist[i]);
+        let mnu = menu.symbolReplace(/ttype/g, lpd.reportlist[i]);
         list.append(mnu);
     }
 
@@ -343,10 +355,10 @@ lightningPainDiary.prototype.doReportMenuDisplay = function () {
     });
 }
 
-lightningPainDiary.prototype.editSel = function () {
-    let sel = $("#panels :checked");
+lightningPainDiary.prototype.editSelected = function () {
+    let sel = $("#table :checked");
     let edit = sel.prop("id");
-    let datekey = edit.replace(stripid, "$1");
+    let datekey = edit.stripID();
 
     lpd.account.lastdiaryupdate = datekey;
     lpd.doAccountWrite();
@@ -354,10 +366,10 @@ lightningPainDiary.prototype.editSel = function () {
     window.location.assign("index.html")
 }
 
-lightningPainDiary.prototype.deleteSel = function () {
-    let sel = $("#panels :checked");
+lightningPainDiary.prototype.deleteSeleted = function () {
+    let sel = $("#table :checked");
     let del = sel.prop("id");
-    let datekey = del.replace(stripid, "$1");
+    let datekey = del.stripID();
 
     lpd.doDiaryEntryDelete(datekey);
     lpd.doReportDisplay();
@@ -366,11 +378,12 @@ lightningPainDiary.prototype.deleteSel = function () {
 lightningPainDiary.prototype.filterDisplay = function () {
     const row = `<div id="row-idname" class="row border-bottom"></div>`;
     const entry = `<div class="col-lg-2 col-md-3 col-sm-4 col-6">ttitle</div>`;
-    const input = `<label class="container col-14">
+    const input =
+        `<label class="container col-14">
             <input id="ent-idname" type="text" class="rounded col-2">&nbsp;ttitle
-        </label>
-        `;
-    const date = `<div class="row container">
+        </label>`;
+    const date =
+        `<div class="row container">
             <label class="col-lg-5 col-md-5 col-sm-7 col-14">
                 <input id="ent-start-idname" type="date" class="rounded col-9">&nbsp;Start ttitle&nbsp;
             </label>
@@ -379,21 +392,23 @@ lightningPainDiary.prototype.filterDisplay = function () {
             </label>
         </div>`;
     const cntnr = `<div id="cont-idname" class="col-lg-12 col-md-11 col-sm-10 col-8 container"></div>`;
-    const sub = `<label class="col-lg-2 col-md-3 col-sm-4 col-14">
+    const sub =
+        `<label class="col-lg-2 col-md-3 col-sm-4 col-14">
             <input id="sub-sname" type="checkbox">&nbsp;ttitle
-        </label>
-        `;
+        </label>`;
 
     let fld = $("#filter #fields");
     fld.empty();
 
     for (let i = 0; i < lpd.trackerlist.length; ++i) {
         let item = lpd.trackerlist[i];
+        let name = item.name;
+        let id = name.spaceToDash();
         let r = null;
 
         switch (item.type) {
             case "date":
-                if (item.name === "Date")
+                if (name === "Date")
                     r = date;
                 break;
             case "range":
@@ -404,30 +419,27 @@ lightningPainDiary.prototype.filterDisplay = function () {
                 break;
         }
 
-        let name = item.name;
-        let id = / /g [Symbol.replace](name, "-");
-
         if (r) {
-            let h = /idname/g [Symbol.replace](row, id);
+            let h = row.symbolReplace(/idname/g, id);
             fld.append(h);
 
-            h = /idname/g [Symbol.replace](r, id);
-            h = /ttitle/g [Symbol.replace](h, name);
+            h = r.symbolReplace(/idname/g, id);
+            h = h.symbolReplace(/ttitle/g, name);
 
             fld.find("#row-" + id).append(h);
         }
 
         if (item.type === "list") {
-            let h = /idname/g [Symbol.replace](cntnr, id);
+            let h = cntnr.symbolReplace(/idname/g, id);
             fld.find("#row-" + id).append(h);
             let cont = fld.find("#row-" + id + " #cont-" + id);
 
             for (let i = 0; i < item.list.length; ++i) {
                 let iname = item.list[i];
-                let iid = / /g [Symbol.replace](iname, "-");
+                let iid = iname.spaceToDash();
 
-                let h = /sname/g [Symbol.replace](sub, iid);
-                h = /ttitle/g [Symbol.replace](h, iname);
+                let h = sub.symbolReplace(/sname/g, iid);
+                h = h.symbolReplace(/ttitle/g, iname);
 
                 cont.append(h);
             }
@@ -456,7 +468,7 @@ lightningPainDiary.prototype.extractFilter = function () {
     for (let i = 0; i < lpd.trackerlist.length; ++i) {
         let list = lpd.trackerlist[i];
         let name = list.name;
-        let id = / /g [Symbol.replace](name, "-");
+        let id = name.spaceToDash();
 
         let row = $("#filter #row-" + id);
 
@@ -477,7 +489,7 @@ lightningPainDiary.prototype.extractFilter = function () {
                 filter[name].type = list.type;
                 filter[name].list = [];
                 row.find(":checked").each(function () {
-                    let lname = /-/g [Symbol.replace]($(this).prop("id").replace(stripid, "$1"), " ");
+                    let lname = $(this).prop("id").idToName();
                     filter[name].list.push(lname);
                 });
                 break;
@@ -491,7 +503,7 @@ lightningPainDiary.prototype.setFilter = function () {
     $("#filter :checkbox").prop("checked", false);
 
     for (let [name, val] of Object.entries(lpd.report.filter)) {
-        let id = / /g [Symbol.replace](name, "-");
+        let id = name.spaceToDash();
         let row = $("#filter #row-" + id);
 
         switch (val.type) {
@@ -507,7 +519,7 @@ lightningPainDiary.prototype.setFilter = function () {
             case "list":
                 if (val.list)
                     for (let i = 0; i < val.list.length; ++i) {
-                        let iid = / /g [Symbol.replace](val.list[i], "-");
+                        let iid = val.list[i].spaceToDash();
 
                         row.find("#cont-" + id + " #sub-" + iid).prop("checked", true);
                     }
@@ -517,17 +529,21 @@ lightningPainDiary.prototype.setFilter = function () {
 }
 
 lightningPainDiary.prototype.diaryFilterDisplay = function () {
-    let row = $("#panels [id|='row']");
+    let trow = $("#table [id|='row']");
 
     let filter = lpd.report.filter;
 
-    row.each(function () {
-        let id = $(this).prop("id").replace(stripid, "$1");
+    trow.each(function () {
+        let id = $(this).prop("id");
+         id = id.stripID();
+         let crow = $("#calendar #row-"+id);
+         
         $(this).show();
+         crow.show();
 
         if (id !== "header")
             for (let [name, val] of Object.entries(filter)) {
-                let nid = / /g [Symbol.replace](name, "-");
+                let nid = name.spaceToDash();
                 let found = false;
 
                 switch (val.type) {
@@ -536,12 +552,14 @@ lightningPainDiary.prototype.diaryFilterDisplay = function () {
                         let end = filter.Date.end != "T" ? filter.Date.end : null;
                         if (start && id < start || end && id > end) {
                             $(this).hide();
+                            crow.hide();
                             found = true;
                         }
                         break;
                     case "range":
                         if (val.val > 0 && $(this).find("#ent-" + nid).text() < val.val) {
                             $(this).hide();
+                            crow.hide();
                             found = true;
                         }
                         break;
@@ -550,9 +568,10 @@ lightningPainDiary.prototype.diaryFilterDisplay = function () {
                             let ent = $(this).find("#ent-" + nid);
 
                             for (let i = 0; i < val.list.length; ++i) {
-                                let lid = / /g [Symbol.replace](val.list[i], "-");
+                                let lid = val.list[i].spaceToDash();
                                 if (ent.find("#sub-" + lid).length === 0) {
                                     $(this).hide();
+                                    crow.hide();
                                     found = true;
                                 }
                             }
@@ -583,7 +602,7 @@ lightningPainDiary.prototype.initReport = function () {
     for (let i = 0; i < lpd.trackerlist.length; ++i) {
         let list = lpd.trackerlist[i];
         let name = list.name;
-        let id = / /g [Symbol.replace](name, "-");
+        let id = name.spaceToDash();
 
         let row = $("#filter #row-" + id);
 
@@ -610,7 +629,148 @@ lightningPainDiary.prototype.initReport = function () {
     lpd.report.filter = filter;
 }
 
-/*********************************** */
+/****************************************************************************************************** */
+
+lightningPainDiary.prototype.calendarDisplay = function (diary) {
+    const calmonth =
+        `<div id="month-idname" class="border">
+            <div id="month-header" class="h4 bkg-light-green clr-dark-green border-bottom row">
+                <div class="col-10">lmonth</div>
+                <div class="col-4 h6">lyear</div>
+            </div>
+            <div id="week-header" class="row"></div>
+        </div>`;
+     const dayhdr = `<div id="wday-idname" class="border col-2">idname</div>`;
+   const calweek = `<div id="week-ddow" class="row"></div>`;
+    const calday =
+        `<div id="day-idname" class="border col-2">
+            <div id="day" class="row border h6">
+                <input id="sel-idname" class="radio-inline noprint" type="radio" name="selected">
+                dday            
+            </div>
+            <div id="row-idname">
+                <div id="cont" class="container"></div>
+            </div)
+        </div>`;
+    const entry = `<div id="ent-idname" class="row">ttext</div>`;
+    const sub = `<div id="sub-idname" class="row">ttext</div>`;
+
+    let year = diary.Date.replace(/([0-9]{4})-[0-9]{2}-[0-9]{2}/g, "$1");
+    let month = diary.Date.replace(/[0-9]{4}-([0-9]{2})-[0-9]{2}/g, "$1");
+    let day = diary.Date.replace(/[0-9]{4}-[0-9]{2}-([0-9]{2})/g, "$1");
+
+    let mid = year + month;
+    let pnl = $("#calendar");
+
+    if (pnl.find("#month-" + mid).length === 0) {
+        let h = calmonth.symbolReplace(/idname/g, mid);
+        h = h.symbolReplace(/lmonth/g, month.getMonthString());
+        h = h.symbolReplace(/lyear/g, year);
+
+        pnl.append(h);
+        let day = pnl.find("#month-" + mid + " #week-header");
+
+        for (let i = 0; i < 7; ++i) {
+            let h = dayhdr.symbolReplace(/idname/g, i.getDayString(true));
+            day.append(h);
+        }
+
+        let week = 1;
+        pnl.find("#month-" + mid).append(calweek.symbolReplace(/ddow/g, week));
+        day = pnl.find("#month-" + mid + " #week-" + week);
+
+        let startday = new Date(year, month - 1, 1).getDay();
+        let dow;
+        for (dow = 0; dow < startday; ++dow) {
+            let h = calday.symbolReplace(/idname/g, "na");
+            h = h.symbolReplace(/dday/g, "");
+            day.append(h);
+        }
+
+        day.find("#day-na [id|='sel']").hide();
+
+        for (let i = 1; i <= monthDays(year, month); ++i) {
+            let h = calday.symbolReplace(/idname/g, year + month + ten(i));
+            h = h.symbolReplace(/dday/g, i);
+            day.append(h);
+
+            if (++dow === 7 && i + 1 <= monthDays(year, month)) {
+                dow = 0;
+                pnl.find("#month-" + mid).append(calweek.symbolReplace(/ddow/g, ++week));
+                day = pnl.find("#month-" + mid + " #week-" + week);
+            }
+        }
+    }
+
+    pnl = pnl.find("#month-" + mid + " #row-" + year + month + ten(day) + " #cont");
+
+    for (let i = 0; i < lpd.trackerlist.length; ++i) {
+        let item = lpd.trackerlist[i];
+        let name = item.name;
+        let iid = name.spaceToDash();
+
+        if (diary[name]) {
+            let txt = diary[name];
+
+            switch (item.type) {
+                case "blood pressure":
+                    txt = !diary[name] || diary[name].high === 0 ? "" : diary[name].high + "/" + diary[name].low + " " + diary[name].pulse;
+                    break;
+                case "date":
+                case "weather":
+                    txt = "";
+                    break;
+                case "list":
+                    txt = name + ":";
+                    break;
+            }
+
+            let h = entry.symbolReplace(/idname/g, iid);
+            h = h.symbolReplace(/ttext/g, txt);
+            pnl.append(h);
+            let ent = pnl.find("#ent-" + iid);
+
+            switch (item.type) {
+                case "weather":
+                    for (let [dname, val] of Object.entries(diary[name])) {
+                        if (val !== "") {
+                            let lid = dname.spaceToDash();
+
+                            if (dname === "icon") {
+                                h = img.symbolReplace(/iicon/g, val);
+                                h = h.symbolReplace(/idname/g, lid);
+                                ent.append(h);
+                            } else {
+                                let txt = dname + ": " + val;
+
+                                h = sub.symbolReplace(/dvalue/g, txt);
+                                h = h.symbolReplace(/idname/g, lid);
+                                ent.append(h);
+                            }
+                        }
+                    }
+                    break;
+
+                case "list":
+                    for (let i = 0; i < diary[name].length; ++i) {
+                        let dname = diary[name][i];
+                        let lid = dname.spaceToDash();
+
+                        h = sub.symbolReplace(/ttext/g, dname);
+                        h = h.symbolReplace(/idname/g, lid);
+                        ent.append(h);
+                    }
+                    break;
+            }
+        }
+    }
+
+    pnl.find("#ent-Pain-Level").addClass("h6")
+
+}
+
+
+/************************************************************************************************************************* */
 
 $(document).ready(function () {
     startUp();
@@ -622,8 +782,8 @@ $(document).ready(function () {
 
             const menu = `<button id="item" class="dropdown-item" type="button" style="cursor: pointer">ttype</button>`;
 
-            if ($("#menu #list").find(":contains(" + name + ")").length === 0) {
-                let mnu = /ttype/g [Symbol.replace](menu, name);
+            if ($("#menu #list :contains(" + name + ")").length === 0) {
+                let mnu = menu.symbolReplace(/ttype/g, name);
                 $("#menu [id|='list']").append(mnu);
             }
 
@@ -643,16 +803,36 @@ $(document).ready(function () {
         let name = $("#report-save #name").val();
         if (name !== "all on") {
             lpd.doReportDelete(name);
-            $("#menu #list").find(":contains(" + name + ")").remove();
+            $("#menu #list :contains(" + name + ")").remove();
         }
     });
 
+    $("#report-save #clear-btn").click(function () {
+                          lpd.initReport();
+                          lpd.doReportUpdate();
+    });
+
     $("#edit-row #edit-btn").click(function () {
-        lpd.editSel();
+        lpd.editSelected();
     });
 
     $("#edit-row #delete-btn").click(function () {
-        lpd.deleteSel();
+        lpd.deleteSelected();
+    });
+
+    $("#tab-row button").click(function () {
+        $("#tab-row button").removeClass("border-bottom");
+        $("#tab-row button").addClass("border-left border-right border-top");
+
+        $(this).removeClass("border-left border-right border-top");
+        $(this).addClass("border-bottom");
+
+        $("#table").hide();
+        $("#calendar").hide();
+        $("#graph").hide();
+
+        let id = $(this).prop("id").replace(/(.*?)-.*/g, "$1");
+        $("#" + id).show();
     });
 
     $("#report-header #show-select").click(function () {
