@@ -105,8 +105,8 @@ body {
 }
 
 [class|='col-'] {
-    padding-right: 1 !important;
-    padding-left: 1 !important;
+    padding-left: 3px !important;
+    padding-right: 3px !important;
 }
 
 .nav-text {
@@ -131,6 +131,14 @@ body {
     background-color: #c0c0c0;
 }
 
+.bkg-light-gray {
+    background-color: #d0d0d0;
+}
+
+.bkg-white {
+    background-color: #ffffff;
+}
+
 .card-title {
     color: #008000;
 }
@@ -141,8 +149,8 @@ body {
     border-color: #008000;
 }
 
-.btn-green:hover {
-    background-color: #ffffff;
+[id|='btn']:hover {
+    background-color: #f8fff8;
 }
 
 .btn-green.disabled,

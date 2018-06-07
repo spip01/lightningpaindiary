@@ -155,10 +155,10 @@ lightningPainDiary.prototype.buildRange = function (entry) {
 
     const item = `<button id="btn-ttitle" type="button" class="btn btn-sm" style="background-color: colors; width:10%">ttitle</button>`;
 
-    let id = / /g [Symbol.replace](entry.name, "-");
+    let id = entry.name.spaceToDash();
 
-    let container = /idname/g [Symbol.replace](panel, id);
-    container = /ttitle/g [Symbol.replace](container, entry.name);
+    let container = panel.symbolReplace(/idname/g, id);
+    container = container.symbolReplace(/ttitle/g, entry.name);
 
     $("#panels").append(container);
 
@@ -167,7 +167,7 @@ lightningPainDiary.prototype.buildRange = function (entry) {
     if (entry.start < entry.end) {
         for (let i = entry.start; i <= entry.end; i++) {
             let c = 120 - (i - entry.start) / (entry.end - entry.start) * 120;
-            let h = /ttitle/g [Symbol.replace](item, i);
+            let h = item.symbolReplace(/ttitle/g, i);
             h = h.replace("colors", "hsl(" + c + ",100%,50%)");
 
             pnl.find("#entry").append(h);
@@ -176,7 +176,7 @@ lightningPainDiary.prototype.buildRange = function (entry) {
         for (let i = entry.start; i >= entry.end; i--) {
             let c = (i - entry.end) / (entry.start - entry.end) * 120;
 
-            let h = /ttitle/g [Symbol.replace](item, i);
+            let h = item.symbolReplace(/ttitle/g, i);
             h = h.replace("colors", "hsl(" + c + ",100%,50%)");
 
             pnl.find("#entry").append(h);
@@ -185,13 +185,13 @@ lightningPainDiary.prototype.buildRange = function (entry) {
 }
 
 lightningPainDiary.prototype.extractRange = function (entry) {
-    let id = / /g [Symbol.replace](entry.name, "-");
+    let id = entry.name.spaceToDash();
     let btn = $("#pnl-" + id + " .btn-green").prop("id");
     return (btn ? btn.replace(/btn-(\d+)/g, "$1") : "");
 }
 
 lightningPainDiary.prototype.setRange = function (name, val) {
-    let id = / /g [Symbol.replace](name, "-");
+    let id = name.spaceToDash();
     $("#pnl-" + id).removeClass("btn-green");
     $("#pnl-" + id + " #btn-" + val).addClass("btn-green");
 }
@@ -210,21 +210,21 @@ lightningPainDiary.prototype.buildTextInput = function (entry) {
             </div>
         `;
 
-    let id = / /g [Symbol.replace](entry.name, "-");
+    let id = entry.name.spaceToDash();
 
-    let container = /idname/g [Symbol.replace](panel, id);
-    container = /ttitle/g [Symbol.replace](container, entry.name);
+    let container = panel.symbolReplace(/idname/g, id);
+    container = container.symbolReplace(/ttitle/g, entry.name);
 
     $("#panels").append(container);
 }
 
 lightningPainDiary.prototype.extractTextInput = function (entry) {
-    let id = / /g [Symbol.replace](entry.name, "-");
+    let id = entry.name.spaceToDash();
     return ($("#pnl-" + id + " #txt").val());
 }
 
 lightningPainDiary.prototype.setTextInput = function (name, val) {
-    let id = / /g [Symbol.replace](name, "-");
+    let id = name.spaceToDash();
     $("#pnl-" + id + " #txt").val(val);
 }
 
@@ -239,21 +239,21 @@ lightningPainDiary.prototype.buildNumInput = function (entry) {
         </div>
         `;
 
-    let id = / /g [Symbol.replace](entry.name, "-");
+    let id = entry.name.spaceToDash();
 
-    let container = /idname/g [Symbol.replace](panel, id);
-    container = /ttitle/g [Symbol.replace](container, entry.name);
+    let container = panel.symbolReplace(/idname/g, id);
+    container = container.symbolReplace(/ttitle/g, entry.name);
 
     $("#panels").append(container);
 }
 
 lightningPainDiary.prototype.extractNumInput = function (entry) {
-    let id = / /g [Symbol.replace](entry.name, "-");
+    let id = entry.name.spaceToDash();
     return (Number($("#pnl-" + id + " #num").val()));
 }
 
 lightningPainDiary.prototype.setNumInput = function (name, val) {
-    let id = / /g [Symbol.replace](name, "-");
+    let id = name.spaceToDash();
     $("#pnl-" + id + " #num").val(val);
 }
 
@@ -266,21 +266,21 @@ lightningPainDiary.prototype.buildDateInput = function (entry, diary) {
         </div>
         `;
 
-    let id = / /g [Symbol.replace](entry.name, "-");
+    let id = entry.name.spaceToDash();
 
-    let container = /idname/g [Symbol.replace](panel, id);
-    container = /ttitle/g [Symbol.replace](container, entry.name);
+    let container = panel.symbolReplace(/idname/g, id);
+    container = container.symbolReplace(/ttitle/g, entry.name);
 
     $("#panels").append(container);
 }
 
 lightningPainDiary.prototype.extractDateInput = function (entry) {
-    let id = / /g [Symbol.replace](entry.name, "-");
+    let id = entry.name.spaceToDash();
     return ($("#pnl-" + id + " #date").val());
 }
 
 lightningPainDiary.prototype.setDateInput = function (name, val) {
-    let id = / /g [Symbol.replace](name, "-");
+    let id = name.spaceToDash();
     $("#pnl-" + id + " #date").val(val);
 }
 
@@ -294,10 +294,10 @@ lightningPainDiary.prototype.buildTimeInput = function (entry, diary) {
         </div>
         `;
 
-    let id = / /g [Symbol.replace](entry.name, "-");
+    let id = entry.name.spaceToDash();
 
-    let container = /idname/g [Symbol.replace](panel, id);
-    container = /ttitle/g [Symbol.replace](container, entry.name);
+    let container = panel.symbolReplace(/idname/g, id);
+    container = container.symbolReplace(/ttitle/g, entry.name);
 
     $("#panels").append(container);
 
@@ -309,12 +309,12 @@ lightningPainDiary.prototype.buildTimeInput = function (entry, diary) {
 }
 
 lightningPainDiary.prototype.extractTimeInput = function (entry) {
-    let id = / /g [Symbol.replace](entry.name, "-");
+    let id = entry.name.spaceToDash();
     return ($("#pnl-" + id + " #time").val());
 }
 
 lightningPainDiary.prototype.setTimeInput = function (name, val) {
-    let id = / /g [Symbol.replace](name, "-");
+    let id = name.spaceToDash();
     $("#pnl-" + id + " #time").val(val);
 }
 
@@ -328,21 +328,21 @@ lightningPainDiary.prototype.buildBoolInput = function (entry, diary) {
         </div>
         `;
 
-    let id = / /g [Symbol.replace](entry.name, "-");
+    let id = entry.name.spaceToDash();
 
-    let container = /idname/g [Symbol.replace](panel, id);
-    container = /ttitle/g [Symbol.replace](container, entry.name);
+    let container = panel.symbolReplace(/idname/g, id);
+    container = container.symbolReplace(/ttitle/g, entry.name);
 
     $("#panels").append(container);
 }
 
 lightningPainDiary.prototype.extractBoolInput = function (entry) {
-    let id = / /g [Symbol.replace](entry.name, "-");
+    let id = entry.name.spaceToDash();
     return ($("#pnl-" + id + " :checked").prop("id") === "yes");
 }
 
 lightningPainDiary.prototype.setBoolInput = function (name, val) {
-    let id = / /g [Symbol.replace](name, "-");
+    let id = name.spaceToDash();
     $("#pnl-" + id).prop("checked", false);
     $("#pnl-" + id + val === "yes" ? " yes" : " no").prop("checked", true);
 }
@@ -362,16 +362,16 @@ lightningPainDiary.prototype.buildBPInput = function (entry) {
         </div>
         `;
 
-    let id = / /g [Symbol.replace](entry.name, "-");
+    let id = entry.name.spaceToDash();
 
-    let container = /idname/g [Symbol.replace](panel, id);
-    container = /ttitle/g [Symbol.replace](container, entry.name);
+    let container = panel.symbolReplace(/idname/g, id);
+    container = container.symbolReplace(/ttitle/g, entry.name);
 
     $("#panels").append(container);
 }
 
 lightningPainDiary.prototype.extractBPInput = function (entry) {
-    let id = / /g [Symbol.replace](entry.name, "-");
+    let id = entry.name.spaceToDash();
     let value = {
         high: Number($("#pnl-" + id + " #high").val()),
         low: Number($("#pnl-" + id + " #low").val()),
@@ -382,7 +382,7 @@ lightningPainDiary.prototype.extractBPInput = function (entry) {
 }
 
 lightningPainDiary.prototype.setBPInput = function (name, val) {
-    let id = / /g [Symbol.replace](name, "-");
+    let id = name.spaceToDash();
     $("#pnl-" + id + " #high").val(val.high);
     $("#pnl-" + id + " #low").val(val.low);
     $("#pnl-" + id + " #pulse").val(val.pulse);
@@ -407,30 +407,30 @@ lightningPainDiary.prototype.buildCheckboxList = function (entry) {
 
     const add = `<input id="add-idname" class="rounded col-lg-3 col-md-3 col-sm-3 col-6" placeholder="ttitle">`;
 
-    let id = / /g [Symbol.replace](entry.name, "-");
+    let id = entry.name.spaceToDash();
 
-    let container = /idname/g [Symbol.replace](panel, id);
-    container = /ttitle/g [Symbol.replace](container, entry.name);
+    let container = panel.symbolReplace(/idname/g, id);
+    container = container.symbolReplace(/ttitle/g, entry.name);
 
     $("#panels").append(container);
     let pnl = $("#pnl-" + id);
 
     for (let i = 0; i < entry.list.length; ++i) {
-        let id = / /g [Symbol.replace](entry.list[i], "-");
-        let h = /idname/g [Symbol.replace](items, id);
-        h = /ttitle/g [Symbol.replace](h, entry.list[i]);
+        let id = entry.list[i].spaceToDash();
+        let h = items.symbolReplace(/idname/g, id);
+        h = h.symbolReplace(/ttitle/g, entry.list[i]);
 
         pnl.find("#entry").append(h);
     }
 
-    let h = /idname/g [Symbol.replace](add, id);
-    h = /ttitle/g [Symbol.replace](h, "add item");
+    let h = add.symbolReplace(/idname/g, id);
+    h = h.symbolReplace(/ttitle/g, "add item");
     pnl.find("#entry").append(h);
 }
 
 lightningPainDiary.prototype.extractCheckboxList = function (entry) {
     let set = [];
-    let id = / /g [Symbol.replace](entry.name, "-");
+    let id = entry.name.spaceToDash();
 
     $("#pnl-" + id + " :checked").each(function () {
         set.push($(this).prop("id"));
@@ -444,11 +444,11 @@ lightningPainDiary.prototype.extractCheckboxList = function (entry) {
 }
 
 lightningPainDiary.prototype.setCheckboxList = function (name, val) {
-    let id = / /g [Symbol.replace](name, "-");
+    let id = name.spaceToDash();
     $("#pnl-" + id).prop("checked", false);
 
     for (let i = 0; val && i < val.length; ++i) {
-        let iid = / /g [Symbol.replace](val[i], "-");
+        let iid = val[i].spaceToDash();
         let ent = $("#pnl-" + id + " #" + iid);
         if (ent)
             ent.prop("checked", true);
@@ -482,10 +482,10 @@ lightningPainDiary.prototype.buildWeatherInput = function (entry) {
     const img = '<img id="ent-idname">';
     const button = `<button type="button" class="btn border btn-sm btn-green col-lg-1 col-md-1 col-sm-1 col-2" style="height: 32px;">Now</button>&nbsp;`;
 
-    let id = / /g [Symbol.replace](entry.name, "-");
+    let id = entry.name.spaceToDash();
 
-    let container = /idname/g [Symbol.replace](panel, id);
-    container = /ttitle/g [Symbol.replace](container, entry.name);
+    let container = panel.symbolReplace(/idname/g, id);
+    container = container.symbolReplace(/ttitle/g, entry.name);
 
     $("#panels").append(container);
     let pnl = $("#pnl-" + id + " #entry");
@@ -493,28 +493,28 @@ lightningPainDiary.prototype.buildWeatherInput = function (entry) {
     for (let i = 0; i < entry.list.length; ++i) {
         let name = entry.list[i];
 
-        let iid = / /g [Symbol.replace](name, "-");
+        let iid = name.spaceToDash();
         let h;
 
         switch (name) {
             case "description":
-                h = /idname/g [Symbol.replace](description, iid);
-                h = /ttitle/g [Symbol.replace](h, name);
+                h = description.symbolReplace(/idname/g, iid);
+                h = h.symbolReplace(/ttitle/g, name);
                 pnl.append(h);
                 break;
             case "icon":
-                h = /idname/g [Symbol.replace](img, iid);
-                h = /ttitle/g [Symbol.replace](h, name);
+                h = img.symbolReplace(/idname/g, iid);
+                h = h.symbolReplace(/ttitle/g, name);
                 pnl.find("#ent-description").parent().append(h);
                 break;
             default:
-                h = /idname/g [Symbol.replace](items, iid);
-                h = /ttitle/g [Symbol.replace](h, name);
+                h = items.symbolReplace(/idname/g, iid);
+                h = h.symbolReplace(/ttitle/g, name);
                 pnl.append(h);
         }
     }
 
-    let h = /idname/g [Symbol.replace](button, id);
+    let h = button.symbolReplace(/idname/g, id);
     pnl.append(h);
 
     pnl.find("button").click(function () {
@@ -523,11 +523,11 @@ lightningPainDiary.prototype.buildWeatherInput = function (entry) {
 }
 
 lightningPainDiary.prototype.extractWeatherInput = function (entry) {
-    let id = / /g [Symbol.replace](entry.name, "-");
+    let id = entry.name.spaceToDash();
     let value = {};
 
     $("#pnl-" + id + " input").each(function () {
-        value[$(this).prop("id").replace(stripid, "$1")] = $(this).val();
+        value[$(this).prop("id").idToName()] = $(this).val();
     });
 
     value.icon = $("#pnl-" + id + " img").prop("src").replace(/^.*\/(.+?).png/g, "$1");
@@ -536,11 +536,11 @@ lightningPainDiary.prototype.extractWeatherInput = function (entry) {
 }
 
 lightningPainDiary.prototype.setWeatherInput = function (name, val) {
-    let id = / /g [Symbol.replace](name, "-");
+    let id = name.spaceToDash();
     let icon = "https://openweathermap.org/img/w/iicon.png";
 
     $("#pnl-" + id + " input").each(function () {
-        let name = $(this).prop("id").replace(stripid, "$1");
+        let name = $(this).prop("id").idToName();
         $(this).val(val[name]);
     });
 
@@ -555,10 +555,10 @@ lightningPainDiary.prototype.loadWeather = function (entry) {
         "&appid=" + OPENWEATHER_API;
 
     loadFile(url, null, function (data) {
-        let id = / /g [Symbol.replace](entry.name, "-");
+        let id = entry.name.spaceToDash();
 
         $("#pnl-" + id + " input").each(function () {
-            let name = $(this).prop("id").replace(stripid, "$1");
+            let name = $(this).prop("id").idToName();
 
             switch (name) {
                 case "wind":

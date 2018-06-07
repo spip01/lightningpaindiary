@@ -122,9 +122,9 @@ lightningPainDiary.prototype.generateTrackersPanel = function () {
     return i < 10 ? '00' + i : i < 100 ? '0' + i : i;
   };
 
-  let panel = /idname/g [Symbol.replace](panels, pnlid);
-  panel = /ttitle/g [Symbol.replace](panel, name);
-  panel = /iftrackers/g [Symbol.replace](panel, "");
+  let panel = panels.symbolReplace(/idname/g, pnlid);
+  panel = panel.symbolReplace(/ttitle/g, name);
+  panel = panel.symbolReplace(/iftrackers/g, "");
 
   $("#pnl-" + pnlid).remove();
   $("#panels").append(panel);
@@ -133,22 +133,22 @@ lightningPainDiary.prototype.generateTrackersPanel = function () {
   for (let i = 0; i < lpd.trackerlist.length; ++i) {
     let item = lpd.trackerlist[i];
 
-    let id = / /g [Symbol.replace](item.name, "-");
+    let id = item.name.spaceToDash();
 
-    let entry = /idname/g [Symbol.replace](panels_entry, id);
-    entry = /ttitle/g [Symbol.replace](entry, item.name);
-    entry = /ttype/g [Symbol.replace](entry, item.type);
-    entry = /iftrackers/g [Symbol.replace](entry, "");
-    entry = /000/g [Symbol.replace](entry, hundred(i));
+    let entry = panels_entry.symbolReplace(/idname/g, id);
+    entry = entry.symbolReplace(/ttitle/g, item.name);
+    entry = entry.symbolReplace(/ttype/g, item.type);
+    entry = entry.symbolReplace(/iftrackers/g, "");
+    entry = entry.symbolReplace(/000/g, hundred(i));
 
     if (item.type === "range") {
-      entry = /ifrange/g [Symbol.replace](entry, "");
-      entry = /startrange/g [Symbol.replace](entry, item.start);
-      entry = /endrange/g [Symbol.replace](entry, item.end);
+      entry = entry.symbolReplace(/ifrange/g, "");
+      entry = entry.symbolReplace(/startrange/g, item.start);
+      entry = entry.symbolReplace(/endrange/g, item.end);
     } else
-      entry = /ifrange/g [Symbol.replace](entry, 'style="display: none"');
+      entry = entry.symbolReplace(/ifrange/g, 'style="display: none"');
 
-    entry = /ifedit/g [Symbol.replace](entry, item.fixed === true ? 'style="display: none"' : '');
+    entry = entry.symbolReplace(/ifedit/g, item.fixed === true ? 'style="display: none"' : '');
 
     pnl.find("[id|='cont']").append(entry);
   }
@@ -156,7 +156,7 @@ lightningPainDiary.prototype.generateTrackersPanel = function () {
   const menu_entries = `<button id="item" class="dropdown-item" type="button" style="cursor: pointer">ttype</button>`;
 
   for (let i = 0; i < trackertypes.length; ++i) {
-    let menu = /ttype/g [Symbol.replace](menu_entries, trackertypes[i]);
+    let menu = menu_entries.symbolReplace(/ttype/g, trackertypes[i]);
     pnl.find("[id|='list']").append(menu);
   }
 
@@ -177,25 +177,25 @@ lightningPainDiary.prototype.generateTabsAndPanels = function () {
 }
 
 lightningPainDiary.prototype.addPanel = function (items) {
-  let pnlid = / /g [Symbol.replace](items.name, "-");
+  let pnlid = items.name.spaceToDash();
   let name = items.name;
 
-  let panel = /idname/g [Symbol.replace](panels, pnlid);
-  panel = /ttitle/g [Symbol.replace](panel, name);
-  panel = /iftrackers/g [Symbol.replace](panel, "style='display: none'");
+  let panel = panels.symbolReplace(/idname/g, pnlid);
+  panel = panel.symbolReplace(/ttitle/g, name);
+  panel = panel.symbolReplace(/iftrackers/g, "style='display: none'");
 
   $("#pnl-" + pnlid).remove();
   $("#panels").append(panel);
 
   for (let j = 0; j < items.list.length; ++j) {
     let item = items.list[j];
-    let id = / /g [Symbol.replace](item, "-");
+    let id = item.spaceToDash();
 
-    let entry = /idname/g [Symbol.replace](panels_entry, id);
-    entry = /ttitle/g [Symbol.replace](entry, item);
-    entry = /iftrackers/g [Symbol.replace](entry, "style='display: none'");
-    entry = /ifrange/g [Symbol.replace](entry, "style='display: none'");
-    entry = /ifedit/g [Symbol.replace](entry, '');
+    let entry = panels_entry.symbolReplace(/idname/g, id);
+    entry = entry.symbolReplace(/ttitle/g, item);
+    entry = entry.symbolReplace(/iftrackers/g, "style='display: none'");
+    entry = entry.symbolReplace(/ifrange/g, "style='display: none'");
+    entry = entry.symbolReplace(/ifedit/g, '');
 
     $("#pnl-" + pnlid + " [id|='cont']").append(entry);
   }
@@ -290,12 +290,12 @@ lightningPainDiary.prototype.newTabBar = function () {
 lightningPainDiary.prototype.addTab = function (item) {
   const tab_entries = `<button id="tab-idname" class="col-lg-2 col-md-3 col-sm-4 col-6 h4 btn-green no-border trborder tbborder">ttitle</button>`;
 
-  let id = / /g [Symbol.replace](item.name, "-");
+  let id = item.name.spaceToDash();
 
-  let tab = /idname/g [Symbol.replace](tab_entries, id);
-  tab = /ttitle/g [Symbol.replace](tab, item.name);
-  tab = /trborder/g [Symbol.replace](tab, item.borderright === true ? "border-right" : "");
-  tab = /tbborder/g [Symbol.replace](tab, item.borderbottom === true ? "border-bottom" : "");
+  let tab = tab_entries.symbolReplace(/idname/g, id);
+  tab = tab.symbolReplace(/ttitle/g, item.name);
+  tab = tab.symbolReplace(/trborder/g, item.borderright === true ? "border-right" : "");
+  tab = tab.symbolReplace(/tbborder/g, item.borderbottom === true ? "border-bottom" : "");
 
   let tabs = $("#tablist");
 
@@ -311,7 +311,7 @@ lightningPainDiary.prototype.addTab = function (item) {
 
 lightningPainDiary.prototype.openTab = function (evt) {
   $("#panels").children().hide();
-  let pnl = $(evt).prop("id").replace(stripid, "$1");
+  let pnl = $(evt).prop("id").stripID();
   $("#panels #pnl-" + pnl).show();
 }
 
@@ -347,13 +347,13 @@ lightningPainDiary.prototype.drop = function (evt) {
     "dragstart": $.proxy(lpd.dragstart),
   });
 
-  parentid = /-/g [Symbol.replace](parentid.replace(stripid, "$1"), " ");
+  parentid = parentid.idToName();
 
   if (parentid === "Trackers") {
     let list = [];
 
     parent.children().each(function () {
-      let id = /-/g [Symbol.replace]($(this).prop("id").replace(stripid, "$1"), " ");
+      let id = $(this).prop("id").idToName()
 
       let i = lpd.trackerlist.findIndex(function (x) {
         return (x.name === id);
@@ -373,7 +373,7 @@ lightningPainDiary.prototype.drop = function (evt) {
     let searched = lpd.trackerlist[index].list;
 
     parent.children().each(function () {
-      let id = /-/g [Symbol.replace]($(this).prop("id").replace(stripid, "$1"), " ");
+      let id = $(this).prop("id").idToName();
 
       let i = searched.findIndex(function (x) {
         return (x === id);
@@ -389,7 +389,7 @@ lightningPainDiary.prototype.drop = function (evt) {
 }
 
 lightningPainDiary.prototype.enableDeleteBtns = function (evt) {
-  let pnlid = $(evt).prop("id").replace(stripid, "$1");
+  let pnlid = $(evt).prop("id").stripID();
   let pnl = $("#pnl-" + pnlid);
 
   if ($(evt).prop("checked")) {
@@ -402,7 +402,7 @@ lightningPainDiary.prototype.enableDeleteBtns = function (evt) {
 }
 
 lightningPainDiary.prototype.enableAddBtns = function (evt) {
-  let pnlid = $(evt).prop("id").replace(stripid, "$1");
+  let pnlid = $(evt).prop("id").stripID();
   let pnl = $("#pnl-" + pnlid);
 
   if (pnlid === "Trackers") {
@@ -438,11 +438,11 @@ lightningPainDiary.prototype.selectType = function (evt) {
 }
 
 lightningPainDiary.prototype.panelAddBtn = function (evt) {
-  let pnlid = $(evt).prop("id").replace(stripid, "$1");
-  let pnlname = /-/g [Symbol.replace](pnlid, " ");
+  let pnlid = $(evt).prop("id").stripID();
+  let pnlname = pnlid.dashToSpace();
   let pnl = $("#pnl-" + pnlid);
   let name = pnl.find("[id|='new']").val();
-  let id = / /g [Symbol.replace](name, "-");
+  let id = name.spaceToDash();
 
   if (pnlid === "Trackers") {
     let entry = {
@@ -503,7 +503,7 @@ lightningPainDiary.prototype.panelAddBtn = function (evt) {
 
 lightningPainDiary.prototype.panelEditBtn = function (evt) {
   let ent = $(evt).parent();
-  let pnlid = ent.prop("id").replace(stripid, "$1");
+  let pnlid = ent.prop("id").idToName();
 
   ent.find("[id|='pos']").hide();
   ent.find("[id|='editname']").show();
@@ -525,14 +525,14 @@ lightningPainDiary.prototype.panelEditBtn = function (evt) {
 }
 
 lightningPainDiary.prototype.doneEdit = function (evt) {
-  let id = $(evt).prop("id").replace(stripid, "$1");
+  let id = $(evt).prop("id").stripID();
   let ent = $(evt).parent();
-  let pnlid = ent.parent().prop("id").replace(stripid, "$1");
+  let pnlid = ent.parent().prop("id").stripID();
   let pnl = $("#pnl-" + pnlid);
-  let pnlname = /-/g [Symbol.replace](pnlid, " ");
+  let pnlname = pnlid.dashToSpace();
 
   let newname = ent.find("[id|='editname']").val();
-  let oldname = /-/g [Symbol.replace](id, " ");
+  let oldname = id.dashToSpace();
 
   if (pnlname === "Trackers") {
     let i = lpd.trackerlist.findIndex(function (x) {
@@ -572,10 +572,10 @@ lightningPainDiary.prototype.doneEdit = function (evt) {
 }
 
 lightningPainDiary.prototype.panelDeleteBtn = function (evt) {
-  let id = $(evt).prop("id").replace(stripid, "$1");
-  let pnlid = $(evt).parent().parent().prop("id").replace(stripid, "$1");
-  let pnlname = /-/g [Symbol.replace](pnlid, " ");
-  let name = /-/g [Symbol.replace](id, " ");
+  let id = $(evt).prop("id").stripID();
+  let pnlid = $(evt).parent().parent().prop("id").stripID();
+  let pnlname = pnlid.dashToSpace();
+  let name = id.dashToSpace();
 
   if (pnlid === "Trackers") {
     let i = lpd.trackerlist.findIndex(function (x) {

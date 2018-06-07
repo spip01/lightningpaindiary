@@ -25,8 +25,6 @@ function lightningPainDiary() {
     this.fbstorage = null;
 }
 
-const stripid = /^.*?-(.*)/g;
-
 const trackertypes = ["blood pressure", "date", "list", "number", "range", "text",
     "time", "true false", "weather"
 ];
@@ -237,8 +235,8 @@ lightningPainDiary.prototype.getDiaryKey = function (date, time) {
     let datekey = date;
     if (time)
         datekey += "T" + time;
-    datekey = /:/g [Symbol.replace](datekey, "");
-    datekey = /-/g [Symbol.replace](datekey, "");
+    datekey = datekey.symbolReplace(/:/g, "");
+    datekey = datekey.symbolReplace(/-/g, "");
 
     return (datekey);
 }
@@ -317,8 +315,8 @@ lightningPainDiary.prototype.doReportlistRead = function (finishfcn) {
             lpd.reportlist.push(data.key);
         });
 
-        if(finishfcn)
-        finishfcn();
+        if (finishfcn)
+            finishfcn();
     });
 }
 
@@ -430,36 +428,74 @@ function loadFile(url, alturl, fctn) {
     *************/
 }
 
-Date.prototype.toDateLocalTimeString =
-    function () {
-        let date = this;
-        let ten = function (i) {
-            return i < 10 ? '0' + i : i;
-        }
-        return date.getFullYear() +
-            "-" + ten(date.getMonth() + 1) +
-            "-" + ten(date.getDate()) +
-            "T" + ten(date.getHours()) +
-            ":" + ten(date.getMinutes());
-    }
+Date.prototype.toDateLocalTimeString = function () {
+    let date = this;
+    return date.getFullYear() +
+        "-" + ten(date.getMonth() + 1) +
+        "-" + ten(date.getDate()) +
+        "T" + ten(date.getHours()) +
+        ":" + ten(date.getMinutes());
+}
 
-Date.prototype.toLocalTimeString =
-    function () {
-        let date = this;
-        let ten = function (i) {
-            return i < 10 ? '0' + i : i;
-        }
-        return ten(date.getHours()) +
-            ":" + ten(date.getMinutes());
-    }
+Date.prototype.toLocalTimeString = function () {
+    let date = this;
+    return ten(date.getHours()) +
+        ":" + ten(date.getMinutes());
+}
 
-Date.prototype.toDateString =
-    function () {
-        let date = this;
-        let ten = function (i) {
-            return i < 10 ? '0' + i : i;
-        }
-        return date.getFullYear() +
-            "-" + ten(date.getMonth() + 1) +
-            "-" + ten(date.getDate());
-    }
+Date.prototype.toDateString = function () {
+    let date = this;
+    return date.getFullYear() +
+        "-" + ten(date.getMonth() + 1) +
+        "-" + ten(date.getDate());
+}
+
+const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const days = ["Sunday", "Monday", "Tuesday", "Wednessday", "Thursday", "Friday", "Saturday"];
+const daysabbrev = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+Date.prototype.getMonthString = function () {
+    return months[this.getMonth()];
+}
+
+Date.prototype.getDayString = function (abbrev) {
+    return abbrev ? daysabbrev[this.getDay()] : days[this.getDay()];
+}
+
+Number.prototype.getDayString = function (abbrev) {
+    return abbrev ? daysabbrev[this] : days[this];
+}
+
+String.prototype.getMonthString = function () {
+    return months[this - 1];
+}
+
+String.prototype.idToName = function () {
+    return this.stripID().dashToSpace();
+}
+
+String.prototype.stripID = function () {
+    return this.replace(/^.*?-(.*)/g, "$1");
+}
+
+String.prototype.dashToSpace = function () {
+    return /-/g [Symbol.replace](this, " ");
+}
+
+String.prototype.spaceToDash = function () {
+    return / /g [Symbol.replace](this, "-");
+}
+
+String.prototype.symbolReplace = function (name, repwith) {
+    return name[Symbol.replace](this, repwith);
+}
+
+function monthDays(year, month) {
+    const days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    let leap = month === 2 ? (year % 100 === 0 ? (year % 400 === 0 ? 1 : 0) : (year % 4 === 0 ? 1 : 0)) : 0;
+    return (days[month - 1] + leap);
+}
+
+function ten(i) {
+    return i < 10 ? '0' + i : i;
+}
