@@ -318,17 +318,11 @@ lightningPainDiary.prototype.extractSelect = function () {
 }
 
 lightningPainDiary.prototype.diarySelectDisplay = function () {
-    let table=$("#table");
-    let calendar=$("#calendar");
-
-    table.find("[id|='ent']").hide();
-    table.find("[id|='sub']").hide();
-    calendar.find("[id|='ent']").hide();
-    calendar.find("[id|='sub']").hide();
+    find("#table, #calendar [id|='ent']").hide();
+    find("#table, #calendar [id|='sub']").hide();
 
     $("#fields :checked").each(function () {
-        table.find("#" + $(this).prop("id")).show();
-        calendar.find("#" + $(this).prop("id")).show();
+        find("#table, #calendar #" + $(this).prop("id")).show();
     })
 }
 
@@ -356,7 +350,7 @@ lightningPainDiary.prototype.reportMenu = function () {
 }
 
 lightningPainDiary.prototype.editSelected = function () {
-    let sel = $("#table :checked");
+    let sel = $("#table, #calendar :checked");
     let edit = sel.prop("id");
     let datekey = edit.stripID();
 
@@ -367,7 +361,7 @@ lightningPainDiary.prototype.editSelected = function () {
 }
 
 lightningPainDiary.prototype.deleteSeleted = function () {
-    let sel = $("#table :checked");
+    let sel = $("#table, #calendar :checked");
     let del = sel.prop("id");
     let datekey = del.stripID();
 
