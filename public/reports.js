@@ -35,10 +35,10 @@ lightningPainDiary.prototype.doReportUpdate = function () {
     lpd.reportMenu();
 
     $("#table, #calendar, #graph [name='selected']").click(function () {
-        $("#edit").removeClass("disabled");
-        $("#edit").removeAttr("disabled");
-        $("#delete").removeClass("disabled");
-        $("#delete").removeAttr("disabled");
+        $("#edit-btn").removeClass("disabled");
+        $("#edit-btn").removeAttr("disabled");
+        $("#delete-btn").removeClass("disabled");
+        $("#delete-btn").removeAttr("disabled");
     });
 
 }
