@@ -318,11 +318,11 @@ lightningPainDiary.prototype.extractSelect = function () {
 }
 
 lightningPainDiary.prototype.diarySelectDisplay = function () {
-    find("#table, #calendar [id|='ent']").hide();
-    find("#table, #calendar [id|='sub']").hide();
+    $("#table, #calendar [id|='ent']").hide();
+    $("#table, #calendar [id|='sub']").hide();
 
     $("#fields :checked").each(function () {
-        find("#table, #calendar #" + $(this).prop("id")).show();
+        $("#table, #calendar #" + $(this).prop("id")).show();
     })
 }
 
