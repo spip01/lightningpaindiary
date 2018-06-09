@@ -6,6 +6,16 @@
     --breakpoint-xl: 1200px;
 */
 
+.h7,
+h7 {
+    margin-bottom: .5rem;
+    font-family: inherit;
+    font-weight: 500;
+    line-height: 1.2;
+    color: inherit;
+    font-size: 0.75rem;
+}
+
 @media only screen and (max-width: 767px) {
     .h1,
     h1 {
@@ -31,11 +41,21 @@
     h6 {
         font-size: 0.75rem
     }
+    .h7,
+    h7 {
+        font-size: 0.5rem;
+    }
     .sticky {
         width: 87%;
     }
     .hide-sm {
         display: none;
+    }
+    .small {
+        font-size: 70%;
+    }
+    body {
+        font-size: .7rem;
     }
 }
 
@@ -63,6 +83,10 @@
     .h6,
     h6 {
         font-size: 0.75rem
+    }
+    .h7,
+    h7 {
+        font-size: 0.5rem;
     }
     .sticky {
         width: 93%;
@@ -97,7 +121,7 @@
 }
 
 body {
-    /* font-size: .8rem; */
+    font-size: .75rem !important;
 }
 
 .sticky {
