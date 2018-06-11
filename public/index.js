@@ -15,6 +15,18 @@ $(document).ready(function () {
 
 lightningPainDiary.prototype.doLoggedout=function(){
     lpd.doTrackerDisplay();
+
+    $("#save").addClass("disabled");
+    $("#save").prop("disabled", true);
+    $("#cancel").addClass("disabled");
+    $("#cancel").prop("disabled", true);
+}
+  
+lightningPainDiary.prototype.doLoggedin=function(){
+    $("#save").removeClass("disabled");
+    $("#save").removeAttr("disabled");
+    $("#cancel").removeClass("disabled");
+    $("#cancel").removeAttr("disabled");
 }
   
 lightningPainDiary.prototype.updateEntry = function () {

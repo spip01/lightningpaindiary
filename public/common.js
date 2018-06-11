@@ -143,10 +143,6 @@ lightningPainDiary.prototype.onAuthStateChanged = function (user) {
         $("#usermenu").show();
         $("#report").show();
         $("#loggedout").hide();
-        $("#save").removeClass("disabled");
-        $("#save").removeAttr("disabled");
-        $("#cancel").removeClass("disabled");
-        $("#cancel").removeAttr("disabled");
 
         if (lpd.doLoggedin)
             lpd.doLoggedin();
@@ -175,10 +171,6 @@ lightningPainDiary.prototype.onAuthStateChanged = function (user) {
         $("#login").show();
         $("#loggedout").show();
         $("#report").hide();
-        $("#save").addClass("disabled");
-        $("#save").prop("disabled", true);
-        $("#cancel").addClass("disabled");
-        $("#cancel").prop("disabled", true);
 
         lpd.init();
 
