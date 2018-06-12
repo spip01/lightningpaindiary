@@ -7,6 +7,11 @@ lightningPainDiary.prototype.doLoggedout = function () {
     $("#select #fields").empty();
     $("#filter").hide();
     $("#filter #fields").empty();
+
+    $("#edit-row #edit").addClass("disabled");
+    $("#edit-row #edit").prop("disabled", true);
+    $("#edit-row #delete").addClass("disabled");
+    $("#edit-row #delete").prop("disabled", true);
 }
 
 lightningPainDiary.prototype.doTrackerDisplay = function () {
@@ -34,15 +39,15 @@ lightningPainDiary.prototype.doReportUpdate = function () {
     lpd.reportMenu();
 
     $("#table, #calendar, #graph [name='selected']").click(function () {
-        $("#edit-btn").removeClass("disabled");
-        $("#edit-btn").removeAttr("disabled");
-        $("#delete-btn").removeClass("disabled");
-        $("#delete-btn").removeAttr("disabled");
+        $("#edit-row #edit").removeClass("disabled");
+        $("#edit-row #edit").removeAttr("disabled");
+        $("#edit-row #delete").removeClass("disabled");
+        $("#edit-row #delete").removeAttr("disabled");
     });
 
 }
 
-const row = `<div id="row-idname" class="row" style="border-bottom: 1px solid #008000;">
+const row = `<div id="row-idname" class="row small" style="border-bottom: 1px solid #008000;">
         <div class="col-print-2 col-lg-2 col-md-2 col-sm-2 col-3 border-right border-bottom">
             <div id="date"></div>
             <div id="time"></div>
@@ -330,7 +335,7 @@ lightningPainDiary.prototype.reportMenu = function () {
 
     let list = $("#menu #list");
     list.empty();
-    $("#report-save #report-btn").text(lpd.account.lastreport);
+    $("#report-save #report").text(lpd.account.lastreport);
 
     let mnu = menu.symbolReplace(/ttype/g, "all on");
     list.append(mnu);
@@ -342,7 +347,7 @@ lightningPainDiary.prototype.reportMenu = function () {
 
     list.find("button").click(function () {
         let name = $(this).text();
-        $("#report-save #report-btn").text(name);
+        $("#report-save #report").text(name);
 
         lpd.doReportRead(name, lpd.doReportUpdate);
     });
@@ -736,7 +741,10 @@ lightningPainDiary.prototype.calendarDisplay = function (diary) {
                     txt = "";
                     break;
                 case "list":
-                    txt = name + ":";
+                    if (diary[name].length > 0)
+                        txt = name + ":";
+                    else
+                        tx = "";
                     break;
             }
 
@@ -759,7 +767,7 @@ lightningPainDiary.prototype.calendarDisplay = function (diary) {
                 h = h.symbolReplace(/ttext/g, txt);
 
                 pnl.append(h);
-                let ent = pnl.find("#ent-" + iid);
+                let ent = pnl.find("#ent-" + iid).last();
 
                 switch (item.type) {
                     case "weather":
@@ -774,7 +782,7 @@ lightningPainDiary.prototype.calendarDisplay = function (diary) {
                                 } else {
                                     let txt = dname + ": " + val;
 
-                                    h = calsub.symbolReplace(/dvalue/g, txt);
+                                    h = calsub.symbolReplace(/ttext/g, txt);
                                     h = h.symbolReplace(/idname/g, lid);
                                     ent.append(h);
                                 }
@@ -805,10 +813,10 @@ lightningPainDiary.prototype.calendarDisplay = function (diary) {
 $(document).ready(function () {
     startUp();
 
-    $("#report-save #save-btn").click(function () {
+    $("#report-save #save").click(function () {
         let name = $("#report-save #name").val();
         if (name !== "all on") {
-            $("#report-save #report-btn").text(name);
+            $("#report-save #report").text(name);
 
             const menu = `<button id="item" class="dropdown-item" type="button" style="cursor: pointer">ttype</button>`;
 
@@ -825,11 +833,11 @@ $(document).ready(function () {
         }
     });
 
-    $("#report-save #cancel-btn").click(function () {
-        lpd.doReportRead($("#report-save #report-btn").text(), lpd.doReportUpdate);
+    $("#report-save #cancel").click(function () {
+        lpd.doReportRead($("#report-save #report").text(), lpd.doReportUpdate);
     });
 
-    $("#report-save #delete-btn").click(function () {
+    $("#report-save #delete").click(function () {
         let name = $("#report-save #name").val();
         if (name !== "all on") {
             lpd.doReportDelete(name);
@@ -837,16 +845,16 @@ $(document).ready(function () {
         }
     });
 
-    $("#report-save #clear-btn").click(function () {
+    $("#report-save #clear").click(function () {
         lpd.initReport();
         lpd.doReportUpdate();
     });
 
-    $("#edit-row #edit-btn").click(function () {
+    $("#edit-row #edit").click(function () {
         lpd.editSelected();
     });
 
-    $("#edit-row #delete-btn").click(function () {
+    $("#edit-row #delete").click(function () {
         lpd.deleteSelected();
     });
 
