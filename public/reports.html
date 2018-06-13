@@ -54,64 +54,69 @@
         <br>
     </div>
 
-    <div id="jssite" class="card card-body bkg-light-green" style="display: none">
-        <div id="report-header" class="row border-bottom noprint bkg-white">
-            <h2 class="clr-dark-green col-lg-4 col-md-4 col-sm-5 col-12">Report Generator</h2>
+    <div id="jssite" style="display: none">
+        <div class="card card-body bkg-light-green">
+            <div id="reportcard" class="card card-body border pad-bottom bkg-light-green">
+                <div id="report-header" class="row border-bottom noprint bkg-white">
+                    <h2 class="clr-dark-green col-lg-4 col-md-4 col-sm-5 col-12">Report Generator</h2>
 
-            <label class="col-sm-4 col-6">
-                <input id="show-select" type="checkbox"> Open Selectors
-            </label>
+                    <label class="col-sm-4 col-6">
+                        <input id="show-select" type="checkbox"> Open Selectors
+                    </label>
 
-            <label class="col-sm-4 col-6">
-                <input id="show-filter" type="checkbox"> Open Filters
-            </label>
-        </div>
+                    <label class="col-sm-4 col-6">
+                        <input id="show-filter" type="checkbox"> Open Filters
+                    </label>
+                </div>
 
-        <div id="select" class="card card-body noprint bkg-white" style="display: none">
-            <h5 class="clr-dark-green">Show selected fields</h5>
+                <div id="select" class="card card-body noprint bkg-white" style="display: none">
+                    <h5 class="clr-dark-green">Show selected fields</h5>
 
-            <div id="fields"></div>
-        </div>
+                    <div id="fields"></div>
+                </div>
 
-        <div id="filter" class="card card-body noprint pad-bottom bkg-white" style="display: none">
-            <h5 class="clr-dark-green">Show entries with matching selections</h5>
+                <div id="filter" class="card card-body noprint pad-bottom bkg-white" style="display: none">
+                    <h5 class="clr-dark-green">Show entries with matching selections</h5>
 
-            <div id="fields"></div>
-        </div>
+                    <div id="fields"></div>
+                </div>
 
-        <div id="report-save" class="card card-body noprint pad-bottom bkg-white" style="display: none">
-            <div class=" row">
-                <div id="menu" class="col-lg-3 col-md-3 col-sm-2 col-6 dropdown" iftrackers>
-                    <button id="report" class="btn border btn-sm btn-green dropdown-toggle" type="button" data-toggle="dropdown">
-                        all on
-                    </button>
-                    <div id="list" class="dropdown-menu"></div>
-                </div>&nbsp;
+                <div id="report-save" class="card card-body noprint pad-bottom bkg-white" style="display: none">
+                    <div class=" row">
+                        <div id="menu" class="col-lg-3 col-md-3 col-sm-3 col-6 dropdown" iftrackers>
+                            <button id="report-btn" class="btn border btn-sm btn-green dropdown-toggle" type="button" data-toggle="dropdown">
+                                all on
+                            </button>
+                            <div id="list" class="dropdown-menu"></div>
+                        </div>
 
-                <input id="name" class="rounded col-lg-3 col-md-3 col-sm-3 col-6" type="text" placeholder="filter name">&nbsp;
-                <button id="save" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 col-sm-2 col-3">Save</button>&nbsp;
-                <button id="delete" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 col-sm-2 col-3">Delete</button>&nbsp;
-                <button id="cancel" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 col-sm-2 col-3">Cancel</button>&nbsp;
-                <button id="clear" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 col-sm-2 col-3">Clear</button>
+                        <input id="name" class="rounded col-lg-3 col-md-3 col-sm-4 col-6" type="text" placeholder="report name">&nbsp;
+                        <button id="save-btn" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 col-sm-2 col-3">Save</button>&nbsp;
+                        <button id="delete-btn" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 col-sm-2 col-3">Delete</button>&nbsp;
+                        <button id="cancel-btn" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 col-sm-2 col-3">Cancel</button>&nbsp;
+                        <button id="clear-btn" type="button" class="btn border btn-sm btn-green col-lg-2 col-md-2 col-sm-2 col-3">Clear</button>
+                    </div>
+                </div>
+                <br>
+
+                <div id="tab-row" class="row noprint">
+                    <button id="table-btn" type="button" class="btn border-bottom btn-sm btn-green col-lg-2 col-md-2 col-sm-2 col-3">Table</button>&nbsp;
+                    <button id="calendar-btn" type="button" class="btn border-left border-top border-right btn-sm btn-green col-lg-2 col-md-2 col-sm-2 col-3">Calendar</button>&nbsp;
+                    <button id="graph-btn" type="button" class="btn border-left border-top border-right btn-sm btn-green col-lg-2 col-md-2 col-sm-2 col-3"
+                        style="display: none">Graph</button>&nbsp;
+                </div>
+
+                <div id="edit-row" class="row noprints">
+                    <button id="edit" type="button" class="btn border btn-sm btn-green disabled col-lg-2 col-md-2 col-sm-2 col-3" disabled>Edit</button>&nbsp;
+                    <button id="delete" type="button" class="btn border btn-sm btn-green disabled col-lg-2 col-md-2 col-sm-2 col-3" disabled>Delete</button>&nbsp;
+                </div>
+
+                <br>
+                <div id="table" class="border-top bkg-white"></div>
+                <div id="calendar" class="border-top bkg-white" style="display: none"></div>
+                <div id="graph" class="border-top bkg-white" style="display: none"></div>
             </div>
         </div>
-        <br>
-
-        <div id="tab-row" class="row noprint">
-            <button id="table" type="button" class="btn border-bottom btn-sm btn-green col-lg-2 col-md-2 col-sm-2 col-3">Table</button>&nbsp;
-            <button id="calendar" type="button" class="btn border-left border-top border-right btn-sm btn-green col-lg-2 col-md-2 col-sm-2 col-3">Calendar</button>&nbsp;
-            <button id="graph" type="button" class="btn border-left border-top border-right btn-sm btn-green col-lg-2 col-md-2 col-sm-2 col-3">Graph</button>&nbsp;
-        </div>
-
-        <div id="edit-row" class="row noprints">
-            <button id="edit" type="button" class="btn border btn-sm btn-green disabled col-lg-2 col-md-2 col-sm-2 col-3" disabled>Edit</button>&nbsp;
-            <button id="delete" type="button" class="btn border btn-sm btn-green disabled col-lg-2 col-md-2 col-sm-2 col-3" disabled>Delete</button>&nbsp;
-        </div>
-
-        <br>
-        <div id="table" class="container border-top bkg-white"></div>
-        <div id="calendar" class="container border-top bkg-white" style="display: none"></div>
-        <div id="graph" class="container border-top bkg-white" style="display: none"></div>
     </div>
 
     <div id="footer"></div>

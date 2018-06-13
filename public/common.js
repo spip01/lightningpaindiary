@@ -156,6 +156,8 @@ lightningPainDiary.prototype.onAuthStateChanged = function (user) {
                 lpd.account = snapshot.val();
 
                 lpd.doTrackerlistRead(lpd.doTrackerDisplay);
+
+                //lpd.doDBUpdate();
             } else {
                 lpd.doAccountWrite();
                 lpd.doTrackerlistWrite();
@@ -233,14 +235,31 @@ lightningPainDiary.prototype.getDiaryKey = function (date, time) {
     return (datekey);
 }
 
-lightningPainDiary.prototype.doDiaryRead = function (entryfcn, finishfcn) {
+lightningPainDiary.prototype.doDBUpdate = function () {
+    debugger;
     var ref = firebase.database().ref("users/" + lpd.uid + '/Diary/');
     ref.once("value", function (snapshot) {
         snapshot.forEach(function (data) {
-            entryfcn(data.val());
+            if (data.key.length === 15) {
+                //lpd.doDiaryEntryWrite(data.val());
+                //lpd.doDiaryEntryDelete(data.key);
+            }
+        });
+    });
+}
+
+lightningPainDiary.prototype.doDiaryRead = function (start, end, entryfcn, finishfcn) {
+    //ref.child("userFavorites").queryOrderedByKey().queryEqual(toValue: user.uid).observe(...)
+
+    var ref = firebase.database().ref("users/" + lpd.uid + '/Diary/');
+    ref.once("value", function (snapshot) {
+        snapshot.forEach(function (data) {
+            if (entryfcn)
+                entryfcn(data.val());
         });
 
-        finishfcn();
+        if (finishfcn)
+            finishfcn();
     });
 }
 
@@ -267,16 +286,16 @@ lightningPainDiary.prototype.doDiaryUpdate = function () {
 lightningPainDiary.prototype.doDiaryEntryRead = function (datekey, finishfcn) {
     if (lpd.checkLoggedInWithMessage()) {
         var ref = firebase.database().ref("users/" + lpd.uid + '/Diary/' + datekey);
-        ref.once("value")
-            .then(function (snapshot) {
-                if (snapshot.exists())
-                    finishfcn(snapshot.val());
-            });
+        ref.once("value").then(function (snapshot) {
+            if (snapshot.exists()) {
+                finishfcn(snapshot.val());
 
-        if (lpd.account.lastdiaryupdate !== datekey) {
-            lpd.account.lastdiaryupdate = datekey;
-            lpd.doAccountWrite("lastdiaryupdate");
-        }
+                if (lpd.account.lastdiaryupdate !== datekey) {
+                    lpd.account.lastdiaryupdate = datekey;
+                    lpd.doAccountWrite("lastdiaryupdate");
+                }
+            }
+        });
     }
 }
 
@@ -316,18 +335,18 @@ lightningPainDiary.prototype.doReportRead = function (namekey, finishfcn) {
     if (lpd.checkLoggedInWithMessage()) {
         var ref = firebase.database().ref("users/" + lpd.uid + '/Reports/' + namekey);
         ref.once("value", function (snapshot) {
-            if (snapshot.exists())
+            if (snapshot.exists()) {
                 lpd.report = snapshot.val();
-            else if (lpd.initReport)
+
+                if (lpd.account.lastreport !== namekey) {
+                    lpd.account.lastreport = namekey;
+                    lpd.doAccountWrite("lastreport");
+                }
+            } else if (lpd.initReport)
                 lpd.initReport();
 
             finishfcn();
         });
-
-        if (lpd.account.lastreport !== namekey) {
-            lpd.account.lastreport = namekey;
-            lpd.doAccountWrite("lastreport");
-        }
     }
 }
 
@@ -440,6 +459,13 @@ Date.prototype.toDateString = function () {
     return date.getFullYear() +
         "-" + ten(date.getMonth() + 1) +
         "-" + ten(date.getDate());
+}
+
+Date.prototype.toDateShortString = function () {
+    let date = this;
+    return date.getFullYear() +
+        ten(date.getMonth() + 1) +
+        ten(date.getDate());
 }
 
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
