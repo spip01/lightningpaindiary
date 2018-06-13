@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Lightning Pain Diary</title>
+    <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+    <meta charset="utfoot-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/4.13.0/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.13.0/firebase-firestore.js"></script>
+
+    <script src="env.js"></script>
+    <script src="common.js"></script>
+    <script src="reports.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="bootstrap-14.css">
+    <link rel="stylesheet" type="text/css" href="local.css">
+</head>
+
+<body>
+    <div id="navbar"></div>
+
+    <div id="javascript" class="">
+        <nav class="navbar navbar-expand-sm bkg-light-green">
+            <a class="navbar-brand" href="index.html">
+                <span class=" clr-dark-green h2">
+                    <i class="fa fa-home"></i>
+                    Lightning Pain Diary
+                </span>
+            </a>
+
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link clr-dark-green h6" href="about.html">
+                        About
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <div style="color: rgb(0, 78, 0);">
+            Unfortunately, this page cannot function without javasript. Please add this site to your"allowed" sites. For chrome it's
+            located&nbsp;
+            <a href="chrome://settings/content/javascript">here</a>
+        </div>
+        <br>
+    </div>
+
+    <div class="card card-body">
+        <br>
+
+        <p>
+            I'm disabled with migraines that I've fought with for the last 20 years. All the pain diaries I've ever tried never did what
+            I needed or what my doctor wanted. So, I decided to write my own. Since I know there are others with the same
+            concerns I decided to publish it on the web. Let me know what you think, any suggestions or concerns. Just send
+            an email to me at lightningpaindiary.com --Stephen
+        </p>
+
+        <p>
+            This page doesn't keep any data you haven't entered. The rules are set so only you can use it. The data is kept at Google
+            in FireBase and there is some associted data saved with that.
+        </p>
+
+        <p>
+            To use the page start with 
+            <a class="clr-dark-green" href="settings.html">Settings</a> under the login menu. Nothing on the page can be saved unless you're logged in.
+        </p>
+
+        <h4>
+            <a class="clr-dark-green" href="settings.html">Settings</a>
+        </h4>
+
+        <p>
+            Start by entering your city and state info so you can fetch the daily weather to save it with your diary entries. Hitting
+            "enter" after setting the city info will display the latitude and longitude of the specified city.
+        </p>
+
+        <p>
+            The "Trackers" tab lets you edit all the fields you want to save with your diary. It's populated with fields for migraines
+            and some other example fields to start with but this can be completely changed. The other tabs let you edit list
+            of items you want as checkboxes on the input page. If you delete items the associated data isn't deleted it'll
+            just be hidden. You can have it displayed again by re-adding the item back to the list. The "delete" buttons
+            can be enabled using the checkbox beside the title. To add and entry just give it a name, select the field type,
+            type in a range if needed and hit "add". The field type can't be edited after it's created. The date, time and
+            pain level fields can't be edited or deleted.
+        </p>
+
+        <h4>
+            <a class="clr-dark-green" href="index.html">Input</a>
+        </h4>
+
+        <p>
+            This page is for your diary input. You'll see all the fields you've setup on the "Trackers" tab. All the fields are optional
+            execept the date, time and pain level. The current date and time can be set by hitting the "Now" button adjacent
+            to the time field. The "add item" field within each checkbox list is not added to the list as a new checkbox
+            but is a one time add. If you want it to always be available you'll have to add it on the "Trackers" tab. The
+            weather is fetched by hitting the adjacent "Now" button. The "Save" button will overwrite an existing entry with
+            the same date and time or create a new one.
+        </p>
+
+        <h4>
+            <a class="clr-dark-green" href="reports.html">Reports</a>
+        </h4>
+
+        <p>
+            This page is completely configurable using the "Open Selectors" and "Open Filters" boxes. Selectors will only display the
+            selected items for each diary entry. You'll see checkboxes for every field and every item in a list. The "all
+            others" checkbox will show any additional items associated with that list. Filters control which diary entries
+            are displayed. The checkboxes will hide any entry that doesn't contain at least one of the items checked or is
+            outside of the specified date range. So, any entry that has one match and has an included date will be displayed.
+            The same controls work for the table and calendar displays. You can create or modify any report by specifying
+            a name and hitting "Save". A report is the selectors and filters combined. Likewise, you can delete a report.
+            After saving a report it'll be added to the menu for easy selection later. The last report saved or selcted will
+            be the one loaded at startup. The "All On" report can't be modified. "Cancel" will reload the current report.
+        </p>
+
+        <p>
+            The "Table" and "Calendar" tabs will show the corresponding report. You'll see everything you've selected displayed. There
+            is a radio button by each entry which will allow editing or deleting that entry. Just use the appropriate buttons
+            located under the tabs.
+        </p>
+    </div>
+
+    <div id="footer"></div>
+</body>
+
+</html>
