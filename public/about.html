@@ -3,6 +3,20 @@
 
 <head>
     <title>Lightning Pain Diary</title>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-66007591-4"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+
+        gtag('config', 'UA-66007591-4');
+    </script>
+
     <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
     <meta charset="utfoot-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -64,17 +78,12 @@
         </p>
 
         <p>
-            This page doesn't keep any data you haven't entered. The rules are set so only you can use it. The data is kept at Google
-            in FireBase and there is some associted data saved with that.
-        </p>
-
-        <p>
-            To use the page start with 
-            <a class="clr-dark-green" href="settings.html">Settings</a> under the login menu. Nothing on the page can be saved unless you're logged in.
+            To use the page start with
+            <a href="settings.html">Settings</a> under the login menu. Nothing on the page can be saved unless you're logged in.
         </p>
 
         <h4>
-            <a class="clr-dark-green" href="settings.html">Settings</a>
+            <a href="settings.html">Settings</a>
         </h4>
 
         <p>
@@ -93,7 +102,7 @@
         </p>
 
         <h4>
-            <a class="clr-dark-green" href="index.html">Input</a>
+            <a href="index.html">Input</a>
         </h4>
 
         <p>
@@ -106,7 +115,7 @@
         </p>
 
         <h4>
-            <a class="clr-dark-green" href="reports.html">Reports</a>
+            <a href="reports.html">Reports</a>
         </h4>
 
         <p>
@@ -117,8 +126,8 @@
             outside of the specified date range. So, any entry that has one match and has an included date will be displayed.
             The same controls work for the table and calendar displays. You can create or modify any report by specifying
             a name and hitting "Save". A report is the selectors and filters combined. Likewise, you can delete a report.
-            After saving a report it'll be added to the menu for easy selection later. The last report saved or selected will
-            be the one loaded at startup. The "All On" report can't be modified. "Cancel" will reload the current report.
+            After saving a report it'll be added to the menu for easy selection later. The last report saved or selected
+            will be the one loaded at startup. The "All On" report can't be modified. "Cancel" will reload the current report.
         </p>
 
         <p>
@@ -126,9 +135,36 @@
             is a radio button by each entry which will allow editing or deleting that entry. Just use the appropriate buttons
             located under the tabs.
         </p>
+
+        <p class="border-top">
+            Your data is kept in Google FireBase. The rules are set so only you can use it. The page uses Google Analitics for access
+            tracking. There is an Amazon Associates link at the bottom of the page. These services keep whatever data you've
+            allowed them to.
+        </p>
+
     </div>
 
     <div id="footer"></div>
+
+    <div class="alignleft">
+        <script type="text/javascript">
+            amzn_assoc_ad_type = "banner";
+            amzn_assoc_marketplace = "amazon";
+            amzn_assoc_region = "US";
+            amzn_assoc_placement = "assoc_banner_placement_default";
+            amzn_assoc_campaigns = "health";
+            amzn_assoc_banner_type = "category";
+            amzn_assoc_p = "48";
+            amzn_assoc_isresponsive = "false";
+            amzn_assoc_banner_id = "1B0WEVWZYBMGB633AC82";
+            amzn_assoc_width = "728";
+            amzn_assoc_height = "90";
+            amzn_assoc_tracking_id = "lightningmade-20";
+            amzn_assoc_linkid = "6bfd315fec0b8341a71b578169625780";
+        </script>
+        <script src="//z-na.amazon-adsystem.com/widgets/q?ServiceVersion=20070822&Operation=GetScript&ID=OneJS&WS=1"></script>
+    </div>
+
 </body>
 
 </html>
