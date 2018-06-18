@@ -42,6 +42,9 @@ lightningPainDiary.prototype.doLoggedout = function () {
   $("[id|='new").addClass("disabled");
   $("[id|='new").prop("disabled", true);
 
+  $("#panels #pnl-Account #save").addClass("disabled");
+  $("#panels #pnl-Account #save").prop("disabled", true);
+
   $("#panels [id|='pnl']").hide();
   $("#panels #pnl-Account").show();
 }
@@ -53,6 +56,9 @@ lightningPainDiary.prototype.doLoggedin = function () {
   $("[id|='en").removeAttr("disabled");
   $("[id|='new").removeClass("disabled");
   $("[id|='new").removeAttr("disabled");
+
+  $("#panels #pnl-Account #save").removeClass("disabled");
+  $("#panels #pnl-Account #save").removeAttr("disabled");
 
   $("#panels [id|='pnl']").hide();
   $("#panels #pnl-Account").show();
@@ -72,7 +78,7 @@ const panels =
     <div class = "border-bottom" style="font-size: 12px">
         Controls data displayed and saved on the entry page. Deleting items doesn't delete 
         any saved data just the display. Re-add it to restore it to the display. 
-        <span class="hide-sm"">Drag to rearrange which changes the order on the entry page.</span>
+        <span class="hide-sm">Drag to rearrange which changes the order on the entry page.</span>
     </div>
     <br>
         
@@ -97,7 +103,7 @@ const panels =
 const panels_entry =
   `
 <div id="ent-idname" class="row border-bottom" draggable="true">
-    <div class="col-lg-3 col-md-3 col-sm-3 col-6">ttitle</div>
+    <div id="name-idname" class="col-lg-3 col-md-3 col-sm-3 col-6">ttitle</div>
     <input id="editname-idname" class="rounded col-lg-3 col-md-3 col-sm-3 col-6" value="ttitle" style="display: none">
     <div id="type" class="col-lg-2 col-md-2 col-sm-3 col-6" iftrackers>ttype</div>
     <div id="show-idname" class="col-lg-2 col-md-2 col-sm-2 col-6" iftrackers>
@@ -106,6 +112,8 @@ const panels_entry =
     <input id="edtstart-idname" class="rounded col-lg-1 col-md-1 col-sm-1 col-3" value="startrange" style="display: none">&nbsp;
     <input id="edtend-idname" class="rounded col-lg-1 col-md-1 col-sm-1 col-3" val="endrange" style="display: none">&nbsp;
     <button id="edit-idname" type="button" class="edit-button btn border btn-sm btn-green" ifedit>Edit</button>&nbsp;
+    <button id="done-idname" type="button" class="edit-button btn border btn-sm btn-green" style="display: none">Done</button>&nbsp;
+    <button id="cancel-idname" type="button" class="edit-button btn border btn-sm btn-green" style="display: none">Cancel</button>&nbsp;
     <button id="del-idname" type="button" class="del-button btn border btn-sm btn-green disabled" disabled ifedit>Delete</button>
 </div>
 `;
@@ -215,6 +223,14 @@ lightningPainDiary.prototype.setPanelEvents = function (id) {
       lpd.doneEdit(this);
   });
 
+  pnl.find("[id|='done']").click(function () {
+    lpd.doneEdit(this);
+  });
+
+  pnl.find("[id|='cancel']").click(function () {
+    lpd.cancelEdit(this);
+  });
+
   pnl.find("[id|='edit']").click(function () {
     lpd.panelEditBtn(this);
   });
@@ -320,7 +336,7 @@ lightningPainDiary.prototype.dragover = function (evt) {
 }
 
 lightningPainDiary.prototype.dragstart = function (evt) {
-  evt.originalEvent.dataTransfer.setData("text", evt.target.id);
+    evt.originalEvent.dataTransfer.setData("text", evt.target.id);
 }
 
 lightningPainDiary.prototype.drop = function (evt) {
@@ -505,8 +521,12 @@ lightningPainDiary.prototype.panelEditBtn = function (evt) {
   let ent = $(evt).parent();
   let pnlid = ent.prop("id").idToName();
 
-  ent.find("[id|='pos']").hide();
+  ent.removeAttr("draggable");
+  ent.find("[id|='name']").hide();
+  ent.find("[id|='edit']").hide();
   ent.find("[id|='editname']").show();
+  ent.find("[id|='done']").show();
+  ent.find("[id|='cancel']").show();
 
   if (pnlid === "Trackers") {
     if (ent.find("[id|='type']").text() === "range") {
@@ -516,12 +536,17 @@ lightningPainDiary.prototype.panelEditBtn = function (evt) {
       ent.find("[id|='edtend']").show();
     }
   }
+}
 
-  $(evt).text("Done");
-  $(evt).off();
-  $(evt).click(function () {
-    lpd.doneEdit(this);
-  });
+lightningPainDiary.prototype.cancelEdit = function (evt) {
+  let ent = $(evt).parent();
+
+  ent.attr("draggable", true);
+  ent.find("[id|='name']").show();
+  ent.find("[id|='edit']").show();
+  ent.find("[id|='editname']").hide();
+  ent.find("[id|='done']").hide();
+  ent.find("[id|='cancel']").hide();
 }
 
 lightningPainDiary.prototype.doneEdit = function (evt) {
@@ -554,6 +579,7 @@ lightningPainDiary.prototype.doneEdit = function (evt) {
     $("#pnl-" + pnlid).show();
 
     lpd.doTrackerWrite(entry, i)
+    lpd.doDiaryTrackerRename(oldname, newname);
   } else {
     let i = lpd.trackerlist.findIndex(function (x) {
       return (x.name === pnlname);
