@@ -1,6 +1,18 @@
 'use strict';
 
 var lpd;
+/*
+ui.start('#firebaseui-auth-container', {
+    signInOptions: [
+        // List of OAuth providers supported.
+        firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+        firebase.auth.EmailAuthProvider.PROVIDER_ID,
+        firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+        firebase.auth.TwitterAuthProvider.PROVIDER_ID,
+        firebase.auth.GithubAuthProvider.PROVIDER_ID
+    ],
+});
+*/
 
 function startUp() {
     $("#javascript").empty();
@@ -253,6 +265,8 @@ lightningPainDiary.prototype.doDiaryRead = function (start, end, entryfcn, finis
 
     var ref = firebase.database().ref("users/" + lpd.uid + '/Diary/');
     ref.once("value", function (snapshot) {
+        lpd.snapshot = snapshot;
+        
         snapshot.forEach(function (data) {
             if (entryfcn)
                 entryfcn(data.val());
@@ -260,6 +274,27 @@ lightningPainDiary.prototype.doDiaryRead = function (start, end, entryfcn, finis
 
         if (finishfcn)
             finishfcn();
+    });
+}
+
+lightningPainDiary.prototype.doDiaryTrackerRename = function (oldname, newname) {
+    //ref.child("userFavorites").queryOrderedByKey().queryEqual(toValue: user.uid).observe(...)
+
+    var ref = firebase.database().ref("users/" + lpd.uid + '/Diary/');
+    ref.once("value", function (snapshot) {
+        lpd.snapshot = snapshot;
+        
+        snapshot.forEach(function (diary) {
+            let entry=diary.val();
+
+            if (entry[oldname]) {
+                entry[newname]=entry[oldname];
+                delete entry[oldname];
+            }
+
+            lpd.doDiaryEntryWrite(entry);
+        });
+
     });
 }
 
@@ -338,13 +373,14 @@ lightningPainDiary.prototype.doReportRead = function (namekey, finishfcn) {
             if (snapshot.exists()) {
                 lpd.report = snapshot.val();
 
+            } else if (lpd.initReport)
+                lpd.initReport();
+
                 if (lpd.account.lastreport !== namekey) {
                     lpd.account.lastreport = namekey;
                     lpd.doAccountWrite("lastreport");
                 }
-            } else if (lpd.initReport)
-                lpd.initReport();
-
+                
             finishfcn();
         });
     }
