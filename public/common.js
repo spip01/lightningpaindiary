@@ -266,7 +266,7 @@ lightningPainDiary.prototype.doDiaryRead = function (start, end, entryfcn, finis
     var ref = firebase.database().ref("users/" + lpd.uid + '/Diary/');
     ref.once("value", function (snapshot) {
         lpd.snapshot = snapshot;
-        
+
         snapshot.forEach(function (data) {
             if (entryfcn)
                 entryfcn(data.val());
@@ -283,12 +283,12 @@ lightningPainDiary.prototype.doDiaryTrackerRename = function (oldname, newname) 
     var ref = firebase.database().ref("users/" + lpd.uid + '/Diary/');
     ref.once("value", function (snapshot) {
         lpd.snapshot = snapshot;
-        
+
         snapshot.forEach(function (diary) {
-            let entry=diary.val();
+            let entry = diary.val();
 
             if (entry[oldname]) {
-                entry[newname]=entry[oldname];
+                entry[newname] = entry[oldname];
                 delete entry[oldname];
             }
 
@@ -376,11 +376,11 @@ lightningPainDiary.prototype.doReportRead = function (namekey, finishfcn) {
             } else if (lpd.initReport)
                 lpd.initReport();
 
-                if (lpd.account.lastreport !== namekey) {
-                    lpd.account.lastreport = namekey;
-                    lpd.doAccountWrite("lastreport");
-                }
-                
+            if (lpd.account.lastreport !== namekey) {
+                lpd.account.lastreport = namekey;
+                lpd.doAccountWrite("lastreport");
+            }
+
             finishfcn();
         });
     }
@@ -552,4 +552,59 @@ function monthDays(year, month) {
 
 function ten(i) {
     return i < 10 ? '0' + i : i;
+}
+
+// from http://www.niwa.nu/2013/05/math-behind-colorspace-conversions-rgb-hsl/
+function hslToRgb(h, s, l) {
+    let r, g, b;
+    h /= 360;
+    s /= 100;
+    l /= 100;
+
+    if (s === 0)
+        r = g = b = l * 255;
+    else {
+        let t1 = l < 50 ? l * (1.0 + s) : l + s - l * s;
+        let t2 = 2 * l - t1;
+
+        let range = function (x) {
+            return (x <= 0 ? x + 1 : x >= 1 ? x - 1 : x);
+        }
+
+        let tr = range(h + 0.333);
+        let tg = range(h);
+        let tb = range(h - 0.333);
+
+        let color = function (t1, t2, tc) {
+            let c;
+
+            if (6 * tc < 1)
+                c = t2 + (t1 - t2) * 6 * tc;
+            else if (2 * tc < 1)
+                c = t1;
+            else if (3 * tc < 2)
+                c = t2 + (t1 - t2) * 6 * (0.666 - tc);
+            else
+                c = t2;
+                
+            return (c);
+        }
+
+        r = Math.round(color(t1, t2, tr) * 255);
+        g = Math.round(color(t1, t2, tg) * 255);
+        b = Math.round(color(t1, t2, tb) * 255);
+    }
+
+    return {
+        r: r,
+        g: g,
+        b: b
+    };
+}
+
+function toHex(n) {
+    var hex = n.toString(16);
+    if (hex.length % 2 === 1)
+        hex = "0" + hex;
+    return hex;
 }

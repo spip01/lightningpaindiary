@@ -30,14 +30,18 @@ lightningPainDiary.prototype.doReportUpdate = function () {
     lpd.setSelect();
     lpd.setFilter();
     lpd.diarySelectDisplay();
-    lpd.diaryFilterDisplay();
+    lpd.doFilterUpdate();
     lpd.reportMenu();
-    lpd.chartDisplay();
 
     $("#table, #calendar, #chart").find("[name='selected']").click(function () {
         $("#edit-row").find("#edit, #delete").removeClass("disabled");
         $("#edit-row").find("#edit, #delete").removeAttr("disabled");
     });
+}
+
+lightningPainDiary.prototype.doFilterUpdate = function () {
+    lpd.diaryFilterDisplay();
+    lpd.chartDisplay();
 }
 
 /************************************************************************************************************************* */
@@ -54,7 +58,7 @@ const row = `<div id="row-idname" class="row small" style="border-bottom: 1px so
 const entry = `<div id="ent-idname" class="col-print-2 col-lg-2 col-md-2 col-sm-2 col-7 border-right border-bottom">ttext</div>`;
 const painlevelentry = `<div id="ent-idname" class="col-print-2 col-lg-2 col-md-2 col-sm-2 col-7 border-right border-bottom h6" style="background-color: hsl(ccolor,100%,50%)">ttext</div>`;
 const sub = `<div id="sub-idname">ttext</div>`;
-const img = '<img id="sub-idname" src="https://openweathermap.org/img/w/iicon.png" height="15" width="15">';
+const img = `<img id="sub-idname" src="https://openweathermap.org/img/w/iicon.png" height="15" width="15">`;
 
 lightningPainDiary.prototype.headerDisplay = function () {
     let pnl = $("#table");
@@ -470,7 +474,7 @@ lightningPainDiary.prototype.filterDisplay = function () {
 
     fld.find(":checkbox").click(function () {
         lpd.report.filter = lpd.extractFilter();
-        lpd.diaryFilterDisplay();
+        lpd.doFilterUpdate();
     });
 
     fld.find("[type='date']").focusout(function () {
@@ -484,12 +488,12 @@ lightningPainDiary.prototype.filterDisplay = function () {
         }
 
         lpd.report.filter[name][sub] = lpd.getDiaryKey($(this).val());
-        lpd.diaryFilterDisplay();
+        lpd.doFilterUpdate();
     });
 
     fld.find(":text").focusout(function () {
         lpd.report.filter = lpd.extractFilter();
-        lpd.diaryFilterDisplay();
+        lpd.doFilterUpdate();
     });
 
     fld.find("[id|='menu-date'] #item").click(function () {
@@ -505,7 +509,7 @@ lightningPainDiary.prototype.filterDisplay = function () {
         }
 
         lpd.report.filter[name].length = $(this).text().replace(/([all369180]*).*/g, "$1");
-        lpd.diaryFilterDisplay();
+        lpd.doFilterUpdate();
     });
 }
 
@@ -896,22 +900,125 @@ lightningPainDiary.prototype.calendarDisplay = function (diary) {
 
 lightningPainDiary.prototype.chartDisplay = function () {
     if (lpd.snapshot) {
-        let diary = [];
+        let painlevel = [{}];
+        let humidity = [{}];
+        let pressure = [{}];
+        let color = [];
+
+        let filterdate = lpd.report.filter.Date;
+        let reportstart = filterdate.start !== "" ? moment(filterdate.start) : 0;
+        let reportend = filterdate.end !== "" ? moment(filterdate.end) : Number.MAX_SAFE_INTEGER;
+        let reportdays = filterdate.length !== "" ? moment(new Date()).subtract(filterdate.length, 'days') : 0;
+        if (reportstart.valueOf() < reportdays.valueOf())
+            reportstart = reportdays;
 
         lpd.snapshot.forEach(function (data) {
-            diary.push(data.val());
+            let entry = data.val();
+
+            let entrydate = moment(entry.Date);
+            if (entrydate.valueOf() >= reportstart.valueOf() && entrydate.valueOf() < reportend.valueOf()) {
+
+                painlevel.push({
+                    x: entry.Date + "T" + entry.Time + "Z",
+                    y: parseInt(entry["Pain Level"], 10)
+                });
+
+                let rgb = hslToRgb(120 - entry["Pain Level"] * 12, 100, 50);
+                color.push("#" + toHex(rgb.r) + toHex(rgb.g) + toHex(rgb.b));
+
+                if (entry["Weather"]) {
+                    humidity.push({
+                        x: entry.Date + "T" + entry.Time + "Z",
+                        y: parseInt(entry["Weather"]["humidity"], 10)
+                    });
+                    pressure.push({
+                        x: entry.Date + "T" + entry.Time + "Z",
+                        y: parseInt(entry["Weather"]["pressure"], 10)
+                    });
+                }
+            }
         });
 
-        var chart = new tauCharts.Chart({
-            data: diary,
-            type: 'line',
-            x: 'Date',
-            y: 'Pain Level',
-            color: 'type'
-        });
+        let ctx = $("#chart #panel")[0].getContext("2d");
 
-        $('#chart').empty();
-        chart.renderTo('#chart');
+        let config = {
+            type: "line",
+            data: {
+                datasets: [{
+                    yAxisID: "pain level",
+                    label: "pain level",
+                    data: painlevel,
+                    spanGaps:true,
+                    pointBackgroundColor: color,
+                    backgroundColor: "rgba(255,255,255,0)",
+                    borderColor: "#ff0000",
+                    borderWidth: 1
+                }, {
+                    yAxisID: "humidity",
+                    label: "humidity",
+                    data: humidity,
+                    backgroundColor: "rgba(255,255,255,0)",
+                    borderColor: "#00ff00",
+                    borderWidth: 1
+                }, {
+                    yAxisID: "pressure",
+                    label: "pressure",
+                    data: pressure,
+                    backgroundColor: "rgba(255,255,255,0)",
+                    borderColor: "#0000ff",
+                    borderWidth: 1
+                }],
+            },
+            options: {
+                scales: {
+                    xAxes: [{
+                        type: "time",
+                        time: {
+                            unit: 'week',
+                            round: 'day',
+                            displayFormats: {
+                                day: 'MMM D'
+                            },
+                        },
+                        gridLines: {
+                            color: "rgba(0,0,0,0.5)",
+                            lineWidth: 0.5
+                        }
+                    }],
+                    yAxes: [{
+                        id: "pain level",
+                        ticks: {
+                            beginAtZero: false
+                        },
+                        gridLines: {
+                            color: "rgba(255,0,0,0.2)",
+                            lineWidth: 0.5
+                        }
+                    }, {
+                        id: "humidity",
+                        ticks: {
+                            beginAtZero: false
+                        },
+                        gridLines: {
+                            color: "rgba(0,255,0,0.2)",
+                            lineWidth: 0.5
+                        }
+                    }, {
+                        id: "pressure",
+                        ticks: {
+                            beginAtZero: false
+                        },
+                        gridLines: {
+                            color: "rgba(0,0,255,0.2)",
+                            lineWidth: 0.5
+                        }
+                    }],
+                },
+                responsive: true
+            }
+        }
+
+        let chart = new Chart(ctx, config);
     }
 }
 
