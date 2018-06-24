@@ -584,12 +584,11 @@ lightningPainDiary.prototype.setFilter = function () {
 lightningPainDiary.prototype.diaryFilterDisplay = function () {
     let trow = $("#table [id|='row']");
 
-    let filter = lpd.report.filter;
+    let daterange = getFilterStartStopDate();
 
     trow.each(function () {
         let id = $(this).prop("id");
         id = id.stripID();
-        let sid = id.slice(0, 8);
         let crow = $("#calendar #row-" + id.slice(0, 8));
         let cmonth = $("#calendar #month-" + id.slice(0, 6));
 
@@ -606,35 +605,20 @@ lightningPainDiary.prototype.diaryFilterDisplay = function () {
 
                 switch (val.type) {
                     case "date":
-                        let start = filter.Date.start != "T" ? filter.Date.start : null;
-                        let end = filter.Date.end != "T" ? filter.Date.end : null;
-                        let iddate = id.slice(0, 6);
+                        let y = id.slice(0, 4);
+                        let m = Number.parseInt(id.slice(4, 6)) - 1;
+                        let d = id.slice(6, 8);
+                        let entryday = moment([y, m, d]).valueOf();
 
-                        if (start && id < start || end && id > end) {
+                        if (entryday < daterange.start || entryday > daterange.end) {
+
                             $(this).hide();
                             crow.hide();
                             found = true;
 
-                            if (iddate < start.slice(0, 6))
+                            let entrymonth = moment([y, m]).valueOf();
+                            if (entrymonth < daterange.start || entrymonth > daterange.end)
                                 cmonth.hide();
-
-                            if (iddate > end.slice(0, 6))
-                                cmonth.hide();
-                        }
-
-                        if (filter.Date.length !== "all") {
-                            let today = new Date();
-                            let startdate = new Date(today.setDate(-filter.Date.length)).toDateShortString();
-
-                            if (id < startdate) {
-                                $(this).hide();
-                                crow.hide();
-                                found = true;
-                            }
-
-                            if (iddate < startdate.slice(0, 6)) {
-                                cmonth.hide();
-                            }
                         }
                         break;
 
@@ -905,18 +889,13 @@ lightningPainDiary.prototype.chartDisplay = function () {
         let pressure = [{}];
         let color = [];
 
-        let filterdate = lpd.report.filter.Date;
-        let reportstart = filterdate.start !== "" ? moment(filterdate.start) : 0;
-        let reportend = filterdate.end !== "" ? moment(filterdate.end) : Number.MAX_SAFE_INTEGER;
-        let reportdays = filterdate.length !== "" ? moment(new Date()).subtract(filterdate.length, 'days') : 0;
-        if (reportstart.valueOf() < reportdays.valueOf())
-            reportstart = reportdays;
+        let daterange = getFilterStartStopDate();
 
         lpd.snapshot.forEach(function (data) {
             let entry = data.val();
 
             let entrydate = moment(entry.Date);
-            if (entrydate.valueOf() >= reportstart.valueOf() && entrydate.valueOf() < reportend.valueOf()) {
+            if (entrydate.valueOf() >= daterange.start.valueOf() && entrydate.valueOf() < daterange.end.valueOf()) {
 
                 painlevel.push({
                     x: entry.Date + "T" + entry.Time + "Z",
@@ -948,25 +927,28 @@ lightningPainDiary.prototype.chartDisplay = function () {
                     yAxisID: "pain level",
                     label: "pain level",
                     data: painlevel,
-                    spanGaps:true,
+                    spanGaps: true,
                     pointBackgroundColor: color,
                     backgroundColor: "rgba(255,255,255,0)",
                     borderColor: "#ff0000",
-                    borderWidth: 1
+                    borderWidth: 1,
+                    lineTension: 0
                 }, {
                     yAxisID: "humidity",
                     label: "humidity",
                     data: humidity,
                     backgroundColor: "rgba(255,255,255,0)",
                     borderColor: "#00ff00",
-                    borderWidth: 1
+                    borderWidth: 1,
+                    lineTension: 0
                 }, {
                     yAxisID: "pressure",
                     label: "pressure",
                     data: pressure,
                     backgroundColor: "rgba(255,255,255,0)",
                     borderColor: "#0000ff",
-                    borderWidth: 1
+                    borderWidth: 1,
+                    lineTension: 0
                 }],
             },
             options: {
@@ -991,7 +973,7 @@ lightningPainDiary.prototype.chartDisplay = function () {
                             beginAtZero: false
                         },
                         gridLines: {
-                            color: "rgba(255,0,0,0.2)",
+                            color: "rgba(255,0,0,0.5)",
                             lineWidth: 0.5
                         }
                     }, {
@@ -1000,7 +982,7 @@ lightningPainDiary.prototype.chartDisplay = function () {
                             beginAtZero: false
                         },
                         gridLines: {
-                            color: "rgba(0,255,0,0.2)",
+                            color: "rgba(0,255,0,0.5)",
                             lineWidth: 0.5
                         }
                     }, {
@@ -1009,7 +991,7 @@ lightningPainDiary.prototype.chartDisplay = function () {
                             beginAtZero: false
                         },
                         gridLines: {
-                            color: "rgba(0,0,255,0.2)",
+                            color: "rgba(0,0,255,0.5s)",
                             lineWidth: 0.5
                         }
                     }],
@@ -1018,11 +1000,30 @@ lightningPainDiary.prototype.chartDisplay = function () {
             }
         }
 
-        let chart = new Chart(ctx, config);
+        if (lpd.chart)
+            lpd.chart.destroy();
+
+        lpd.chart = new Chart(ctx, config);
     }
 }
 
 /************************************************************************************************************************* */
+
+lightningPainDiary.prototype.getFilterStartStopDate = function () {
+    let filterdate = lpd.report.filter.Date;
+
+    let start = filterdate.start !== "" ? moment(filterdate.start) : 0;
+    let end = filterdate.end !== "" ? moment(filterdate.end) : Number.MAX_SAFE_INTEGER;
+    let length = filterdate.length !== "" && filterdate.length !== "all" ? moment(new Date()).subtract(filterdate.length, 'days') : 0;
+
+    if (start.valueOf() < length.valueOf())
+        start = length;
+
+    return ({
+        start: start,
+        end: end
+    });
+}
 
 $(document).ready(function () {
     startUp();
