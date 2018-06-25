@@ -584,7 +584,7 @@ lightningPainDiary.prototype.setFilter = function () {
 lightningPainDiary.prototype.diaryFilterDisplay = function () {
     let trow = $("#table [id|='row']");
 
-    let daterange = getFilterStartStopDate();
+    let daterange = lpd.getFilterStartStopDate();
 
     trow.each(function () {
         let id = $(this).prop("id");
@@ -600,7 +600,7 @@ lightningPainDiary.prototype.diaryFilterDisplay = function () {
             let found = false;
             let list = 0;
 
-            for (let [name, val] of Object.entries(filter)) {
+            for (let [name, val] of Object.entries(lpd.report.filter)) {
                 let nid = name.spaceToDash();
 
                 switch (val.type) {
@@ -654,6 +654,58 @@ lightningPainDiary.prototype.diaryFilterDisplay = function () {
             }
         }
     });
+}
+
+lightningPainDiary.prototype.entryFilterCheck = function (entry) {
+    let show = true;
+
+    let daterange = lpd.getFilterStartStopDate();
+
+    for (let [name, value] of Object.entries(entry)) {
+        let found = false;
+        let list = 0;
+
+        let filter = lpd.report.filter[name];
+
+        if (filter)
+            switch (filter.type) {
+                case "date":
+                    let entryday = moment(value).valueOf();
+
+                    if (entryday < daterange.start || entryday > daterange.end) {
+                        show = false;
+                        found = true;
+                    }
+                    break;
+
+                case "range":
+                    if (filter.val > 0 && value < filter.val) {
+                        show = false;
+                        found = true;
+                    }
+                    break;
+
+                case "list":
+                    if (filter.list) {
+                        list += filter.list.length;
+
+                        for (let i = 0; i < filter.list.length; ++i) {
+                            if (value.indexOf(filter.list[i]) !== -1)
+                                found = true;
+                        }
+                    }
+                    break;
+            }
+
+        if (found)
+            break;
+
+        if (!found && list > 0) {
+            show = false;
+        }
+    }
+
+    return (show);
 }
 
 /****************************************************************************************************** */
@@ -888,15 +940,14 @@ lightningPainDiary.prototype.chartDisplay = function () {
         let humidity = [{}];
         let pressure = [{}];
         let color = [];
+        color.push("#000000");
 
-        let daterange = getFilterStartStopDate();
+        let daterange = lpd.getFilterStartStopDate();
 
         lpd.snapshot.forEach(function (data) {
             let entry = data.val();
 
-            let entrydate = moment(entry.Date);
-            if (entrydate.valueOf() >= daterange.start.valueOf() && entrydate.valueOf() < daterange.end.valueOf()) {
-
+            if (lpd.entryFilterCheck(entry)) {
                 painlevel.push({
                     x: entry.Date + "T" + entry.Time + "Z",
                     y: parseInt(entry["Pain Level"], 10)
@@ -928,7 +979,9 @@ lightningPainDiary.prototype.chartDisplay = function () {
                     label: "pain level",
                     data: painlevel,
                     spanGaps: true,
-                    pointBackgroundColor: color,
+                    pointBorderColor: color,
+                    pointBorderWidth: 3,
+                    pointRadius: 4,
                     backgroundColor: "rgba(255,255,255,0)",
                     borderColor: "#ff0000",
                     borderWidth: 1,
@@ -978,6 +1031,7 @@ lightningPainDiary.prototype.chartDisplay = function () {
                         }
                     }, {
                         id: "humidity",
+                        position: "right",
                         ticks: {
                             beginAtZero: false
                         },
@@ -987,6 +1041,7 @@ lightningPainDiary.prototype.chartDisplay = function () {
                         }
                     }, {
                         id: "pressure",
+                        position: "right",
                         ticks: {
                             beginAtZero: false
                         },
@@ -996,7 +1051,11 @@ lightningPainDiary.prototype.chartDisplay = function () {
                         }
                     }],
                 },
-                responsive: true
+                responsive: true,
+                tooltips: {
+                    enabled: false,
+                    custom: lpd.getToolTip
+                }
             }
         }
 
@@ -1007,16 +1066,119 @@ lightningPainDiary.prototype.chartDisplay = function () {
     }
 }
 
+lightningPainDiary.prototype.getToolTip = function (tooltipModel, b) {
+    // Tooltip Element
+    var tooltipEl = document.getElementById('chartjs-tooltip');
+
+    // Create element on first render
+    if (!tooltipEl) {
+        let style = "background:" + tooltipModel.backgroundColor +"; ";
+        style += "color:" + tooltipModel.bodyFontColor +"; ";
+
+        tooltipEl = document.createElement('div');
+        tooltipEl.id = "chartjs-tooltip";
+        tooltipEl.innerHTML = '<table style="'+style+'"></table>';
+        document.body.appendChild(tooltipEl);
+    }
+
+    // Hide if no tooltip
+    if (tooltipModel.opacity === 0) {
+        tooltipEl.style.opacity = 0;
+        return;
+    }
+
+    // Set caret Position
+    tooltipEl.classList.remove('above', 'below', 'no-transform');
+    if (tooltipModel.yAlign) {
+        tooltipEl.classList.add(tooltipModel.yAlign);
+    } else {
+        tooltipEl.classList.add('no-transform');
+    }
+
+    let selected = lpd.report.select;
+
+    // Set Text
+    lpd.snapshot.forEach(function (data) {
+        let entry = data.val();
+
+        if (tooltipModel.title[0] === entry.Date + "T" + entry.Time + "Z") {
+
+            let innerHtml = '<thead>';
+            innerHtml += '<tr><th>' + entry.Date + ' ' + entry.Time + '</th></tr>';
+            innerHtml += '</thead><tbody>';
+
+            for (let [name, value] of Object.entries(selected)) {
+                if (value && entry[value.name]) {
+                    let body = value.name + ": " + entry[value.name];
+                    let j;
+
+                    switch (value.type) {
+                        case "date":
+                            if (value.name === "Date")
+                                continue;
+                                
+                            break;
+
+                        case "time":
+                            if (value.name === "Time")
+                                continue;
+
+                            break;
+
+                        case "list":
+                            body = value.name + ": ";
+
+                            for (let i = 0; i < value.list.length; ++i)
+                                if ((j = entry[value.name].indexOf(value.list[i])) !== -1)
+                                    body += entry[value.name][j] + " ";
+
+                            break;
+
+                        case "weather":
+                            for (let i = 0; i < value.list.length; ++i)
+                                if (entry.Weather[value.list[i]]) {
+                                    body = value.list[i]+": "+entry.Weather[value.list[i]] + " ";
+                                    innerHtml += '<tr><td>' + body + '</td></tr>';
+                                }
+
+                            continue;
+                    }
+
+                    innerHtml += '<tr><td>' + body + '</td></tr>';
+                }
+            }
+
+            innerHtml += '</tbody>';
+
+            let tableRoot = tooltipEl.querySelector('table');
+            tableRoot.innerHTML = innerHtml;
+        }
+    });
+
+    // `this` will be the overall tooltip
+    let position = this._chart.canvas.getBoundingClientRect();
+
+    // Display, position, and set styles for font
+    tooltipEl.style.opacity = 1;
+    tooltipEl.style.position = 'absolute';
+    tooltipEl.style.left = position.left + tooltipModel.caretX + 'px';
+    tooltipEl.style.top = position.top + tooltipModel.caretY + 'px';
+    tooltipEl.style.fontFamily = tooltipModel._bodyFontFamily;
+    tooltipEl.style.fontSize = tooltipModel.bodyFontSize + 'px';
+    tooltipEl.style.fontStyle = tooltipModel._bodyFontStyle;
+    tooltipEl.style.padding = tooltipModel.yPadding + 'px ' + tooltipModel.xPadding + 'px';
+}
+
 /************************************************************************************************************************* */
 
 lightningPainDiary.prototype.getFilterStartStopDate = function () {
     let filterdate = lpd.report.filter.Date;
 
-    let start = filterdate.start !== "" ? moment(filterdate.start) : 0;
-    let end = filterdate.end !== "" ? moment(filterdate.end) : Number.MAX_SAFE_INTEGER;
-    let length = filterdate.length !== "" && filterdate.length !== "all" ? moment(new Date()).subtract(filterdate.length, 'days') : 0;
+    let start = filterdate.start !== "" ? moment(filterdate.start).valueOf() : 0;
+    let end = filterdate.end !== "" ? moment(filterdate.end).valueOf() : Number.MAX_SAFE_INTEGER;
+    let length = filterdate.length !== "" && filterdate.length !== "all" ? moment(new Date()).subtract(filterdate.length, 'days').valueOf() : 0;
 
-    if (start.valueOf() < length.valueOf())
+    if (start < length)
         start = length;
 
     return ({
