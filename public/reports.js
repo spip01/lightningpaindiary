@@ -945,9 +945,10 @@ lightningPainDiary.prototype.chartDisplay = function () {
 
         let colors = [];
         for (let i = 0; i < 12; ++i) {
-            let rgb = hslToRgb(i * 30, 100, 50);
+            let rgb = hslToRgb(i * (360/7), 50, 50);
             colors.push("#" + toHex(rgb.r) + toHex(rgb.g) + toHex(rgb.b));
         }
+        colors[0]="#ff0000"
         let nextcolor = 0;
 
         let datasets = [];
@@ -958,8 +959,8 @@ lightningPainDiary.prototype.chartDisplay = function () {
                 data: dataset,
                 backgroundColor: "rgba(255,255,255,0)",
                 borderColor: color,
-                borderWidth: 1,
-                lineTension: 0
+                borderWidth: 1.5,
+                lineTension: .3
             });
         };
 
@@ -986,6 +987,7 @@ lightningPainDiary.prototype.chartDisplay = function () {
         datasets[0].pointBackgroundColor = plcolor;
         datasets[0].pointBorderWidth = 2;
         datasets[0].pointRadius = 3;
+        datasets[0].borderWidth = 2;
 
         axis.push(newaxis("Pain Level", colors[nextcolor++]));
         axis[0].position = "left";
@@ -1258,6 +1260,11 @@ $(document).ready(function () {
 
         let id = $(this).prop("id").replace(/(.*?)-.*/g, "$1");
         $("#" + id).show();
+
+        if (id==="chart")
+            $("#edit-row").hide();
+        else
+            $("#edit-row").show();
     });
 
     $("#report-header #show-select").click(function () {
