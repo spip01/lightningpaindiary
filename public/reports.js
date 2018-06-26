@@ -251,6 +251,9 @@ lightningPainDiary.prototype.selectDisplay = function () {
             $("#table, #calendar").find("#" + id).show();
         else
             $("#table, #calendar").find("#" + id).hide();
+        
+        lpd.report.select = lpd.extractSelect();
+        lpd.chartDisplay();
     });
 }
 
@@ -306,6 +309,7 @@ lightningPainDiary.prototype.extractSelect = function () {
                 if (sel) {
                     let item = {};
                     item.name = name;
+                    item.type = list.type;
 
                     if (list.type === "weather" || list.type === "list") {
                         item.list = [];
@@ -936,35 +940,105 @@ lightningPainDiary.prototype.calendarDisplay = function (diary) {
 
 lightningPainDiary.prototype.chartDisplay = function () {
     if (lpd.snapshot) {
-        let painlevel = [{}];
-        let humidity = [{}];
-        let pressure = [{}];
-        let color = [];
-        color.push("#000000");
+        let plcolor = [];
+        plcolor.push("#000000");
 
-        let daterange = lpd.getFilterStartStopDate();
+        let colors = [];
+        for (let i = 0; i < 12; ++i) {
+            let rgb = hslToRgb(i * 30, 100, 50);
+            colors.push("#" + toHex(rgb.r) + toHex(rgb.g) + toHex(rgb.b));
+        }
+        let nextcolor = 0;
+
+        let datasets = [];
+        let newset = function (name, dataset, color) {
+            return ({
+                yAxisID: name,
+                label: name,
+                data: dataset,
+                backgroundColor: "rgba(255,255,255,0)",
+                borderColor: color,
+                borderWidth: 1,
+                lineTension: 0
+            });
+        };
+
+        let axis = [];
+        let newaxis = function (name, color) {
+            return ({
+                id: name,
+                position: "right",
+                ticks: {
+                    beginAtZero: false
+                },
+                gridLines: {
+                    color: color,
+                    lineWidth: 0.5
+                }
+            });
+        };
+
+        let dataset = [];
+        dataset["Pain Level"] = [];
+        datasets.push(newset("Pain Level", dataset["Pain Level"], colors[nextcolor]));
+        datasets[0].spanGaps = true;
+        datasets[0].pointBorderColor = plcolor;
+        datasets[0].pointBackgroundColor = plcolor;
+        datasets[0].pointBorderWidth = 2;
+        datasets[0].pointRadius = 3;
+
+        axis.push(newaxis("Pain Level", colors[nextcolor++]));
+        axis[0].position = "left";
 
         lpd.snapshot.forEach(function (data) {
             let entry = data.val();
 
             if (lpd.entryFilterCheck(entry)) {
-                painlevel.push({
-                    x: entry.Date + "T" + entry.Time + "Z",
-                    y: parseInt(entry["Pain Level"], 10)
-                });
-
                 let rgb = hslToRgb(120 - entry["Pain Level"] * 12, 100, 50);
-                color.push("#" + toHex(rgb.r) + toHex(rgb.g) + toHex(rgb.b));
+                plcolor.push("#" + toHex(rgb.r) + toHex(rgb.g) + toHex(rgb.b));
 
-                if (entry["Weather"]) {
-                    humidity.push({
-                        x: entry.Date + "T" + entry.Time + "Z",
-                        y: parseInt(entry["Weather"]["humidity"], 10)
-                    });
-                    pressure.push({
-                        x: entry.Date + "T" + entry.Time + "Z",
-                        y: parseInt(entry["Weather"]["pressure"], 10)
-                    });
+                let select = lpd.report.select;
+                for (let i = 0; i < select.length; ++i) {
+                    let value = select[i];
+                    let name = value.name;
+                    
+                    if (value && entry[name]) {
+                        switch (value.type) {
+                            case "range":
+                            case "number":
+                                if (!dataset[name]) {
+                                    dataset[name] = [];
+                                    datasets.push(newset(name, dataset[name], colors[nextcolor]));
+                                    axis.push(newaxis(name, colors[nextcolor++]));
+                                }
+
+                                dataset[name].push({
+                                    x: entry.Date + "T" + entry.Time + "Z",
+                                    y: parseInt(entry[name], 10)
+                                });
+
+                                break;
+
+                            case "weather":
+                                for (let i = 0; i < value.list.length; ++i) {
+                                    let lname = value.list[i];
+                                    if (entry[name][lname] && lname != "description" && lname != "icon") {
+                                        if (!dataset[lname]) {
+                                            dataset[lname] = [];
+                                            datasets.push(newset(lname, dataset[lname], colors[nextcolor]));
+                                            axis.push(newaxis(lname, colors[nextcolor++]));
+                                        }
+
+                                        dataset[lname].push({
+                                            x: entry.Date + "T" + entry.Time + "Z",
+                                            y: parseInt(entry[name][lname], 10)
+                                        });
+                                    }
+                                }
+
+                                continue;
+                        }
+                    }
                 }
             }
         });
@@ -974,35 +1048,7 @@ lightningPainDiary.prototype.chartDisplay = function () {
         let config = {
             type: "line",
             data: {
-                datasets: [{
-                    yAxisID: "pain level",
-                    label: "pain level",
-                    data: painlevel,
-                    spanGaps: true,
-                    pointBorderColor: color,
-                    pointBorderWidth: 3,
-                    pointRadius: 4,
-                    backgroundColor: "rgba(255,255,255,0)",
-                    borderColor: "#ff0000",
-                    borderWidth: 1,
-                    lineTension: 0
-                }, {
-                    yAxisID: "humidity",
-                    label: "humidity",
-                    data: humidity,
-                    backgroundColor: "rgba(255,255,255,0)",
-                    borderColor: "#00ff00",
-                    borderWidth: 1,
-                    lineTension: 0
-                }, {
-                    yAxisID: "pressure",
-                    label: "pressure",
-                    data: pressure,
-                    backgroundColor: "rgba(255,255,255,0)",
-                    borderColor: "#0000ff",
-                    borderWidth: 1,
-                    lineTension: 0
-                }],
+                datasets: datasets
             },
             options: {
                 scales: {
@@ -1013,43 +1059,14 @@ lightningPainDiary.prototype.chartDisplay = function () {
                             round: 'day',
                             displayFormats: {
                                 day: 'MMM D'
-                            },
+                            }
                         },
                         gridLines: {
                             color: "rgba(0,0,0,0.5)",
                             lineWidth: 0.5
                         }
                     }],
-                    yAxes: [{
-                        id: "pain level",
-                        ticks: {
-                            beginAtZero: false
-                        },
-                        gridLines: {
-                            color: "rgba(255,0,0,0.5)",
-                            lineWidth: 0.5
-                        }
-                    }, {
-                        id: "humidity",
-                        position: "right",
-                        ticks: {
-                            beginAtZero: false
-                        },
-                        gridLines: {
-                            color: "rgba(0,255,0,0.5)",
-                            lineWidth: 0.5
-                        }
-                    }, {
-                        id: "pressure",
-                        position: "right",
-                        ticks: {
-                            beginAtZero: false
-                        },
-                        gridLines: {
-                            color: "rgba(0,0,255,0.5s)",
-                            lineWidth: 0.5
-                        }
-                    }],
+                    yAxes: axis,
                 },
                 responsive: true,
                 tooltips: {
@@ -1067,27 +1084,23 @@ lightningPainDiary.prototype.chartDisplay = function () {
 }
 
 lightningPainDiary.prototype.getToolTip = function (tooltipModel, b) {
-    // Tooltip Element
     var tooltipEl = document.getElementById('chartjs-tooltip');
 
-    // Create element on first render
     if (!tooltipEl) {
-        let style = "background:" + tooltipModel.backgroundColor +"; ";
-        style += "color:" + tooltipModel.bodyFontColor +"; ";
+        let style = "background:" + tooltipModel.backgroundColor + "; ";
+        style += "color:" + tooltipModel.bodyFontColor + "; ";
 
         tooltipEl = document.createElement('div');
         tooltipEl.id = "chartjs-tooltip";
-        tooltipEl.innerHTML = '<table style="'+style+'"></table>';
+        tooltipEl.innerHTML = '<table style="' + style + '"></table>';
         document.body.appendChild(tooltipEl);
     }
 
-    // Hide if no tooltip
     if (tooltipModel.opacity === 0) {
         tooltipEl.style.opacity = 0;
         return;
     }
 
-    // Set caret Position
     tooltipEl.classList.remove('above', 'below', 'no-transform');
     if (tooltipModel.yAlign) {
         tooltipEl.classList.add(tooltipModel.yAlign);
@@ -1095,9 +1108,8 @@ lightningPainDiary.prototype.getToolTip = function (tooltipModel, b) {
         tooltipEl.classList.add('no-transform');
     }
 
-    let selected = lpd.report.select;
+    let select = lpd.report.select;
 
-    // Set Text
     lpd.snapshot.forEach(function (data) {
         let entry = data.val();
 
@@ -1107,7 +1119,9 @@ lightningPainDiary.prototype.getToolTip = function (tooltipModel, b) {
             innerHtml += '<tr><th>' + entry.Date + ' ' + entry.Time + '</th></tr>';
             innerHtml += '</thead><tbody>';
 
-            for (let [name, value] of Object.entries(selected)) {
+            for (let i = 0; i < select.length; ++i) {
+                let value = select[i];
+
                 if (value && entry[value.name]) {
                     let body = value.name + ": " + entry[value.name];
                     let j;
@@ -1116,7 +1130,7 @@ lightningPainDiary.prototype.getToolTip = function (tooltipModel, b) {
                         case "date":
                             if (value.name === "Date")
                                 continue;
-                                
+
                             break;
 
                         case "time":
@@ -1137,7 +1151,7 @@ lightningPainDiary.prototype.getToolTip = function (tooltipModel, b) {
                         case "weather":
                             for (let i = 0; i < value.list.length; ++i)
                                 if (entry.Weather[value.list[i]]) {
-                                    body = value.list[i]+": "+entry.Weather[value.list[i]] + " ";
+                                    body = value.list[i] + ": " + entry.Weather[value.list[i]] + " ";
                                     innerHtml += '<tr><td>' + body + '</td></tr>';
                                 }
 
@@ -1155,10 +1169,8 @@ lightningPainDiary.prototype.getToolTip = function (tooltipModel, b) {
         }
     });
 
-    // `this` will be the overall tooltip
     let position = this._chart.canvas.getBoundingClientRect();
 
-    // Display, position, and set styles for font
     tooltipEl.style.opacity = 1;
     tooltipEl.style.position = 'absolute';
     tooltipEl.style.left = position.left + tooltipModel.caretX + 'px';
