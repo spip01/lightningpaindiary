@@ -56,7 +56,7 @@ const row = `<div id="row-idname" class="row small" style="border-bottom: 1px so
     </div>`;
 
 const entry = `<div id="ent-idname" class="col-print-2 col-lg-2 col-md-2 col-sm-2 col-7 border-right border-bottom">ttext</div>`;
-const painlevelentry = `<div id="ent-idname" class="col-print-2 col-lg-2 col-md-2 col-sm-2 col-7 border-right border-bottom h6" style="background-color: hsl(ccolor,100%,50%)">ttext</div>`;
+const painlevelentry = `<div id="ent-idname" class="col-print-2 col-lg-2 col-md-2 col-sm-2 col-7 border-right border-bottom h6" style="-webkit-print-color-adjust: exact !important; background-color: hsl(ccolor,100%,50%)">ttext</div>`;
 const sub = `<div id="sub-idname">ttext</div>`;
 const img = `<img id="sub-idname" src="https://openweathermap.org/img/w/iicon.png" height="15" width="15">`;
 
@@ -782,7 +782,7 @@ const calentry =
         <span style="font-size: .6rem;">ttext</span>
     </div>`;
 const timeentry =
-    `<label id="ent-idname" class="row" style="font-size: .7rem; background-color: hsl(ccolor,100%,50%)">
+    `<label id="ent-idname" class="row" style="font-size: .7rem; -webkit-print-color-adjust: exact !important; background-color: hsl(ccolor,100%,50%)">
         <input id="sel-sidname" class="radio-inline text-nowrap text-center noprint h5" type="radio" name="selected" style="width: 10px; height: 10px;">&nbsp;ttext            
     </label>`;
 const calsub = `<div id="sub-idname" class="col-14 text-nowrap" style="font-size: .6rem;">ttext</div>`;
