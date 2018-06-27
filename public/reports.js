@@ -960,7 +960,7 @@ lightningPainDiary.prototype.chartDisplay = function () {
                 backgroundColor: "rgba(255,255,255,0)",
                 borderColor: color,
                 borderWidth: 1.5,
-                lineTension: .3
+                lineTension: 0
             });
         };
 
@@ -1058,9 +1058,8 @@ lightningPainDiary.prototype.chartDisplay = function () {
                         type: "time",
                         time: {
                             unit: 'week',
-                            round: 'day',
                             displayFormats: {
-                                day: 'MMM D'
+                                week: 'MMM DD'
                             }
                         },
                         gridLines: {
