@@ -910,7 +910,7 @@ lightningPainDiary.prototype.calendarDisplay = function (diary) {
                                     h = h.symbolReplace(/idname/g, lid);
                                     ent.append(h);
                                 } else {
-                                    let txt = dname + ": " + (dname === "description" || dname === "pressure"? "<br>&nbsp;" : "") + val;
+                                    let txt = dname + ": " + (dname === "description" || dname === "pressure"? "<br>&nbsp;&nbsp;" : "") + val;
 
                                     h = calsub.symbolReplace(/ttext/g, txt);
                                     h = h.symbolReplace(/idname/g, lid);
