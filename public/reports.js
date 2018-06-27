@@ -251,7 +251,7 @@ lightningPainDiary.prototype.selectDisplay = function () {
             $("#table, #calendar").find("#" + id).show();
         else
             $("#table, #calendar").find("#" + id).hide();
-        
+
         lpd.report.select = lpd.extractSelect();
         lpd.chartDisplay();
     });
@@ -910,7 +910,7 @@ lightningPainDiary.prototype.calendarDisplay = function (diary) {
                                     h = h.symbolReplace(/idname/g, lid);
                                     ent.append(h);
                                 } else {
-                                    let txt = dname + ": " + val;
+                                    let txt = dname + ": " + (dname === "description" || dname === "pressure"? "<br>&nbsp;" : "") + val;
 
                                     h = calsub.symbolReplace(/ttext/g, txt);
                                     h = h.symbolReplace(/idname/g, lid);
@@ -945,10 +945,10 @@ lightningPainDiary.prototype.chartDisplay = function () {
 
         let colors = [];
         for (let i = 0; i < 12; ++i) {
-            let rgb = hslToRgb(i * (360/7), 50, 50);
+            let rgb = hslToRgb(i * (360 / 7), 50, 50);
             colors.push("#" + toHex(rgb.r) + toHex(rgb.g) + toHex(rgb.b));
         }
-        colors[0]="#ff0000"
+        colors[0] = "#ff0000"
         let nextcolor = 0;
 
         let datasets = [];
@@ -1003,7 +1003,7 @@ lightningPainDiary.prototype.chartDisplay = function () {
                 for (let i = 0; i < select.length; ++i) {
                     let value = select[i];
                     let name = value.name;
-                    
+
                     if (value && entry[name]) {
                         switch (value.type) {
                             case "range":
@@ -1260,7 +1260,7 @@ $(document).ready(function () {
         let id = $(this).prop("id").replace(/(.*?)-.*/g, "$1");
         $("#" + id).show();
 
-        if (id==="chart")
+        if (id === "chart")
             $("#edit-row").hide();
         else
             $("#edit-row").show();
@@ -1304,4 +1304,12 @@ $(document).ready(function () {
             $("#row-header").removeClass("sticky");
         }
     }
+
+    let mediaQueryList = window.matchMedia('print')
+    mediaQueryList.addListener((mql) => {
+      if (mql.matches) {
+        if (lpd.chart)
+            lpd.chart.resize();
+      }
+    });
 });
