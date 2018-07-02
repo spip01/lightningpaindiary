@@ -264,6 +264,11 @@ lightningPainDiary.prototype.doDiaryRead = function (start, end, entryfcn, finis
     //ref.child("userFavorites").queryOrderedByKey().queryEqual(toValue: user.uid).observe(...)
 
     var ref = firebase.database().ref("users/" + lpd.uid + '/Diary/');
+    ref.orderByChild("Date");
+    if (start)
+        ref.startAt(start);
+    if (end)
+        ref.endAt(end);
     ref.once("value", function (snapshot) {
         lpd.snapshot = snapshot;
 

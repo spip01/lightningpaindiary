@@ -18,7 +18,8 @@ lightningPainDiary.prototype.doReportDisplay = function () {
     lpd.selectDisplay();
     lpd.filterDisplay();
     lpd.headerDisplay();
-    lpd.doDiaryRead(lpd.report.filter.Date.start, lpd.report.filter.Date.end, lpd.diaryDisplay, lpd.doReportUpdate);
+    let daterange = lpd.getFilterStartStopDate();
+    lpd.doDiaryRead(daterange.start, daterange.end, lpd.diaryDisplay, lpd.doReportUpdate);
 }
 
 lightningPainDiary.prototype.diaryDisplay = function (diary) {
