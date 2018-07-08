@@ -13,7 +13,7 @@ $(document).ready(function () {
     });
 });
 
-lightningPainDiary.prototype.doLoggedout=function(){
+lightningPainDiary.prototype.doLoggedout = function () {
     lpd.doTrackerDisplay();
 
     $("#save").addClass("disabled");
@@ -21,14 +21,14 @@ lightningPainDiary.prototype.doLoggedout=function(){
     $("#cancel").addClass("disabled");
     $("#cancel").prop("disabled", true);
 }
-  
-lightningPainDiary.prototype.doLoggedin=function(){
+
+lightningPainDiary.prototype.doLoggedin = function () {
     $("#save").removeClass("disabled");
     $("#save").removeAttr("disabled");
     $("#cancel").removeClass("disabled");
     $("#cancel").removeAttr("disabled");
 }
-  
+
 lightningPainDiary.prototype.updateEntry = function () {
     let value = {};
 
@@ -153,7 +153,10 @@ lightningPainDiary.prototype.doTrackerDisplay = function () {
         lpd.procRange(this);
     });
 
-    lpd.doDiaryEntryRead(lpd.account.lastdiaryupdate, lpd.doDiaryDisplay);
+    if (lpd.account.lastdiaryupdate) {
+        lpd.doDiaryEntryRead(lpd.account.lastdiaryupdate, lpd.doDiaryDisplay);
+        $("#entrybuttons #save").text("Update");
+    }
 }
 
 lightningPainDiary.prototype.buildRange = function (entry) {
@@ -317,6 +320,7 @@ lightningPainDiary.prototype.buildTimeInput = function (entry, diary) {
         let now = new Date();
         $(this).parent().find("input").val(now.toLocalTimeString());
         $("#pnl-Date input").val(now.toDateString());
+        $("#entrybuttons #save").text("Save");
     });
 }
 
@@ -436,7 +440,7 @@ lightningPainDiary.prototype.buildCheckboxList = function (entry) {
     }
 
     let h = add.symbolReplace(/idname/g, id);
-    h = h.symbolReplace(/ttitle/g, "add item");
+    h = h.symbolReplace(/ttitle/g, "notes");
     pnl.find("#entry").append(h);
 }
 
@@ -477,10 +481,17 @@ lightningPainDiary.prototype.buildWeatherInput = function (entry) {
             <div id="entry" class="row col-lg-10 col-md-10 col-sm-10 col-12"></div>
         </div>
         `;
-    const items =
+        const items =
         `
         <label class="col-lg-4 col-md-4 col-sm-6 col-12">
             <input id="ent-idname" class="rounded col-lg-4 col-md-5 col-sm-6 col-6" type="text">
+            &nbsp;ttitle
+        </label>
+        `;
+        const city =
+        `
+        <label class="col-lg-4 col-md-4 col-sm-6 col-12">
+            <input id="ent-idname" class="rounded col-6" type="text">
             &nbsp;ttitle
         </label>
         `;
@@ -506,23 +517,27 @@ lightningPainDiary.prototype.buildWeatherInput = function (entry) {
         let name = entry.list[i];
 
         let iid = name.spaceToDash();
-        let h;
+        let h = items;
 
         switch (name) {
-            case "description":
-                h = description.symbolReplace(/idname/g, iid);
-                h = h.symbolReplace(/ttitle/g, name);
-                pnl.append(h);
-                break;
             case "icon":
                 h = img.symbolReplace(/idname/g, iid);
                 h = h.symbolReplace(/ttitle/g, name);
                 pnl.find("#ent-description").parent().append(h);
+                h = null;
                 break;
-            default:
-                h = items.symbolReplace(/idname/g, iid);
-                h = h.symbolReplace(/ttitle/g, name);
-                pnl.append(h);
+            case "description":
+                h = description;
+                break;
+            case "city":
+                h = city;
+                break;
+        }
+
+        if (h) {
+            h = h.symbolReplace(/idname/g, iid);
+            h = h.symbolReplace(/ttitle/g, name);
+            pnl.append(h);
         }
     }
 
@@ -530,7 +545,8 @@ lightningPainDiary.prototype.buildWeatherInput = function (entry) {
     pnl.append(h);
 
     pnl.find("button").click(function () {
-        lpd.loadWeather(entry);
+        if (!getLocation(lpd.loadWeather))
+            lpd.loadWeather(lpd.account);
     });
 }
 
@@ -560,34 +576,51 @@ lightningPainDiary.prototype.setWeatherInput = function (name, val) {
     $("#pnl-" + id + " img").prop("src", f);
 }
 
-lightningPainDiary.prototype.loadWeather = function (entry) {
+lightningPainDiary.prototype.loadWeather = function (position) {
     let icon = "https://openweathermap.org/img/w/iicon.png";
-    let url = "https://api.openweathermap.org/data/2.5/weather?q=" + lpd.account.city + "," +
-        lpd.account.state + "," + lpd.account.country + "&units=" + (lpd.account.ifmetric ? "metric" : "imperial") +
+    let url = "https://api.openweathermap.org/data/2.5/weather?lat=" + position.coords.latitude + "&lon=" +
+        position.coords.longitude + "&units=" + (lpd.account.ifmetric ? "metric" : "imperial") +
         "&appid=" + OPENWEATHER_API;
 
     loadFile(url, null, function (data) {
-        let id = entry.name.spaceToDash();
+        for (let i = 0; i < lpd.trackerlist.length; ++i) {
+            let id = lpd.trackerlist[i].name.spaceToDash();
+            let pnl = $("#pnl-" + id);
 
-        $("#pnl-" + id + " input").each(function () {
-            let name = $(this).prop("id").idToName();
+            if (lpd.trackerlist[i].type === "weather") {
+                for (let j = 0; j < lpd.trackerlist[i].list.length; ++j) {
 
-            switch (name) {
-                case "wind":
-                    $(this).val(data.wind.speed);
-                    break;
-                case "clouds":
-                    $(this).val(data.clouds.all);
-                    break;
-                case "description":
-                    $(this).val(data.weather[0].description);
-                    break;
-                default:
-                    $(this).val(data.main[name]);
+                    let name = lpd.trackerlist[i].list[j];
+                    let nameid = name.spaceToDash();
+                    let ent = pnl.find("#ent-" + nameid);
+
+                    switch (name) {
+                        case "wind":
+                            ent.val(data.wind.speed);
+                            break;
+                        case "clouds":
+                            ent.val(data.clouds.all);
+                            break;
+                        case "description":
+                            ent.val(data.weather[0].description);
+                            break;
+                        case "city":
+                            ent.val(data.name);
+                            break;
+                        case "lat":
+                            ent.val(data.coord.lat);
+                            break;
+                        case "lon":
+                            ent.val(data.coord.lon);
+                            break;
+                        default:
+                            ent.val(data.main[name]);
+                    }
+
+                    let f = /iicon/g [Symbol.replace](icon, data.weather[0].icon)
+                    $("#pnl-" + id + " img").prop("src", f);
+                }
             }
-        });
-
-        let f = /iicon/g [Symbol.replace](icon, data.weather[0].icon)
-        $("#pnl-" + id + " img").prop("src", f);
+        }
     });
 }

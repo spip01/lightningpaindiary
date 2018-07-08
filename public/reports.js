@@ -12,6 +12,9 @@ lightningPainDiary.prototype.doLoggedout = function () {
 lightningPainDiary.prototype.doTrackerDisplay = function () {
     lpd.doReportlistRead();
     lpd.doReportRead(lpd.account.lastreport, lpd.doReportDisplay);
+
+    lpd.account.lastdiaryupdate = null;
+    lpd.doAccountWrite("lastdiaryupdate");
 }
 
 lightningPainDiary.prototype.doReportDisplay = function () {

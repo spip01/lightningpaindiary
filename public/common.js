@@ -109,7 +109,7 @@ const demotrackerlist = [{
 }, {
     name: "Weather",
     type: "weather",
-    list: ["temp", "humidity", "pressure", "wind", "clouds", "description", "icon"],
+    list: ["temp", "humidity", "pressure", "wind", "clouds", "city", "lat", "lon", "description", "icon"],
     // http://openweathermap.org/api
 }, {
     name: "Notes",
@@ -591,7 +591,7 @@ function hslToRgb(h, s, l) {
                 c = t2 + (t1 - t2) * 6 * (0.666 - tc);
             else
                 c = t2;
-                
+
             return (c);
         }
 
@@ -612,4 +612,11 @@ function toHex(n) {
     if (hex.length % 2 === 1)
         hex = "0" + hex;
     return hex;
+}
+
+function getLocation(fcn) {
+    if (navigator.geolocation)
+        navigator.geolocation.getCurrentPosition(fcn);
+
+    return navigator.geolocation;
 }
