@@ -336,7 +336,7 @@ lightningPainDiary.prototype.dragover = function (evt) {
 }
 
 lightningPainDiary.prototype.dragstart = function (evt) {
-  evt.originalEvent.dataTransfer.setData("text", evt.target.id);
+    evt.originalEvent.dataTransfer.setData("text", evt.target.id);
 }
 
 lightningPainDiary.prototype.drop = function (evt) {
@@ -640,12 +640,8 @@ function lookupWeather(evt) {
   let url = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "," + state + "," + country + "&units=" + tmpFormat + "&appid=" + OPENWEATHER_API;
 
   loadFile(url, null, function (data) {
-    $("#lat").val(data.coord.lat);
-    $("#lon").val(data.coord.lon);
-
-    lpd.account.coord = [];
-    lpd.account.coord.latitude = data.coord.lat;
-    lpd.account.coord.longitude = data.coord.lon;
+    let h = "<div class='row container'>Lon: " + data.coord.lon + " Lat: " + data.coord.lat + "</div>";
+    $("#addressinp").after(h);
   });
 }
 
@@ -655,9 +651,6 @@ lightningPainDiary.prototype.extractAccount = function () {
   lpd.account.city = pnl.find("#city").val();
   lpd.account.state = pnl.find("#state").val();
   lpd.account.country = pnl.find("#country").val();
-  lpd.account.coord = [];
-  lpd.account.coord.latitude = pnl.find("#lat").val();
-  lpd.account.coord.longitude = pnl.find("#lon").val();
   lpd.account.ifmetric = pnl.find("#ifmetric").prop("checked");
   lpd.account.ifnotify = pnl.find("#ifnotify").prop("checked");
   lpd.account.notifytime = pnl.find("#notifytime").val();
@@ -674,10 +667,6 @@ lightningPainDiary.prototype.doAccountDisplay = function () {
   pnl.find("#city").val(lpd.account.city);
   pnl.find("#state").val(lpd.account.state);
   pnl.find("#country").val(lpd.account.country);
-  if (lpd.account.coord) {
-    pnl.find("#lat").val(lpd.account.coord.latitude);
-    pnl.find("#lon").val(lpd.account.coord.longitude);
-  }
   pnl.find("#ifimperial").prop("checked", !lpd.account.ifmetric);
   pnl.find("#ifmetric").prop("checked", lpd.account.ifmetric);
   pnl.find("#ifnotify").prop("checked", lpd.account.ifnotify);

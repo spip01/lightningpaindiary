@@ -12,9 +12,6 @@ lightningPainDiary.prototype.doLoggedout = function () {
 lightningPainDiary.prototype.doTrackerDisplay = function () {
     lpd.doReportlistRead();
     lpd.doReportRead(lpd.account.lastreport, lpd.doReportDisplay);
-
-    lpd.account.lastdiaryupdate = null;
-    lpd.doAccountWrite("lastdiaryupdate");
 }
 
 lightningPainDiary.prototype.doReportDisplay = function () {
@@ -1028,7 +1025,7 @@ lightningPainDiary.prototype.chartDisplay = function () {
                             case "weather":
                                 for (let i = 0; i < value.list.length; ++i) {
                                     let lname = value.list[i];
-                                    if (entry[name][lname] && lname != "description" && lname != "icon") {
+                                    if (entry[name][lname] && lname != "description" && lname != "icon" && lname != "city" && lname != "lat" && lname != "lon") {
                                         if (!dataset[lname]) {
                                             dataset[lname] = [];
                                             datasets.push(newset(lname, dataset[lname], colors[nextcolor]));
