@@ -20,11 +20,6 @@ lightningPainDiary.prototype.doLoggedout = function () {
     $("#save").prop("disabled", true);
     $("#cancel").addClass("disabled");
     $("#cancel").prop("disabled", true);
-
-    $("button :contains(Next)").addClass("disabled");
-    $("button :contains(Next)").prop("disabled", true);
-    $("button :contains(Previous)").addClass("disabled");
-    $("button :contains(Previous)").prop("disabled", true);
 }
 
 lightningPainDiary.prototype.doLoggedin = function () {
@@ -311,8 +306,6 @@ lightningPainDiary.prototype.buildTimeInput = function (entry, diary) {
             <div class="col-lg-2 col-md-2 col-sm-2 col-6 h6 clr-dark-green">ttitle</div>
             <input id="time" type="time" class="rounded col-lg-3 col-md-3 col-sm-3 col-6">&nbsp;
             <button type="button" class="btn border btn-sm btn-green">Now</button>&nbsp;
-            <button type="button" class="btn border btn-sm btn-green disabled" disabled style="display: none">Next</button>&nbsp;
-            <button type="button" class="btn border btn-sm btn-green disabled" disabled style="display: none">Previous</button>&nbsp;
         </div>
         `;
 
@@ -323,17 +316,11 @@ lightningPainDiary.prototype.buildTimeInput = function (entry, diary) {
 
     $("#panels").append(container);
 
-    $("#pnl-" + id + " button" + " :contains(Now)").click(function () {
+    $("#pnl-" + id + " button").click(function () {
         let now = new Date();
         $(this).parent().find("input").val(now.toLocalTimeString());
         $("#pnl-Date input").val(now.toDateString());
         $("#entrybuttons #save").text("Save");
-    });
-
-    $("#pnl-" + id + " button" + " :contains(Next)").click(function () {
-    });
-
-    $("#pnl-" + id + " button" + " :contains(Previous)").click(function () {
     });
 }
 
@@ -494,14 +481,14 @@ lightningPainDiary.prototype.buildWeatherInput = function (entry) {
             <div id="entry" class="row col-lg-10 col-md-10 col-sm-10 col-12"></div>
         </div>
         `;
-        const items =
+    const items =
         `
         <label class="col-lg-4 col-md-4 col-sm-6 col-12">
             <input id="ent-idname" class="rounded col-lg-4 col-md-5 col-sm-6 col-6" type="text">
             &nbsp;ttitle
         </label>
         `;
-        const city =
+    const city =
         `
         <label class="col-lg-4 col-md-4 col-sm-6 col-12">
             <input id="ent-idname" class="rounded col-6" type="text">
